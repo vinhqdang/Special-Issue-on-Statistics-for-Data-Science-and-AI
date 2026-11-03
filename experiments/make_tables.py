@@ -25,3 +25,13 @@ L.append("\\bottomrule\\end{tabular}")
 open("manuscript/tables/subsets.tex", "w").write("\n".join(L))
 for o in cs: print(o["dataset"], o["crit"], o["weight_win"], o["rank_lo"], o["rank_hi"])
 print(max(r["tcs_size"] for r in sim), min(r["tcs_cover"] for r in sim), min(r["naive_cover"] for r in sim), max(r["naive_cover"] for r in sim))
+
+# head-to-head with the marginal-box procedure
+b5 = json.load(open("results/simulation_box.json")); b0 = json.load(open("results/simulation_box_mc0.0.json"))
+L = ["\\begin{tabular}{rrrrrrrrr}\\toprule",
+     "$n$ & $\\delta$ & $\\rho$ & \\multicolumn{2}{c}{Retention} & \\multicolumn{2}{c}{Exclusion, $r=0.5$} & \\multicolumn{2}{c}{Exclusion, $r=0$} \\\\",
+     " & & & TCS & Box & TCS & Box & TCS & Box \\\\\\midrule"]
+for a, c in zip(b5, b0):
+    L.append(f"{a['n']} & {a['delta']:.2f} & {a['rho']:.1f} & {min(a['tcs_cover'], c['tcs_cover']):.3f} & {min(a['box_cover'], c['box_cover']):.3f} & {a['tcs_excl']:.2f} & {a['box_excl']:.2f} & {c['tcs_excl']:.2f} & {c['box_excl']:.2f} \\\\")
+L.append("\\bottomrule\\end{tabular}")
+open("manuscript/tables/box.tex", "w").write("\n".join(L))

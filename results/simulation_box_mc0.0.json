@@ -1,0 +1,134 @@
+[
+ {
+  "n": 200,
+  "delta": 0.02,
+  "rho": 0.0,
+  "tcs_cover": 1.0,
+  "box_cover": 1.0,
+  "tcs_excl": 0.01,
+  "box_excl": 0.0,
+  "tcs_size": 7.98,
+  "box_size": 8.0
+ },
+ {
+  "n": 200,
+  "delta": 0.02,
+  "rho": 0.5,
+  "tcs_cover": 1.0,
+  "box_cover": 1.0,
+  "tcs_excl": 0.04833333333333333,
+  "box_excl": 0.0,
+  "tcs_size": 7.903333333333333,
+  "box_size": 8.0
+ },
+ {
+  "n": 200,
+  "delta": 0.05,
+  "rho": 0.0,
+  "tcs_cover": 1.0,
+  "box_cover": 1.0,
+  "tcs_excl": 0.565,
+  "box_excl": 0.48833333333333334,
+  "tcs_size": 6.87,
+  "box_size": 7.023333333333333
+ },
+ {
+  "n": 200,
+  "delta": 0.05,
+  "rho": 0.5,
+  "tcs_cover": 1.0,
+  "box_cover": 1.0,
+  "tcs_excl": 0.61,
+  "box_excl": 0.49833333333333335,
+  "tcs_size": 6.78,
+  "box_size": 7.003333333333333
+ },
+ {
+  "n": 500,
+  "delta": 0.02,
+  "rho": 0.0,
+  "tcs_cover": 1.0,
+  "box_cover": 1.0,
+  "tcs_excl": 0.235,
+  "box_excl": 0.04666666666666667,
+  "tcs_size": 7.53,
+  "box_size": 7.906666666666666
+ },
+ {
+  "n": 500,
+  "delta": 0.02,
+  "rho": 0.5,
+  "tcs_cover": 1.0,
+  "box_cover": 1.0,
+  "tcs_excl": 0.33166666666666667,
+  "box_excl": 0.1,
+  "tcs_size": 7.336666666666667,
+  "box_size": 7.8
+ },
+ {
+  "n": 500,
+  "delta": 0.05,
+  "rho": 0.0,
+  "tcs_cover": 1.0,
+  "box_cover": 1.0,
+  "tcs_excl": 0.9633333333333334,
+  "box_excl": 0.7966666666666666,
+  "tcs_size": 6.073333333333333,
+  "box_size": 6.406666666666666
+ },
+ {
+  "n": 500,
+  "delta": 0.05,
+  "rho": 0.5,
+  "tcs_cover": 0.9966666666666667,
+  "box_cover": 1.0,
+  "tcs_excl": 0.97,
+  "box_excl": 0.8116666666666666,
+  "tcs_size": 6.056666666666667,
+  "box_size": 6.376666666666667
+ },
+ {
+  "n": 2000,
+  "delta": 0.02,
+  "rho": 0.0,
+  "tcs_cover": 1.0,
+  "box_cover": 1.0,
+  "tcs_excl": 0.7616666666666667,
+  "box_excl": 0.5483333333333333,
+  "tcs_size": 6.476666666666667,
+  "box_size": 6.903333333333333
+ },
+ {
+  "n": 2000,
+  "delta": 0.02,
+  "rho": 0.5,
+  "tcs_cover": 1.0,
+  "box_cover": 1.0,
+  "tcs_excl": 0.825,
+  "box_excl": 0.6116666666666667,
+  "tcs_size": 6.35,
+  "box_size": 6.776666666666666
+ },
+ {
+  "n": 2000,
+  "delta": 0.05,
+  "rho": 0.0,
+  "tcs_cover": 1.0,
+  "box_cover": 1.0,
+  "tcs_excl": 1.0,
+  "box_excl": 1.0,
+  "tcs_size": 6.0,
+  "box_size": 6.0
+ },
+ {
+  "n": 2000,
+  "delta": 0.05,
+  "rho": 0.5,
+  "tcs_cover": 1.0,
+  "box_cover": 1.0,
+  "tcs_excl": 1.0,
+  "box_excl": 1.0,
+  "tcs_size": 6.0,
+  "box_size": 6.0
+ }
+]

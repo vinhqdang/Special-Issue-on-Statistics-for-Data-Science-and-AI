@@ -27,12 +27,15 @@ def box(x, alpha):
     return keep
 
 
+MC = float(sys.argv[1]) if len(sys.argv) > 1 else 0.5   # correlation between models
+
+
 def one(args):
     n, delta, rho, seed, B, alpha = args
     rng = np.random.default_rng(seed)
     mu = pop(delta); M = mu.shape[0]
     Sig_k = rho * np.ones((K, K)) + (1 - rho) * np.eye(K)
-    Sig_m = 0.5 * np.ones((M, M)) + 0.5 * np.eye(M)
+    Sig_m = MC * np.ones((M, M)) + (1 - MC) * np.eye(M)
     L = np.linalg.cholesky(np.kron(Sig_m, Sig_k))
     x = mu.reshape(1, M, K) + 0.15 * (rng.standard_normal((n, M * K)) @ L.T).reshape(n, M, K)
     idx = rng.integers(0, n, size=(B, n))
@@ -53,4 +56,4 @@ if __name__ == "__main__":
             res = p.map(one, [(n, d, rho, 7000 + 1000 * gi + r, B, alpha) for r in range(R)])
             row = dict(n=n, delta=d, rho=rho, **{k: float(np.mean([x[k] for x in res])) for k in res[0]})
             out.append(row); print(row, flush=True)
-    json.dump(out, open("results/simulation_box.json", "w"), indent=1)
+    json.dump(out, open("results/simulation_box.json" if MC == 0.5 else f"results/simulation_box_mc{MC}.json", "w"), indent=1)
