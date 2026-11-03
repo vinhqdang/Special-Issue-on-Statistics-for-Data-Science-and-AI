@@ -1,0 +1,488 @@
+[
+ {
+  "dataset": "adult",
+  "n_test": 19537,
+  "alpha": 0.05,
+  "models": [
+   "LR",
+   "LR-strong-reg",
+   "Tree(d=3)",
+   "Tree(d=12)",
+   "RandomForest",
+   "HistGB",
+   "kNN(25)",
+   "NaiveBayes",
+   "MLP"
+  ],
+  "criteria": [
+   "error",
+   "eo_gap",
+   "ece",
+   "noise_drop"
+  ],
+  "S": [
+   -3.3240664654103598,
+   -2.3723419324558206,
+   -1.1840280490569415,
+   -0.11164628074978285,
+   -6.626687903712359,
+   -5.034977466929301,
+   -7.442726417243788,
+   0.5909606735369264,
+   -2.04359808205872
+  ],
+  "pareto": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   false,
+   true
+  ],
+  "variants": {
+   "orig": {
+    "keep": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "n_excluded": 0,
+    "crit": 3.5786897407182043,
+    "steps": 1
+   },
+   "stepdown": {
+    "keep": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "n_excluded": 0,
+    "crit": 3.5786897407182043,
+    "steps": 1
+   },
+   "sd_pre": {
+    "keep": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "n_excluded": 0,
+    "crit": 3.6014694244751375,
+    "steps": 1
+   },
+   "sd_eps_small": {
+    "keep": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "n_excluded": 0,
+    "crit": 3.5786897407182043,
+    "steps": 1
+   },
+   "sd_eps_large": {
+    "keep": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "n_excluded": 0,
+    "crit": 3.5786897407182043,
+    "steps": 1
+   }
+  },
+  "S_minus_orig_crit_max": -2.987729067181278,
+  "subsets": [
+   {
+    "criteria": [
+     "error",
+     "eo_gap"
+    ],
+    "n_excluded": {
+     "orig": 2,
+     "stepdown": 2,
+     "sd_pre": 2
+    }
+   },
+   {
+    "criteria": [
+     "error",
+     "ece"
+    ],
+    "n_excluded": {
+     "orig": 4,
+     "stepdown": 4,
+     "sd_pre": 4
+    }
+   },
+   {
+    "criteria": [
+     "error",
+     "noise_drop"
+    ],
+    "n_excluded": {
+     "orig": 2,
+     "stepdown": 2,
+     "sd_pre": 2
+    }
+   },
+   {
+    "criteria": [
+     "eo_gap",
+     "ece"
+    ],
+    "n_excluded": {
+     "orig": 2,
+     "stepdown": 2,
+     "sd_pre": 2
+    }
+   },
+   {
+    "criteria": [
+     "eo_gap",
+     "noise_drop"
+    ],
+    "n_excluded": {
+     "orig": 0,
+     "stepdown": 0,
+     "sd_pre": 0
+    }
+   },
+   {
+    "criteria": [
+     "ece",
+     "noise_drop"
+    ],
+    "n_excluded": {
+     "orig": 2,
+     "stepdown": 2,
+     "sd_pre": 2
+    }
+   },
+   {
+    "criteria": [
+     "error",
+     "eo_gap",
+     "ece"
+    ],
+    "n_excluded": {
+     "orig": 1,
+     "stepdown": 1,
+     "sd_pre": 1
+    }
+   },
+   {
+    "criteria": [
+     "error",
+     "eo_gap",
+     "noise_drop"
+    ],
+    "n_excluded": {
+     "orig": 0,
+     "stepdown": 0,
+     "sd_pre": 0
+    }
+   },
+   {
+    "criteria": [
+     "error",
+     "ece",
+     "noise_drop"
+    ],
+    "n_excluded": {
+     "orig": 2,
+     "stepdown": 2,
+     "sd_pre": 2
+    }
+   },
+   {
+    "criteria": [
+     "eo_gap",
+     "ece",
+     "noise_drop"
+    ],
+    "n_excluded": {
+     "orig": 0,
+     "stepdown": 0,
+     "sd_pre": 0
+    }
+   }
+  ]
+ },
+ {
+  "dataset": "credit-g",
+  "n_test": 400,
+  "alpha": 0.05,
+  "models": [
+   "LR",
+   "LR-strong-reg",
+   "Tree(d=3)",
+   "Tree(d=12)",
+   "RandomForest",
+   "HistGB",
+   "kNN(25)",
+   "NaiveBayes",
+   "MLP"
+  ],
+  "criteria": [
+   "error",
+   "eo_gap",
+   "ece",
+   "noise_drop"
+  ],
+  "S": [
+   -0.024264420119412995,
+   -0.6737640261482689,
+   -0.8379253324095978,
+   -0.8677429169021901,
+   -1.4148081539071038,
+   -0.1427753251887703,
+   -0.6989761002231616,
+   0.507452609505201,
+   0.027526529394424334
+  ],
+  "pareto": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   false,
+   false
+  ],
+  "variants": {
+   "orig": {
+    "keep": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "n_excluded": 0,
+    "crit": 3.7056832749581594,
+    "steps": 1
+   },
+   "stepdown": {
+    "keep": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "n_excluded": 0,
+    "crit": 3.7056832749581594,
+    "steps": 1
+   },
+   "sd_pre": {
+    "keep": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "n_excluded": 0,
+    "crit": 3.777582647950712,
+    "steps": 1
+   },
+   "sd_eps_small": {
+    "keep": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "n_excluded": 0,
+    "crit": 3.7056832749581594,
+    "steps": 1
+   },
+   "sd_eps_large": {
+    "keep": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "n_excluded": 0,
+    "crit": 3.7056832749581594,
+    "steps": 1
+   }
+  },
+  "S_minus_orig_crit_max": -3.198230665452958,
+  "subsets": [
+   {
+    "criteria": [
+     "error",
+     "eo_gap"
+    ],
+    "n_excluded": {
+     "orig": 0,
+     "stepdown": 0,
+     "sd_pre": 0
+    }
+   },
+   {
+    "criteria": [
+     "error",
+     "ece"
+    ],
+    "n_excluded": {
+     "orig": 0,
+     "stepdown": 0,
+     "sd_pre": 0
+    }
+   },
+   {
+    "criteria": [
+     "error",
+     "noise_drop"
+    ],
+    "n_excluded": {
+     "orig": 0,
+     "stepdown": 0,
+     "sd_pre": 0
+    }
+   },
+   {
+    "criteria": [
+     "eo_gap",
+     "ece"
+    ],
+    "n_excluded": {
+     "orig": 0,
+     "stepdown": 0,
+     "sd_pre": 0
+    }
+   },
+   {
+    "criteria": [
+     "eo_gap",
+     "noise_drop"
+    ],
+    "n_excluded": {
+     "orig": 0,
+     "stepdown": 0,
+     "sd_pre": 0
+    }
+   },
+   {
+    "criteria": [
+     "ece",
+     "noise_drop"
+    ],
+    "n_excluded": {
+     "orig": 0,
+     "stepdown": 0,
+     "sd_pre": 0
+    }
+   },
+   {
+    "criteria": [
+     "error",
+     "eo_gap",
+     "ece"
+    ],
+    "n_excluded": {
+     "orig": 0,
+     "stepdown": 0,
+     "sd_pre": 0
+    }
+   },
+   {
+    "criteria": [
+     "error",
+     "eo_gap",
+     "noise_drop"
+    ],
+    "n_excluded": {
+     "orig": 0,
+     "stepdown": 0,
+     "sd_pre": 0
+    }
+   },
+   {
+    "criteria": [
+     "error",
+     "ece",
+     "noise_drop"
+    ],
+    "n_excluded": {
+     "orig": 0,
+     "stepdown": 0,
+     "sd_pre": 0
+    }
+   },
+   {
+    "criteria": [
+     "eo_gap",
+     "ece",
+     "noise_drop"
+    ],
+    "n_excluded": {
+     "orig": 0,
+     "stepdown": 0,
+     "sd_pre": 0
+    }
+   }
+  ]
+ }
+]
