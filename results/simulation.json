@@ -1,0 +1,134 @@
+[
+ {
+  "n": 200,
+  "delta": 0.02,
+  "rho": 0.0,
+  "tcs_cover": 1.0,
+  "naive_cover": 0.4225,
+  "tcs_size": 7.6925,
+  "naive_size": 5.465,
+  "tcs_excl": 0.15375,
+  "naive_excl": 0.96625
+ },
+ {
+  "n": 200,
+  "delta": 0.02,
+  "rho": 0.5,
+  "tcs_cover": 0.9975,
+  "naive_cover": 0.3625,
+  "tcs_size": 7.53,
+  "naive_size": 5.365,
+  "tcs_excl": 0.23375,
+  "naive_excl": 0.97875
+ },
+ {
+  "n": 200,
+  "delta": 0.05,
+  "rho": 0.0,
+  "tcs_cover": 1.0,
+  "naive_cover": 0.385,
+  "tcs_size": 6.255,
+  "naive_size": 5.385,
+  "tcs_excl": 0.8725,
+  "naive_excl": 1.0
+ },
+ {
+  "n": 200,
+  "delta": 0.05,
+  "rho": 0.5,
+  "tcs_cover": 0.9975,
+  "naive_cover": 0.41,
+  "tcs_size": 6.1525,
+  "naive_size": 5.41,
+  "tcs_excl": 0.9225,
+  "naive_excl": 1.0
+ },
+ {
+  "n": 500,
+  "delta": 0.02,
+  "rho": 0.0,
+  "tcs_cover": 1.0,
+  "naive_cover": 0.355,
+  "tcs_size": 6.9725,
+  "naive_size": 5.355,
+  "tcs_excl": 0.51375,
+  "naive_excl": 1.0
+ },
+ {
+  "n": 500,
+  "delta": 0.02,
+  "rho": 0.5,
+  "tcs_cover": 1.0,
+  "naive_cover": 0.335,
+  "tcs_size": 6.855,
+  "naive_size": 5.3325,
+  "tcs_excl": 0.5725,
+  "naive_excl": 1.0
+ },
+ {
+  "n": 500,
+  "delta": 0.05,
+  "rho": 0.0,
+  "tcs_cover": 0.9975,
+  "naive_cover": 0.38,
+  "tcs_size": 5.9975,
+  "naive_size": 5.38,
+  "tcs_excl": 1.0,
+  "naive_excl": 1.0
+ },
+ {
+  "n": 500,
+  "delta": 0.05,
+  "rho": 0.5,
+  "tcs_cover": 1.0,
+  "naive_cover": 0.3525,
+  "tcs_size": 6.0,
+  "naive_size": 5.3525,
+  "tcs_excl": 1.0,
+  "naive_excl": 1.0
+ },
+ {
+  "n": 2000,
+  "delta": 0.02,
+  "rho": 0.0,
+  "tcs_cover": 1.0,
+  "naive_cover": 0.3525,
+  "tcs_size": 6.01,
+  "naive_size": 5.3525,
+  "tcs_excl": 0.995,
+  "naive_excl": 1.0
+ },
+ {
+  "n": 2000,
+  "delta": 0.02,
+  "rho": 0.5,
+  "tcs_cover": 1.0,
+  "naive_cover": 0.3875,
+  "tcs_size": 6.0075,
+  "naive_size": 5.3875,
+  "tcs_excl": 0.99625,
+  "naive_excl": 1.0
+ },
+ {
+  "n": 2000,
+  "delta": 0.05,
+  "rho": 0.0,
+  "tcs_cover": 1.0,
+  "naive_cover": 0.3625,
+  "tcs_size": 6.0,
+  "naive_size": 5.3625,
+  "tcs_excl": 1.0,
+  "naive_excl": 1.0
+ },
+ {
+  "n": 2000,
+  "delta": 0.05,
+  "rho": 0.5,
+  "tcs_cover": 1.0,
+  "naive_cover": 0.355,
+  "tcs_size": 6.0,
+  "naive_size": 5.355,
+  "tcs_excl": 1.0,
+  "naive_excl": 1.0
+ }
+]

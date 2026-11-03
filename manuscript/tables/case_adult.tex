@@ -1,0 +1,12 @@
+\begin{tabular}{lrrrrrcccr}\toprule
+Model & Error & EO gap & ECE & Noise drop & $S_m$ & TCS & Naive & $\hat\pi_m$ & Top-1 \\\midrule
+LR & 0.150 & 0.110 & 0.007 & 0.031 & -3.32 & yes & yes & 1.00 & 0.06 \\
+LR-strong-reg & 0.152 & 0.157 & 0.015 & 0.023 & -2.37 & yes & yes & 1.00 & 0.00 \\
+Tree(d=3) & 0.155 & 0.093 & 0.004 & 0.042 & -1.18 & yes & yes & 0.99 & 0.12 \\
+Tree(d=12) & 0.146 & 0.082 & 0.034 & 0.065 & -0.11 & yes & yes & 0.84 & 0.00 \\
+RandomForest & 0.136 & 0.121 & 0.020 & 0.039 & -6.63 & yes & yes & 1.00 & 0.00 \\
+HistGB & 0.129 & 0.092 & 0.009 & 0.072 & -5.03 & yes & yes & 1.00 & 0.00 \\
+kNN(25) & 0.157 & 0.128 & 0.012 & 0.004 & -7.44 & yes & yes & 1.00 & 0.41 \\
+NaiveBayes & 0.406 & 0.141 & 0.404 & 0.023 & 0.59 & yes & no & 0.27 & 0.00 \\
+MLP & 0.147 & 0.084 & 0.019 & 0.034 & -2.04 & yes & yes & 1.00 & 0.41 \\
+\bottomrule\end{tabular}
