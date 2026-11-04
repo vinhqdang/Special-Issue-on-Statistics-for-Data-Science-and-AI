@@ -15,7 +15,7 @@ budgets L in {250, 500, 1000, 2000} (only L <= N/4), R replications of
 Labels in the pool are used only to answer label queries and to compute the truth.
 
 Usage:  python experiments/label_baselines.py run R [keys]     -> results/label_baselines.json
-        python experiments/label_baselines.py report            -> figures and LaTeX table
+        python experiments/label_baselines.py report            -> figures, manuscript_v2/tables/baselines_*.tex
 """
 import sys, os, json, zlib, time
 import numpy as np
@@ -116,7 +116,8 @@ def summarise(d, key, L, R, res, dtime):
         ok = fin[m]
         if ok.sum() == 0:
             continue
-        cov = ((lo[m][ok] <= truth) & (truth <= hi[m][ok])).mean(0)[live]
+        tol = 1e-9 * (1 + np.abs(truth))                                  # exact estimates with zero-width CIs count as covered
+        cov = ((lo[m][ok] - tol <= truth) & (truth <= hi[m][ok] + tol)).mean(0)[live]
         row[f"cover_{m}"] = float(cov.mean()); row[f"cover_{m}_min"] = float(cov.min())
         row[f"cover_{m}_top"] = float(cov[np.isin(np.flatnonzero(live), top)].mean()) if len(top) else None
         row[f"bias2share_{m}"] = float(np.median(((th[m][ok].mean(0) - truth) ** 2 / np.maximum(((th[m][ok] - truth) ** 2).mean(0), 1e-30))[live]))
@@ -162,67 +163,99 @@ NAME = {"adult-sex": "Adult-sex", "adult-race": "Adult-race", "bank": "Bank", "c
         "magic": "MAGIC", "eeg": "EEG", "phoneme": "Phoneme", "spambase": "Spambase", "churn": "Churn", "electricity": "Electricity"}
 
 
-def fmt(x):
+def fmt(x, big=100):
     if x is None or not np.isfinite(x): return "--"
-    if x >= 100: return "$>$100"
+    if x >= big: return f"$>${big}"
     return f"{x:.2f}" if x < 10 else f"{x:.1f}"
+
+
+def _med(v):
+    v = [x for x in v if x is not None and np.isfinite(x)]
+    return float(np.median(v)) if v else float("nan")
 
 
 def report():
     import matplotlib; matplotlib.use("Agg"); import matplotlib.pyplot as plt
-    rows = json.load(open(OUT)); os.makedirs("manuscript_v2/figures", exist_ok=True)
-    main = ["pattern", "is", "score10", "dis25", "dis50", "ppipp", "stratppi", "pattern_ppi"]
-    # ---- table: L = 500 (all settings), efficiency vs SRS (all targets), coverage
-    L0 = 500
-    sub = [r for r in rows if r["L"] == L0]
-    lines = []
-    for r in sub:
-        lines.append(NAME[r["dataset"]] + " & " + " & ".join(fmt(r[f"eff_{m}_vs_srs_all"]) for m in main) + r" \\")
-    med = lambda m, k: float(np.median([r[f"eff_{m}_vs_{k}"] for r in rows if r.get(f"eff_{m}_vs_{k}") is not None]))
-    lines.append(r"\midrule")
-    lines.append(r"Median, all $(s,L)$ & " + " & ".join(fmt(med(m, "srs_all")) for m in main) + r" \\")
-    lines.append(r"Median, top-3 pairs & " + " & ".join(fmt(med(m, "srs_top")) for m in main) + r" \\")
-    lines.append(r"Median vs PATTERN & " + " & ".join("1" if m == "pattern" else fmt(med(m, "pattern_all")) for m in main) + r" \\")
-    cov = lambda m: float(np.mean([r[f"cover_{m}"] for r in rows if f"cover_{m}" in r]))
-    covmin = lambda m: float(np.min([r[f"cover_{m}_min"] for r in rows if f"cover_{m}_min" in r]))
-    fail = lambda m: float(np.max([r[f"fail_{m}"] for r in rows]))
-    lines.append(r"\midrule")
-    lines.append(r"Coverage, mean & " + " & ".join(f"{cov(m):.3f}" for m in main) + r" \\")
-    lines.append(r"Coverage, worst target & " + " & ".join(f"{covmin(m):.2f}" for m in main) + r" \\")
-    lines.append(r"Failure rate, max & " + " & ".join(f"{fail(m):.3f}" for m in main) + r" \\")
-    tms = lambda m: float(np.median([r[f"time_{m}"] * 1e3 for r in rows]))
-    lines.append(r"Time per replicate (ms) & " + " & ".join(f"{tms(m):.0f}" for m in main) + r" \\")
-    open("results/label_baselines_table.tex", "w").write("\n".join(lines) + "\n")
-    # ---- figure: efficiency vs SRS by setting, L = 500 and L = 1000 panels + coverage panel
-    cols = {"pattern": "#1b4f9c", "is": "#d1495b", "score10": "#edae49", "dis25": "#66a182", "dis50": "#2e8b57",
-            "ppipp": "#8d6cab", "stratppi": "#b07aa1", "pattern_ppi": "#00798c"}
-    marks = {"pattern": "o", "is": "v", "score10": "s", "dis25": "<", "dis50": ">", "ppipp": "D", "stratppi": "P", "pattern_ppi": "*"}
-    fig, axes = plt.subplots(1, 3, figsize=(13, 4.4), gridspec_kw=dict(width_ratios=[1.25, 1.25, 1]))
-    for ax, L in zip(axes[:2], (500, 1000)):
-        sub = [r for r in rows if r["L"] == L]; xs = np.arange(len(sub))
-        for k, m in enumerate(main):
-            v = [min(r[f"eff_{m}_vs_srs_all"] or np.nan, 200) for r in sub]
-            ax.scatter(xs + (k - 3.5) * 0.08, v, s=28 if m != "pattern" else 44, marker=marks[m], color=cols[m], label=LABEL[m], zorder=3,
-                       edgecolor="black" if m == "pattern" else "none", linewidth=0.5)
-        ax.axhline(1, color="grey", lw=0.8, ls="--"); ax.set_yscale("log")
-        ax.set_xticks(xs); ax.set_xticklabels([NAME[r["dataset"]] for r in sub], rotation=55, ha="right", fontsize=8)
-        ax.set_title(f"L = {L}: MSE efficiency vs SRS (median over targets)", fontsize=9); ax.grid(axis="y", alpha=0.3)
-    axes[0].set_ylabel("MSE(SRS) / MSE(method)")
-    ax = axes[2]
-    for k, m in enumerate(["srs"] + main):
-        c = [r[f"cover_{m}"] for r in rows if f"cover_{m}" in r]; w = [r[f"cover_{m}_min"] for r in rows if f"cover_{m}_min" in r]
-        ax.scatter(np.full(len(c), k) + np.random.default_rng(k).uniform(-0.15, 0.15, len(c)), c, s=10, color=cols.get(m, "black"), alpha=0.7)
-        ax.scatter([k], [np.median(w)], marker="_", s=150, color="black")
-    ax.axhline(0.95, color="grey", lw=0.8, ls="--")
-    ax.set_xticks(range(len(main) + 1)); ax.set_xticklabels([LABEL[m].split(" (")[0] for m in ["srs"] + main], rotation=55, ha="right", fontsize=8)
-    ax.set_title("95% CI coverage: mean over targets per (setting, L);\nbar = median of worst-target coverage", fontsize=9)
-    ax.set_ylim(0.5, 1.0); ax.grid(axis="y", alpha=0.3)
-    h, l = axes[0].get_legend_handles_labels()
-    fig.legend(h, l, loc="lower center", ncol=8, fontsize=8, frameon=False)
-    fig.tight_layout(rect=(0, 0.07, 1, 1))
+    rows = json.load(open(OUT)); os.makedirs("manuscript_v2/figures", exist_ok=True); os.makedirs("manuscript_v2/tables", exist_ok=True)
+    rows.sort(key=lambda r: (KEYS.index(r["dataset"]), r["L"]))
+    order = ["pattern", "is", "score10", "score5", "dis25", "dis50", "ppi", "ppipp", "stratppi", "pattern_dif", "pattern_ppi"]
+    # ---- Table 1: by method and budget (medians over settings of the per-setting medians over targets)
+    out = [r"\begin{table}[t]\centering\small",
+           r"\caption{Baselines by label budget $L$ (number of settings in brackets). Efficiency: ratio of mean squared errors, "
+           r"median over the non-degenerate comparison estimands within a setting, then median over settings; ``vs SRS'' is "
+           r"MSE(SRS)/MSE(method), ``vs PATTERN'' is MSE(PATTERN)/MSE(method), so values above 1 favour the method. "
+           r"Coverage: nominal 95\% Wald intervals, mean over estimands and settings; ``worst'': lowest single-estimand coverage over all "
+           r"settings and budgets. $R=200$ replications per setting and budget. Source: \texttt{results/label\_baselines.json}.}\label{tab:base-budget}",
+           r"\setlength{\tabcolsep}{3.5pt}",
+           r"\resizebox{\textwidth}{!}{\begin{tabular}{l" + "rr" * 4 + r"rrr}\toprule"]
+    Ls = [L for L in BUDGETS if any(r["L"] == L for r in rows)]
+    out.append(" & " + " & ".join(rf"\multicolumn{{2}}{{c}}{{$L={L}$ ({sum(r['L'] == L for r in rows)})}}" for L in Ls)
+               + r" & \multicolumn{3}{c}{All $(s,L)$} \\")
+    out.append(" ".join(rf"\cmidrule(lr){{{2 + 2 * k}-{3 + 2 * k}}}" for k in range(len(Ls))) + rf" \cmidrule(lr){{{2 + 2 * len(Ls)}-{4 + 2 * len(Ls)}}}")
+    out.append("Method & " + " & ".join(["vs SRS & vs PAT."] * len(Ls)) + r" & Cover. & Worst & ms \\ \midrule")
+    for m in ["srs"] + order:
+        cells = []
+        for L in Ls:
+            sub = [r for r in rows if r["L"] == L]
+            cells.append("1" if m == "srs" else fmt(_med([r[f"eff_{m}_vs_srs_all"] for r in sub])))
+            cells.append("1" if m == "pattern" else fmt(_med([r[f"eff_{m}_vs_pattern_all"] for r in sub])))
+        cov = np.mean([r[f"cover_{m}"] for r in rows]); worst = min(r[f"cover_{m}_min"] for r in rows)
+        ms = np.median([r[f"time_{m}"] * 1e3 for r in rows])
+        if m == "pattern_dif": out.append(r"\midrule \multicolumn{" + str(4 + 2 * len(Ls)) + r"}{l}{\emph{Extension (B5): PATTERN sample, model-assisted estimator}} \\")
+        out.append(f"{LABEL[m]} & " + " & ".join(cells) + f" & {cov:.3f} & {worst:.2f} & {ms:.0f}" + r" \\")
+    out += [r"\bottomrule\end{tabular}}\end{table}"]
+    open("manuscript_v2/tables/baselines_budget.tex", "w").write("\n".join(out) + "\n")
+    # ---- Table 2: by setting at L = 500 (L = 250 where 500 > N/4), vs PATTERN, with coverage of the best competitor
+    main = ["is", "score10", "dis25", "dis50", "ppipp", "stratppi", "pattern_dif", "pattern_ppi"]
+    out = [r"\begin{table}[t]\centering\small",
+           r"\caption{Efficiency relative to PATTERN, MSE(PATTERN)/MSE(method), median over estimands, by setting at $L=500$ "
+           r"($L=250$ for Spambase, whose pool is too small for $L=500$). Values above 1 mean that the method beats PATTERN. "
+           r"Second column: efficiency of PATTERN relative to SRS. Last two columns: mean coverage of the 95\% intervals of StratPPI "
+           r"and of PATTERN-PPI. Source: \texttt{results/label\_baselines.json}.}\label{tab:base-setting}",
+           r"\setlength{\tabcolsep}{3.5pt}",
+           r"\resizebox{\textwidth}{!}{\begin{tabular}{l r" + "r" * len(main) + r"rr}\toprule",
+           r" & PAT. & \multicolumn{6}{c}{Baselines (B1--B4) vs PATTERN} & \multicolumn{2}{c}{B5 vs PATTERN} & \multicolumn{2}{c}{Coverage} \\",
+           r"\cmidrule(lr){3-8}\cmidrule(lr){9-10}\cmidrule(lr){11-12}",
+           r"Setting & vs SRS & " + " & ".join(LABEL[m].split(" (")[0] for m in main) + r" & StratPPI & PAT-PPI \\ \midrule"]
+    for key in KEYS:
+        cand = [r for r in rows if r["dataset"] == key and r["L"] == 500] or [r for r in rows if r["dataset"] == key and r["L"] == 250]
+        if not cand: continue
+        r = cand[0]
+        cells = [fmt(r["eff_pattern_vs_srs_all"])] + [(r"\textbf{" + fmt(r[f"eff_{m}_vs_pattern_all"]) + "}") if (r[f"eff_{m}_vs_pattern_all"] or 0) > 1 and m not in ("pattern_dif", "pattern_ppi") else fmt(r[f"eff_{m}_vs_pattern_all"]) for m in main]
+        cells += [f"{r['cover_stratppi']:.3f}", f"{r['cover_pattern_ppi']:.3f}"]
+        out.append(NAME[key] + (r"$^{\ast}$" if r["L"] != 500 else "") + " & " + " & ".join(cells) + r" \\")
+    out += [r"\bottomrule\end{tabular}}\end{table}"]
+    open("manuscript_v2/tables/baselines_setting.tex", "w").write("\n".join(out) + "\n")
+    # ---- figure: efficiency vs PATTERN by setting (all budgets), and coverage
+    cols = {"is": "#d1495b", "score10": "#edae49", "dis25": "#66a182", "dis50": "#2e8b57", "ppipp": "#8d6cab",
+            "stratppi": "#3b6fb6", "pattern_dif": "#7f7f7f", "pattern_ppi": "#00798c", "srs": "black", "pattern": "#1b4f9c"}
+    marks = {"is": "v", "score10": "s", "dis25": "<", "dis50": ">", "ppipp": "D", "stratppi": "P", "pattern_dif": "x", "pattern_ppi": "*"}
+    show = ["is", "score10", "dis25", "ppipp", "stratppi", "pattern_ppi"]
+    fig, axes = plt.subplots(1, 2, figsize=(12.5, 4.6), gridspec_kw=dict(width_ratios=[1.7, 1]))
+    ax = axes[0]; xs = np.arange(len(KEYS))
+    for k, m in enumerate(show):
+        for key_i, key in enumerate(KEYS):
+            sub = [r for r in rows if r["dataset"] == key]
+            v = [np.clip(r[f"eff_{m}_vs_pattern_all"], 1e-2, 1e2) for r in sub]
+            ax.scatter(np.full(len(v), key_i) + (k - 2.5) * 0.12, v, s=22, marker=marks[m], color=cols[m],
+                       label=LABEL[m] if key_i == 0 else None, zorder=3, alpha=0.85)
+    ax.axhline(1, color="grey", lw=0.9, ls="--"); ax.set_yscale("log"); ax.set_ylim(0.02, 30)
+    ax.set_xticks(xs); ax.set_xticklabels([NAME[k] for k in KEYS], rotation=45, ha="right", fontsize=8)
+    ax.set_ylabel("MSE(PATTERN) / MSE(method)"); ax.grid(axis="y", alpha=0.3)
+    ax.set_title("Efficiency relative to PATTERN (median over estimands), one point per budget", fontsize=9)
+    ax.legend(fontsize=7.5, ncol=3, loc="lower left", frameon=True)
+    ax = axes[1]; ms = ["srs", "pattern"] + show
+    for k, m in enumerate(ms):
+        c = [r[f"cover_{m}"] for r in rows]
+        ax.scatter(np.full(len(c), k) + np.random.default_rng(k).uniform(-0.18, 0.18, len(c)), c, s=10, color=cols[m], alpha=0.7)
+        ax.scatter([k], [np.median([r[f"cover_{m}_min"] for r in rows])], marker="_", s=180, color="black", zorder=4)
+    ax.axhline(0.95, color="grey", lw=0.8, ls="--"); ax.set_ylim(0.4, 1.0); ax.grid(axis="y", alpha=0.3)
+    ax.set_xticks(range(len(ms))); ax.set_xticklabels([LABEL[m].split(" (")[0] for m in ms], rotation=45, ha="right", fontsize=8)
+    ax.set_title("Coverage of 95% intervals: dots = mean over estimands\nper (setting, L); bar = median worst-estimand coverage", fontsize=9)
+    fig.tight_layout()
     for ext in ("pdf", "png"):
         fig.savefig(f"manuscript_v2/figures/base_efficiency.{ext}", dpi=200)
-    print(open("results/label_baselines_table.tex").read())
+    print(open("manuscript_v2/tables/baselines_budget.tex").read()); print(open("manuscript_v2/tables/baselines_setting.tex").read())
 
 
 if __name__ == "__main__":

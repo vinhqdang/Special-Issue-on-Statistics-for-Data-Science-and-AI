@@ -1,0 +1,21 @@
+\begin{table}[t]\centering\small
+\caption{Baselines by label budget $L$ (number of settings in brackets). Efficiency: ratio of mean squared errors, median over the non-degenerate comparison estimands within a setting, then median over settings; ``vs SRS'' is MSE(SRS)/MSE(method), ``vs PATTERN'' is MSE(PATTERN)/MSE(method), so values above 1 favour the method. Coverage: nominal 95\% Wald intervals, mean over estimands and settings; ``worst'': lowest single-estimand coverage over all settings and budgets. $R=200$ replications per setting and budget. Source: \texttt{results/label\_baselines.json}.}\label{tab:base-budget}
+\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{lrrrrrrrrrrr}\toprule
+ & \multicolumn{2}{c}{$L=250$ (11)} & \multicolumn{2}{c}{$L=500$ (10)} & \multicolumn{2}{c}{$L=1000$ (8)} & \multicolumn{2}{c}{$L=2000$ (6)} & \multicolumn{3}{c}{All $(s,L)$} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5} \cmidrule(lr){6-7} \cmidrule(lr){8-9} \cmidrule(lr){10-12}
+Method & vs SRS & vs PAT. & vs SRS & vs PAT. & vs SRS & vs PAT. & vs SRS & vs PAT. & Cover. & Worst & ms \\ \midrule
+SRS & 1 & 0.27 & 1 & 0.25 & 1 & 0.23 & 1 & 0.14 & 0.925 & 0.16 & 11 \\
+PATTERN & 3.75 & 1 & 3.95 & 1 & 4.35 & 1 & 7.43 & 1 & 0.947 & 0.52 & 12 \\
+IS (B1) & 3.09 & 0.79 & 2.77 & 0.74 & 3.48 & 0.67 & 4.30 & 0.54 & 0.950 & 0.60 & 16 \\
+Score-10 (B2) & 1.45 & 0.40 & 2.09 & 0.52 & 2.24 & 0.56 & 4.16 & 0.50 & 0.941 & 0.17 & 12 \\
+Score-5 (B2) & 1.97 & 0.54 & 2.24 & 0.57 & 2.15 & 0.52 & 3.18 & 0.43 & 0.943 & 0.37 & 12 \\
+Dis-25 (B3) & 2.25 & 0.42 & 2.27 & 0.55 & 2.04 & 0.35 & 2.48 & 0.26 & 0.938 & 0.05 & 15 \\
+Dis-50 (B3) & 1.84 & 0.43 & 1.94 & 0.37 & 1.68 & 0.34 & 1.93 & 0.25 & 0.940 & 0.36 & 13 \\
+PPI (B4) & 1.82 & 0.49 & 1.82 & 0.47 & 1.86 & 0.44 & 1.81 & 0.27 & 0.940 & 0.27 & 45 \\
+PPI++ (B4) & 2.10 & 0.49 & 1.97 & 0.48 & 1.93 & 0.44 & 1.89 & 0.27 & 0.929 & 0.16 & 64 \\
+StratPPI (B4) & 3.07 & 1.01 & 4.45 & 1.12 & 4.58 & 1.08 & 8.50 & 0.83 & 0.919 & 0.00 & 59 \\
+\midrule \multicolumn{12}{l}{\emph{Extension (B5): PATTERN sample, model-assisted estimator}} \\
+PATTERN-DIF (B5) & 6.57 & 1.63 & 6.23 & 1.48 & 6.64 & 1.48 & 15.5 & 1.32 & 0.937 & 0.00 & 48 \\
+PATTERN-PPI (B5) & 6.71 & 1.68 & 6.37 & 1.55 & 6.83 & 1.54 & 15.5 & 1.33 & 0.908 & 0.00 & 68 \\
+\bottomrule\end{tabular}\end{table}
