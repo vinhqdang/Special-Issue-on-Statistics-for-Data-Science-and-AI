@@ -17,8 +17,8 @@ feature that the plain values lack: the label enters only through $Y_i-\pi_i$.
 \begin{proposition}[Residual influence values]\label{prop:residual}
 Let $d_i=\nabla f(T)^\top(u_i-v_i)$, which does not depend on the labels. Then $e_i=(Y_i-\pi_i)\,d_i$, and for $G_i=g$
 \begin{align}
-e^{TPR}_i&=s_g\frac{(Y_i-\pi_i)(D_i-\delta_g)}{P_g},\qquad
-e^{FPR}_i=s_g\frac{\{(1-Y_i)-(1-\pi_i)\}(D_i-\gamma_g)}{Q_g},\notag\\
+e^{TPR}_i&=s_g\frac{(Y_i-\pi_i)(D_i-\delta_g)}{P_g},\notag\\
+e^{FPR}_i&=s_g\frac{\{(1-Y_i)-(1-\pi_i)\}(D_i-\gamma_g)}{Q_g},\notag\\
 e^{ERR}_i&=-\frac{2(Y_i-\pi_i)D_i}{N},\label{eq:resid-forms}
 \end{align}
 and $\tilde z_i=z_i-e_i$ equals (\Mref{eq:infl-forms}) with $Y_i$ replaced by $\pi_i$. In a stratum where the pair agrees,
@@ -26,10 +26,11 @@ $e^{ERR}_i=0$ for every $i$: the stratum contributes neither variance nor error 
 Under the working model that $Y_1,\dots,Y_N$ are independent with $P(Y_i=1)=\pi_i$ (the proxy is calibrated), with expectation $E_\pi$,
 the gradient evaluated at the non-random model-expected totals $T_\pi=\sum_{i\in U}\psi_i$ (as in the design; this changes $d_i$ by a relative $O(r)$ only),
 and with $\bar\sigma^2_h=N_h^{-1}\sum_{U_h}\pi_i(1-\pi_i)d_i^2$ and $C_h=\mathrm{Cov}_h(z,\tilde z)$ the stratum covariance,
-\begin{equation}\label{eq:resid-moments}
-E_\pi(e_i)=0,\quad \mathrm{Var}_\pi(e_i)=\pi_i(1-\pi_i)d_i^2,\qquad
-E_\pi S^2_{e,h}=\bar\sigma^2_h,\quad E_\pi S^2_{z,h}=S^2_{\tilde z,h}+\bar\sigma^2_h,\quad E_\pi C_h=S^2_{\tilde z,h}.
-\end{equation}
+\begin{align}
+&E_\pi(e_i)=0,\quad \mathrm{Var}_\pi(e_i)=\pi_i(1-\pi_i)d_i^2,\notag\\
+&E_\pi S^2_{e,h}=\bar\sigma^2_h,\quad E_\pi S^2_{z,h}=S^2_{\tilde z,h}+\bar\sigma^2_h,\notag\\
+&E_\pi C_h=S^2_{\tilde z,h}.\label{eq:resid-moments}
+\end{align}
 \end{proposition}
 
 \subsection{Difference estimator: coefficient and calibrated form}\label{si:theory-dif}
@@ -64,8 +65,8 @@ Under the setting of Proposition~\Mref{prop:dif-deff}, for $\theta^{TPR},\theta^
 the stratum mean of $\pi_i(1-\pi_i)$. In a \emph{disagreement stratum} ($|D_i|=1$ on $U_h$, $D_i$ and $\pi_i$ uncorrelated within the stratum,
 $\bar a$ the stratum mean of $D_i$, and $\delta_g,\gamma_g$ negligible),
 \begin{align}
-1+\nu^{TPR}&=\frac{\bar\pi(1-\bar\pi\bar a^2)}{\overline{\pi(1-\pi)}},\qquad
-1+\nu^{FPR}=\frac{(1-\bar\pi)\{1-(1-\bar\pi)\bar a^2\}}{\overline{\pi(1-\pi)}},\notag\\
+1+\nu^{TPR}&=\frac{\bar\pi(1-\bar\pi\bar a^2)}{\overline{\pi(1-\pi)}},\notag\\
+1+\nu^{FPR}&=\frac{(1-\bar\pi)\{1-(1-\bar\pi)\bar a^2\}}{\overline{\pi(1-\pi)}},\notag\\
 1+\nu^{ERR}&=\frac{1-\bar a^2(1-2\bar\pi)^2}{4\,\overline{\pi(1-\pi)}} .\label{eq:dif-closed}
 \end{align}
 In an \emph{agreement stratum} ($D_i=0$) the error difference has $e_i=\tilde z_i=0$, and for the rate differences
@@ -93,7 +94,7 @@ removes more of the proxy's within-stratum signal (a finer partition of the prox
 
 \subsection{Misspecified proxy for the difference estimator}\label{si:theory-dif-proxy}
 
-\begin{proposition}[Misspecified proxy for the difference estimator]\label{prop:dif-proxy}
+\begin{proposition}[Misspecified proxy]\label{prop:dif-proxy}
 \begin{enumerate}
 \item[(a)] For every proxy, $\hat T_\psi$ is design-unbiased and $\hat V_\psi$ is a consistent variance estimator
 (Proposition~\Mref{prop:validity}). Misspecification can affect efficiency only.
@@ -159,9 +160,10 @@ probability of a sample without positives is $(1-\pi)^{n_h}$, which is the zero-
 (iii) \emph{Exact proxies}: if $\pi_i\in\{0,1\}$ equals $Y_i$ then $e_i\equiv0$ and
 (A3) fails; the estimator is then exact, but the proxy is unlikely to be exact on the whole pool. The floor of Section~\Mref{sec:ablations} carries over: replace $s^2_{\hat e,h}$ by the anticipated
 residual variance
-\begin{equation}\label{eq:floor}
-\tilde s^2_{h}=N_h^{-1}\sum_{i\in U_h}\pi_i(1-\pi_i)\hat d_i^{\,2},\qquad \hat d_i=\nabla f(\hat T_\psi)^\top(u_i-v_i),
-\end{equation}
+\begin{align}
+\tilde s^2_{h}&=N_h^{-1}\sum_{i\in U_h}\pi_i(1-\pi_i)\hat d_i^{\,2},\label{eq:floor}\\
+\hat d_i&=\nabla f(\hat T_\psi)^\top(u_i-v_i),\notag
+\end{align}
 whenever $s^2_{\hat e,h}=0$ (or, more conservatively, use $\max\{s^2_{\hat e,h},\eta\tilde s^2_h\}$ with $\eta\in(0,1]$). Because $\tilde s^2_h=0$ exactly when $d_i\equiv0$ on $U_h$, structural zeros
 are untouched. The floor is label-free, never decreases $\hat V_\psi$, leaves the point estimate unchanged, and (Supplementary Section~\ref{si:proofs}) does not affect
 Proposition~\Mref{prop:validity}(c)--(d): the floor is active with probability tending to zero in every stratum with $S^2_{e,h}$ bounded away from zero, and in strata
@@ -183,10 +185,11 @@ sharpness gives a well-defined allocation.
 Let $n^\psi$ be the optimal allocation for the difference estimator ($A_h=A^\psi_h$, $A^{\psi\,2}_h=\sum_tw_tS^2_{e,ht}$) and $\tilde n^0$ the allocation obtained from the
 plain anticipated variances. Put $\tilde\nu_h=\sum_tw_tS^2_{\tilde z,ht}/\sum_tw_t\bar\sigma^2_{ht}$, $x_h=(1+\tilde\nu_h)^{1/2}$ and assume the anticipated values are exact for the
 residual variances ($\tilde A^\psi_h=A^\psi_h$). Ignoring caps, minima and rounding, the weighted variance of the difference estimator with the \emph{wrong} (plain) allocation satisfies
-\begin{equation}\label{eq:alloc-loss}
-\frac{\Phi_\psi(\tilde n^0)}{\Phi_\psi(n^\psi)}=\Big(\sum_h\omega_hx_h\Big)\Big(\sum_h\omega_h/x_h\Big)\le\frac{(x_{\max}+x_{\min})^2}{4x_{\max}x_{\min}},\qquad
-\omega_h=\frac{N_hA^\psi_h}{\sum_kN_kA^\psi_k},
-\end{equation}
+\begin{align}
+\frac{\Phi_\psi(\tilde n^0)}{\Phi_\psi(n^\psi)}&=\Big(\sum_h\omega_hx_h\Big)\Big(\sum_h\omega_h/x_h\Big)\notag\\
+&\le\frac{(x_{\max}+x_{\min})^2}{4x_{\max}x_{\min}},\notag\\
+\omega_h&=\frac{N_hA^\psi_h}{\sum_kN_kA^\psi_k},\label{eq:alloc-loss}
+\end{align}
 with equality to one iff $\tilde\nu_h$ is constant over the strata with $\omega_h>0$. The same expressions hold, with $x_h$ replaced by $1/x_h$ and
 $\omega_h\propto N_hA^0_h$, for the plain estimator allocated with the residual variances. Consequently, if $\tilde\nu_h\in[0,\nu_{\max}]$, the loss from
 using the wrong rule is at most $\{1+(1+\nu_{\max})^{1/2}\}^2/\{4(1+\nu_{\max})^{1/2}\}$ in either direction, for instance $9/8$ for $\nu_{\max}=3$.
@@ -226,10 +229,9 @@ is the net share of disputed positives on which $m$ is right and $j$ wrong.
 $\{\mathcal A_g,\mathcal D_g\}_{g=0,1}$ and $L/N\to0$,
 \begin{equation}\label{eq:deff-tpr}
 \mathrm{Eff}^{TPR}=\frac{\sum_g(r_g-\delta_g^2p_g)/(\zeta_gp_g^2)}
-{\Big[\sum_g\big\{\rho_g\sigma_{\mathcal D,g}+(1-\rho_g)|\delta_g|
-\sqrt{\pi_{\mathcal A,g}(1-\pi_{\mathcal A,g})}\big\}/p_g\Big]^2},
+{\big[\sum_g\{\rho_g\sigma_{\mathcal D,g}+(1-\rho_g)\sigma_{\mathcal A,g}\}/p_g\big]^2},
 \end{equation}
-$\sigma^2_{\mathcal D,g}=\pi_{\mathcal D,g}-c_{\mathcal D,g}^2+\delta_g^2\pi_{\mathcal D,g}(1-\pi_{\mathcal D,g})
+$\sigma_{\mathcal A,g}=|\delta_g|\{\pi_{\mathcal A,g}(1-\pi_{\mathcal A,g})\}^{1/2}$ and $\sigma^2_{\mathcal D,g}=\pi_{\mathcal D,g}-c_{\mathcal D,g}^2+\delta_g^2\pi_{\mathcal D,g}(1-\pi_{\mathcal D,g})
 -2\delta_gc_{\mathcal D,g}(1-\pi_{\mathcal D,g})$. The same holds for $\theta^{FPR}_{mj}$ with $Y$
 replaced by $1-Y$. For $\theta^{ERR}_{mj}$, with $\rho=\sum_g\zeta_g\rho_g$ and $\mu_g$ the mean of
 $D_i(1-2Y_i)$ over $\mathcal D_g$,
@@ -247,11 +249,11 @@ where $\Gamma$ is the efficiency of Neyman allocation between the two groups alo
 $\theta^{ERR}_{mj}=0=\mu_g$, then $\mathrm{Eff}^{ERR}=1/\rho$.
 \item[(c)] \emph{Target size.} For one group (drop $g$), with $\pi_{\mathcal D}$,
 $\pi_{\mathcal A}$ and $a$ held fixed, as $\rho\to0$,
-\begin{equation}\label{eq:deff-lambda}
-\mathrm{Eff}^{TPR}=\frac{1+O(\rho)}{\rho\,(\beta+\lambda)^2},\qquad
-\beta=\sqrt{1-a^2\pi_{\mathcal D}},\qquad
-\lambda=\frac{|a|\sqrt{\pi_{\mathcal D}\,\pi_{\mathcal A}(1-\pi_{\mathcal A})}}{p}.
-\end{equation}
+\begin{align}
+\mathrm{Eff}^{TPR}&=\frac{1+O(\rho)}{\rho\,(\beta+\lambda)^2},\notag\\
+\beta&=\sqrt{1-a^2\pi_{\mathcal D}},\notag\\
+\lambda&=\frac{|a|\sqrt{\pi_{\mathcal D}\,\pi_{\mathcal A}(1-\pi_{\mathcal A})}}{p}.\label{eq:deff-lambda}
+\end{align}
 Since $\delta=\rho\pi_{\mathcal D}a/p$, the target is proportional to $\rho$ and to $a$. A more
 one-sided disagreement set (larger $|a|$, hence a larger target) changes the gain by the bounded
 factor $(\beta+\lambda)^{-2}$, which is below one when the agreement region is noisy
@@ -314,11 +316,11 @@ difference estimator is Proposition~\ref{prop:dif-proxy}.
 \item[(a)] Proposition~\Mref{prop:validity} holds for $\tilde n$ whatever the proxy, provided
 $\tilde n_h\ge2$ in every stratum (guaranteed by the minimum of 10 labels).
 \item[(b)] Ignoring caps, minima and rounding, the relative loss in the weighted variance is
-\begin{equation}\label{eq:proxy-loss}
-\frac{\Phi_0(\tilde n)}{\Phi_0(n^\ast)}=
-\frac{(\sum_hN_h\tilde A_h)(\sum_hN_hA_h^2/\tilde A_h)}{(\sum_hN_hA_h)^2}
-=\Big(\sum_h\omega_hx_h\Big)\Big(\sum_h\omega_h/x_h\Big)\ge1,
-\end{equation}
+\begin{align}
+\frac{\Phi_0(\tilde n)}{\Phi_0(n^\ast)}&=
+\frac{(\sum_hN_h\tilde A_h)(\sum_hN_hA_h^2/\tilde A_h)}{(\sum_hN_hA_h)^2}\notag\\
+&=\Big(\sum_h\omega_hx_h\Big)\Big(\sum_h\omega_h/x_h\Big)\ge1,\label{eq:proxy-loss}
+\end{align}
 with $\omega_h=N_hA_h/\sum_kN_kA_k$ and $x_h=\tilde A_h/A_h$. The loss is zero if and only if
 $\tilde A_h\propto A_h$; a proxy that is wrong by a common factor costs nothing.
 \item[(c)] If $x_{\min}\le x_h\le x_{\max}$, the loss is at most
@@ -330,15 +332,17 @@ the number of strata.
 \item[(d)] Proportional allocation is the special case $\tilde A_h\equiv1$. Neither allocation
 dominates the other for every population: \eqref{eq:proxy-loss} is smaller for the proxy
 allocation if and only if
-\[
-\Big(\sum_h\omega_hx_h\Big)\Big(\sum_h\omega_h/x_h\Big)\le\Big(\sum_h\omega_h/A_h\Big)\Big(\sum_h\omega_hA_h\Big).
-\]
+\begin{align*}
+&\Big(\sum_h\omega_hx_h\Big)\Big(\sum_h\omega_h/x_h\Big)\\
+&\quad\le\Big(\sum_h\omega_h/A_h\Big)\Big(\sum_h\omega_hA_h\Big).
+\end{align*}
 A proxy that is badly wrong in a high-variance stratum can make the design worse than
 proportional allocation, and, through the minimum of $\ell$ labels in that stratum, worse than SRS.
 \item[(e)] A defensive mixture $n_h=\eta\,n^{\rm prop}_h+(1-\eta)\tilde n_h$, $0<\eta<1$, satisfies
 $\Phi_0(n)\le\Phi_0(n^{\rm prop})/\eta$ and $\Phi_0(n)\le\Phi_0(\tilde n)/(1-\eta)$; since
 proportional allocation is never worse than SRS up to the factor $(1-1/\min_hN_h)^{-1}$, the
-mixture is never worse than $1/\eta$ times SRS in the weighted variance, up to the same factor.
+mixture is never worse than $1/\eta$ times SRS in the weighted variance without finite-population corrections, and with them (sampling fraction $f=L/N$) never worse than $(1-\eta f)/\{\eta(1-f)\}$ times SRS,
+both up to the same factor; the second bound is $\eta^{-1}\{1+O(f)\}$.
 \end{enumerate}
 \end{proposition}
 

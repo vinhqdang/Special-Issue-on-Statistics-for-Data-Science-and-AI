@@ -14,7 +14,7 @@ def test_vpool():
     x = rng.standard_normal((N, 2)); g = (rng.random(N) < 0.35).astype(int)
     py = 1 / (1 + np.exp(-(1.2 * x[:, 1] - 0.4))); y = (rng.random(N) < py).astype(float)
     pm = np.clip(py[:, None] + 0.25 * rng.standard_normal((N, M)), 0.02, 0.98); pred = (pm > 0.5).astype(int); p = pm.mean(1)
-    U, V, names = total_columns(pred, g); est = Estimands(names, M, N); ctx0 = None
+    U, V, names = total_columns(pred, g); est = Estimands(names, M, N)
     st = make_strata(pred, g, "pattern"); ids, Nh, nh = neyman_allocation(st, U, V, p, est, 1500)
     ctx = DifContext(st, ids, U, V, p, est); ve = ctx.ve
     t = y[:, None] * U + (1 - y[:, None]) * V; T = t.sum(0); G = ve.grad(T); z = t @ G.T

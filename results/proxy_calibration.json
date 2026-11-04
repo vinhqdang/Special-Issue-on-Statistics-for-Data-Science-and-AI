@@ -26,7 +26,7 @@
  {
   "dataset": "churn",
   "N": 2000,
-  "prevalence": 0.142,
+  "prevalence": 0.141,
   "ece10": 0.071,
   "worst_quintile_gap": 0.201,
   "auc": 0.932
