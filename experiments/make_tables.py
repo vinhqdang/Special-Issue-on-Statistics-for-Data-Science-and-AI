@@ -58,3 +58,18 @@ for r in rv:
     L.append(f"{name} & {r['n']} & {r['naive_retain']:.2f} & {r['tcs_retain']:.2f} & {r['naive_size']:.1f} & {r['tcs_size']:.1f} & {r['P_ref']} & {r['winner_correct']:.2f} & {r['tcs_excl']:.2f} \\\\")
 L.append("\\bottomrule\\end{tabular}")
 open("manuscript/tables/realval.tex", "w").write("\n".join(L))
+
+# twelve data settings at n = 500
+allr = json.load(open("results/realdata_validation.json")) + json.load(open("results/realdata_multi.json"))
+lab2 = {"adult-sex": "Adult (sex)", "adult-race": "Adult (race)", "bank": "Bank marketing", "credit-card": "Credit card default",
+        "law-school": "Law school", "magic": "MAGIC telescope", "eeg": "EEG eye state", "phoneme": "Phoneme", "spambase": "Spambase",
+        "churn": "Churn", "electricity": "Electricity", "nomao": "Nomao"}
+grp = {"adult-sex": "sex", "adult-race": "race", "bank": "age", "credit-card": "sex", "law-school": "race"}
+L = ["\\begin{tabular}{lcrrrrrr}\\toprule",
+     "Data set & Group & Pool & $|\\mathcal{P}_{\\mathrm{ref}}|$ & \\multicolumn{2}{c}{Naive front} & Winner & TCS \\\\",
+     " & & & & Retention & Size & correct & size \\\\\\midrule"]
+for r in [r for r in allr if r["n"] == 500]:
+    L.append(f"{lab2[r['dataset']]} & {grp.get(r['dataset'], 'arb.')} & {r['pool']} & {r['P_ref']} & {r['naive_retain']:.2f} & {r['naive_size']:.1f} & {r['winner_correct']:.2f} & {r['tcs_size']:.1f} \\\\")
+L.append("\\bottomrule\\end{tabular}")
+open("manuscript/tables/multi.tex", "w").write("\n".join(L))
+print("rows", len(allr), "min tcs retain", min(r["tcs_retain"] for r in allr), "max tcs excl", max((r["tcs_excl"] or 0) for r in allr))

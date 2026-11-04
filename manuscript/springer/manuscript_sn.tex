@@ -21,7 +21,7 @@
 \title[Trust confidence sets]{Trust confidence sets: statistical inference for selecting models under several trustworthiness criteria}
 \author*[1]{\fnm{Vinh} \sur{Dang}}\email{vinh.dang3@rmit.edu.vn}
 \affil*[1]{\orgname{RMIT University Vietnam}, \country{Vietnam}}
-\abstract{Trustworthy machine learning is assessed on several criteria at once: error, group fairness, calibration and robustness. Candidate models are usually compared through point estimates on one finite test sample, and the winner or the Pareto front of those estimates is reported as if it were a population fact. We describe a trust confidence set (TCS), a data-dependent set of models that contains every population-nondominated model with probability at least $1-\alpha$, asymptotically. It uses a paired bootstrap of one shared test sample, studentised pairwise differences, an intersection--union step across criteria and a maximum over rivals, so it accepts criteria such as calibration error and fairness gaps. In simulation, the TCS retained all nondominated models in at least 99.7\% of replications, whereas the Pareto front of point estimates did so in 34--42\%, and the TCS excluded more dominated models than a Bonferroni box procedure. Validated against a large held-out reference on Adult and Bank Marketing, the point-estimate Pareto front recovered the reference set in 10--76\% of test samples of 500--5000 rows and the composite-score winner matched in 13--75\%; the TCS always retained the reference set but excluded almost no model, because few were truly dominated. Step-down, equivalence margins and a refit bootstrap added little.}
+\abstract{Trustworthy machine learning is assessed on several criteria at once: error, group fairness, calibration and robustness. Candidate models are usually compared through point estimates on one finite test sample, and the winner or the Pareto front of those estimates is reported as if it were a population fact. We describe a trust confidence set (TCS), a data-dependent set of models that contains every population-nondominated model with probability at least $1-\alpha$, asymptotically. It uses a paired bootstrap of one shared test sample, studentised pairwise differences, an intersection--union step across criteria and a maximum over rivals, so it accepts criteria such as calibration error and fairness gaps. In simulation, the TCS retained all nondominated models in at least 99.7\% of replications, whereas the Pareto front of point estimates did so in 34--42\%, and the TCS excluded more dominated models than a Bonferroni box procedure. Validated against large held-out references on twelve real data settings, the point-estimate Pareto front recovered the reference set in a median of 39\% of test samples of 500 rows and the composite-score winner matched in a median of 36\%; the TCS always retained the reference set but returned almost every model, because few were truly dominated. Step-down, equivalence margins and a refit bootstrap added little.}
 \keywords{trustworthy machine learning, model selection, Pareto dominance, confidence set, bootstrap, algorithmic fairness}
 \maketitle
 \section{Introduction}
@@ -187,6 +187,31 @@ Bank (age) & 500 & 0.10 & 1.00 & 6.2 & 9.0 & 7 & 0.16 & 0.00 \\
  & 1000 & 0.17 & 1.00 & 6.4 & 9.0 & 7 & 0.20 & 0.00 \\
  & 2000 & 0.22 & 1.00 & 6.6 & 9.0 & 7 & 0.28 & 0.00 \\
  & 5000 & 0.47 & 1.00 & 7.2 & 9.0 & 7 & 0.38 & 0.00 \\
+\bottomrule\end{tabular}
+\end{table*}
+
+\subsection{Twelve data settings}\label{sec:multi}
+We ran the same protocol on nine further binary data sets from OpenML (models and criteria as above; the minority class is the positive class; data sets above 30,000 rows were subsampled to 30,000, and 40\% of the rows form the held-out pool). The group is sex for credit-card default and race for law school; for the others it is an arbitrary split of the first numeric feature at its median, which is removed from the features, so it only exercises the equalised-odds coordinate and has no fairness meaning. Together with the three settings above this gives twelve settings and 41 combinations of setting and test size (test sizes up to one third of the pool; 150 samples per cell for the new data sets, 200 for the first three).
+
+Table~\ref{tab:multi} reports the results at $n=500$. The TCS retained the reference nondominated set in every sample of every cell, but its mean size was between 8.97 and 9.00 of nine models and it excluded at most 3.5\% of the dominated models. Perfect retention therefore says little: a set that is almost the whole list retains everything. The informative comparison is with the point-estimate procedures. At $n=500$ the Pareto front retained the reference set in a median of 39\% of samples (range 0--68\%), and the composite-score winner matched the reference winner in a median of 36\% (range 12--96\%). The winner was recovered often (63--96\%) in five settings and rarely (12--38\%) in seven. In three settings (law school, churn, Nomao) all nine models are nondominated in the reference, so no procedure should exclude any model: the TCS size of nine is exactly right there, while the Pareto front of the estimates, with 5.0 to 8.4 models on average, is wrong by construction. Across the other nine settings the reference sets contain 7 or 8 models, so the room for exclusion is one or two models. We did not find a setting in which the TCS removes a model that the reference retains, and we also did not find one in which it removes many models that the reference excludes. Limits: one train/test split and one set of nine models per setting, reference sets estimated on finite pools of 1,800 to 19,500 rows, and arbitrary groups in seven settings.
+
+\begin{table*}[t]\centering\small
+\caption{Twelve data settings at $n=500$ (150--200 samples each). Pool: size of the held-out pool. Naive front: Pareto front of the point estimates. Retention: share of samples in which all reference-nondominated models were kept. Winner correct: share of samples whose composite-score winner equals the reference winner. arb.: arbitrary group.}\label{tab:multi}
+\begin{tabular}{lcrrrrrr}\toprule
+Data set & Group & Pool & $|\mathcal{P}_{\mathrm{ref}}|$ & \multicolumn{2}{c}{Naive front} & Winner & TCS \\
+ & & & & Retention & Size & correct & size \\\midrule
+Adult (sex) & sex & 19537 & 8 & 0.21 & 7.2 & 0.13 & 9.0 \\
+Adult (race) & race & 19537 & 8 & 0.21 & 7.0 & 0.38 & 9.0 \\
+Bank marketing & age & 18085 & 7 & 0.10 & 6.2 & 0.16 & 9.0 \\
+Credit card default & sex & 12000 & 7 & 0.36 & 6.9 & 0.12 & 9.0 \\
+Law school & race & 8320 & 9 & 0.00 & 5.0 & 0.96 & 9.0 \\
+MAGIC telescope & arb. & 7608 & 8 & 0.47 & 7.7 & 0.17 & 9.0 \\
+EEG eye state & arb. & 5992 & 7 & 0.63 & 7.3 & 0.63 & 9.0 \\
+Phoneme & arb. & 2162 & 8 & 0.68 & 7.8 & 0.34 & 9.0 \\
+Spambase & arb. & 1841 & 7 & 0.37 & 6.5 & 0.76 & 9.0 \\
+Churn & arb. & 2000 & 9 & 0.42 & 8.2 & 0.14 & 9.0 \\
+Electricity & arb. & 12000 & 8 & 0.43 & 7.3 & 0.76 & 9.0 \\
+Nomao & arb. & 12000 & 9 & 0.53 & 8.4 & 0.71 & 9.0 \\
 \bottomrule\end{tabular}
 \end{table*}
 
