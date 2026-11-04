@@ -230,3 +230,4 @@ manuscript_v2/*.log
 manuscript_v2/*.out
 manuscript_v2/*.blg
 manuscript_v2/*.bbl
+results/pool_cache_seed*/
