@@ -225,3 +225,8 @@ manuscript/*.log
 manuscript/*.out
 manuscript/*.toc
 results/pool_cache/
+manuscript_v2/*.aux
+manuscript_v2/*.log
+manuscript_v2/*.out
+manuscript_v2/*.blg
+manuscript_v2/*.bbl
