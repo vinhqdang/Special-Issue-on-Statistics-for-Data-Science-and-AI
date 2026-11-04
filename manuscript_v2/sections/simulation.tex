@@ -29,7 +29,7 @@ We re-ran the SRS and PATTERN arms of the main study (Section~\ref{sec:empirical
 pools, at the same budgets, with $R=200$ replications and the same random seeds; the GROUP and ORACLE
 samples are drawn as well, so that the random stream is identical. The resulting median efficiencies
 coincide with those in \texttt{results/label\_efficiency.json} for all 35 pool--budget
-combinations, so the per-target efficiencies below are those underlying the main results. A
+combinations (the medians in the main study exclude degenerate estimands, so in law school they differ from the medians over all targets reported here), so the per-target efficiencies below are those underlying the main results. A
 target is compared when its influence values are not identically zero and its design variance is
 positive. This removes the 45 targets of the 15 pairs of models with identical predictions in
 Law school, a further six targets in that pool, and all targets of Law school at $L=2000$, where the
@@ -43,7 +43,7 @@ efficiency are infinite (the json reports $4\times10^{23}$). That leaves 3519 ta
 which not all nine models agree; $\rho$: median pairwise disagreement rate. Obs: Monte Carlo
 ($R=200$; identical to \texttt{results/label\_efficiency.json}). LIN, OWN, FORM: predictions defined
 in the text. Last two columns: per-target ratio Obs/LIN, median and 10\%--90\% range, and the
-correlation of $\log$ Obs and $\log$ LIN across targets. Source: \texttt{results/theory\_check.json}.}
+correlation of $\log$ Obs and $\log$ LIN across targets. For Law school the four medians (Obs, LIN, OWN, FORM) include the 51 estimands whose influence values vanish, whereas the last two columns use only the 57 compared targets; over those 57 the observed median is 37.6, as in Table~\ref{tab:efficiency}. Source: \texttt{results/theory\_check.json}.}
 \label{tab:sim-real}
 \small
 \begin{tabular}{lrrrrrrrrll}
@@ -188,7 +188,7 @@ deterministic within each group ($|\mu_g|=0.9$), the gain is several times $1/\r
 the five-model family the pairwise disagreement rate is about half of $\rho$, and FORM, which assumes
 that each pair's disagreements are isolated, overstates the gain by a factor of about 1.9 (median
 ratio of observed to FORM between 0.53 and 0.56 for $\rho\ge2\%$). The observed efficiency is instead
-close to $1/\rho_{\rm any}$ ($\rho_{\rm any}$ times the median efficiency is between 0.94 and 1.03 for
+close to $1/\rho_{\rm any}$ ($\rho_{\rm any}$ times the median efficiency is between 0.94 and 1.06 for
 $\rho\ge2\%$), the lower end of \eqref{eq:deff-sandwich}. This is expected: in this family the models
 err independently inside the disagreement region, so a pair's disagreements are spread evenly over
 the values of $K$. In the real pools, where models make correlated errors, the median OWN efficiency
@@ -242,7 +242,7 @@ into the disagreement strata and differ only in how it is divided among them. Th
 (1.21--1.24) are valid but loose here. This robustness is specific to the structure of the problem
 and should not be read as a general guarantee: Proposition~\ref{prop:proxy}(d) shows that a proxy
 that misjudges a high-variance stratum can do arbitrarily badly in other stratified problems, and the
-empirical comparison with the oracle allocation in Section~\ref{sec:empirical} is the relevant check
+empirical comparison with the oracle allocation in Section~\ref{sec:ablations} is the relevant check
 for real data.
 
 \subsection{The difference estimator (PATTERN-DIF)}\label{sec:sim-dif}

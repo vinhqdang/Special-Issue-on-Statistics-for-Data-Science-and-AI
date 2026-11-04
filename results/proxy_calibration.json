@@ -1,0 +1,90 @@
+[
+ {
+  "dataset": "adult-race",
+  "N": 19537,
+  "prevalence": 0.239,
+  "ece10": 0.05,
+  "worst_quintile_gap": 0.09,
+  "auc": 0.911
+ },
+ {
+  "dataset": "adult-sex",
+  "N": 19537,
+  "prevalence": 0.239,
+  "ece10": 0.052,
+  "worst_quintile_gap": 0.09,
+  "auc": 0.911
+ },
+ {
+  "dataset": "bank",
+  "N": 18085,
+  "prevalence": 0.117,
+  "ece10": 0.021,
+  "worst_quintile_gap": 0.041,
+  "auc": 0.927
+ },
+ {
+  "dataset": "churn",
+  "N": 2000,
+  "prevalence": 0.142,
+  "ece10": 0.071,
+  "worst_quintile_gap": 0.201,
+  "auc": 0.932
+ },
+ {
+  "dataset": "credit-card",
+  "N": 12000,
+  "prevalence": 0.221,
+  "ece10": 0.038,
+  "worst_quintile_gap": 0.051,
+  "auc": 0.764
+ },
+ {
+  "dataset": "eeg",
+  "N": 5992,
+  "prevalence": 0.449,
+  "ece10": 0.195,
+  "worst_quintile_gap": 0.315,
+  "auc": 0.967
+ },
+ {
+  "dataset": "electricity",
+  "N": 12000,
+  "prevalence": 0.422,
+  "ece10": 0.058,
+  "worst_quintile_gap": 0.119,
+  "auc": 0.886
+ },
+ {
+  "dataset": "law-school",
+  "N": 8320,
+  "prevalence": 0.322,
+  "ece10": 0.051,
+  "worst_quintile_gap": 0.055,
+  "auc": 1.0
+ },
+ {
+  "dataset": "magic",
+  "N": 7608,
+  "prevalence": 0.352,
+  "ece10": 0.063,
+  "worst_quintile_gap": 0.116,
+  "auc": 0.916
+ },
+ {
+  "dataset": "phoneme",
+  "N": 2162,
+  "prevalence": 0.294,
+  "ece10": 0.034,
+  "worst_quintile_gap": 0.089,
+  "auc": 0.886
+ },
+ {
+  "dataset": "spambase",
+  "N": 1841,
+  "prevalence": 0.394,
+  "ece10": 0.069,
+  "worst_quintile_gap": 0.112,
+  "auc": 0.985
+ }
+]
