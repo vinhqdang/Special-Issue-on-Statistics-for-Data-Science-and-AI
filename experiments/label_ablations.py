@@ -215,7 +215,7 @@ SHORT = {"adult-sex": "Adult-sex", "adult-race": "Adult-race", "bank": "Bank", "
 
 
 def report(path="results/label_ablations.json", figdir="manuscript_v2/figures"):
-    import matplotlib; matplotlib.use("Agg"); import matplotlib.pyplot as plt
+    import matplotlib; matplotlib.use("Agg"); import matplotlib.pyplot as plt, matplotlib.ticker
     rows = json.load(open(path)); f2 = lambda x: "--" if x is None or not np.isfinite(x) else f"{x:.2f}"
     f3 = lambda x: "--" if x is None or not np.isfinite(x) else f"{x:.3f}"
     byL = lambda L: [r for r in rows if r["L"] == L]
@@ -292,10 +292,15 @@ def report(path="results/label_ablations.json", figdir="manuscript_v2/figures"):
             ax.scatter(p[:, 3].astype(float), np.minimum(p[:, 4].astype(float), CLIP), s=16, c=cols[M], marker=mk[M],
                        edgecolors="white", linewidths=0.5, label=f"M = {M}")
         ax.set_xscale("log"); ax.set_yscale("log"); ax.axhline(1, color="#9a9890", lw=0.8, ls=":")
+        ax.axhline(CLIP, color="#9a9890", lw=0.6, ls="--")
+        ax.set_xticks([0.05, 0.1, 0.2, 0.4, 0.8]); ax.set_xticklabels(["0.05", "0.1", "0.2", "0.4", "0.8"])
+        ax.xaxis.set_minor_formatter(matplotlib.ticker.NullFormatter())
         ax.set_title(f"L = {L}"); ax.set_xlabel("share of pool with disagreement")
         ax.grid(alpha=0.25, lw=0.5)
-    axes[0].set_ylabel("efficiency vs SRS (median over targets)"); axes[-1].legend(frameon=False, fontsize=7, loc="lower right")
-    fig.tight_layout(); fig.savefig(f"{figdir}/abl_models_disagreement.pdf"); fig.savefig(f"{figdir}/abl_models_disagreement.png", dpi=200)
+    axes[0].set_ylabel("efficiency vs SRS")
+    h, l = axes[0].get_legend_handles_labels()
+    fig.legend(h, l, frameon=False, fontsize=8, ncol=4, loc="upper center", bbox_to_anchor=(0.5, 1.0))
+    fig.tight_layout(rect=(0, 0, 1, 0.92)); fig.savefig(f"{figdir}/abl_models_disagreement.pdf"); fig.savefig(f"{figdir}/abl_models_disagreement.png", dpi=200)
     # coverage of worst target at L = 250
     rr = byL(250); x = np.arange(len(rr))
     meths = [("Wald", "cover_z_min", "#2a78d6", "o"), ("t (Satterthwaite)", "cover_t_min", "#eb6834", "s"),

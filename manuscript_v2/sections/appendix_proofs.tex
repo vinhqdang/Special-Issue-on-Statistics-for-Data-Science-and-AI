@@ -1,1 +1,270 @@
-% appendix_proofs (to be written)
+% ---------------------------------------------------------------------------------------------
+% Proofs for Section \ref{sec:theory}. Notation as in docs/notation_v2.md and sections/theory.tex.
+% ---------------------------------------------------------------------------------------------
+\section{Proofs}\label{sec:theory-proofs}
+
+Throughout, $x_i=a^\top t_i(Y_i)$ for a fixed or sequence-dependent vector $a$, and
+$\bar x_h$, $S^2_{x,h}$, $\bar x_{s_h}$, $s^2_{x,h}$ are the stratum population and sample means
+and variances. We use repeatedly two classical facts on simple random sampling without
+replacement of $n$ units from $N$ \citep[Ch.~2]{cochran1977}: $E(\bar x_s)=\bar x_U$ and
+$\operatorname{Var}(\bar x_s)=(1-n/N)S^2_x/n$; the same formulas hold coordinatewise and for
+covariances of vector-valued variables. Because all contributions lie in $\{0,1\}$, any population
+variance of a coordinate or of a product of two coordinates satisfies
+$S^2\le N/\{4(N-1)\}\le1/2$ for $N\ge2$.
+
+\subsection{Proof of Proposition~\ref{prop:validity}}
+
+\emph{(a)} Within stratum $h$, $E(\bar t_{s_h})=\bar t_h$ and
+$\operatorname{Cov}(\bar t_{s_h})=(1-f_h)\Sigma_h/n_h$. The strata are sampled independently and
+$N_h$, $n_h$ are constants because, by (A1), they are functions of the predictions, probabilities
+and groups only. Hence $E(\hat T)=\sum_hN_h\bar t_h=T$ and
+$\operatorname{Cov}(\hat T)=\sum_hN_h^2(1-f_h)\Sigma_h/n_h$. Only $n_h\ge1$ is used, and nothing is
+assumed about the proxy.
+
+\emph{(b)} Let $\hat\tau=\hat T/N$. By (a), each coordinate satisfies
+$\operatorname{Var}(\hat\tau_c)=\sum_hW_h^2(1-f_h)S^2_{hc}/n_h\le r^2/2$, so
+$\|\hat\tau-\tau\|=O_p(r)$ by Chebyshev's inequality, and $r^2\le\sum_hW_h^2/\min_kn_k\le
+1/\min_kn_k\to0$ by (A1). Let $K=\{x\in[0,1]^C:x_{P_g}\ge c/2,\ x_{Q_g}\ge c/2,\ g=0,1\}$, where
+$x_{P_g}$, $x_{Q_g}$ denote the coordinates of the denominators. $K$ is compact and convex, and
+$\phi$ is a rational function whose denominators are bounded away from zero on $K$, so its first
+and second derivatives are bounded on $K$, say by $B$. By (A2) $\tau\in K$ with the denominators at
+least $c$; on the event $\mathcal E=\{\|\hat\tau-\tau\|_\infty\le c/2\}$, whose probability tends to
+one, the segment from $\tau$ to $\hat\tau$ lies in $K$, and Taylor's theorem gives
+\begin{equation}\label{eq:taylor}
+\big|\hat\theta-\theta-\nabla\phi(\tau)^\top(\hat\tau-\tau)\big|\le\tfrac{B}{2}\,C\,\|\hat\tau-\tau\|^2=O_p(r^2).
+\end{equation}
+Therefore $\hat\theta-\theta=O_p(r)+O_p(r^2)=O_p(r)\to0$.
+
+\emph{(c)} Let $a=\nabla\phi(\tau)$ (it depends on $\nu$ and is bounded by $B$), $x_i=a^\top t_i$,
+and $\Lambda=a^\top(\hat\tau-\tau)=\sum_hW_h(\bar x_{s_h}-\bar x_h)$. Since $z_i=x_i/N$,
+$\operatorname{Var}(\Lambda)=\sum_hW_h^2(1-f_h)S^2_{x,h}/n_h=V(\theta;n)$, abbreviated $V$. By
+\eqref{eq:taylor} and (A3), $(\hat\theta-\theta-\Lambda)/V^{1/2}=O_p(r^2)/(c^{1/2}r)=O_p(r)\to0$,
+so by Slutsky's lemma it suffices to show $\Lambda/V^{1/2}\to N(0,1)$.
+
+Since the limit does not depend on the subsequence, it suffices to show that every subsequence has
+a further subsequence along which the convergence holds. Passing to a subsequence, we may therefore
+assume that the set $\mathcal H_1$ of strata satisfying the first alternative of (A4), and its
+complement $\mathcal H_2$ (second alternative), do not depend on $\nu$, and that
+$\lambda_h^2=W_h^2(1-f_h)S^2_{x,h}/(n_hV)$ converges to some $\lambda_{h,\infty}^2$ for every $h$
+(the $\lambda_h^2$ lie in $[0,1]$ and sum to one). For $h\in\mathcal H_2$,
+$\lambda_{h,\infty}=0$, so $\sum_{h\in\mathcal H_2}W_h(\bar x_{s_h}-\bar x_h)/V^{1/2}$ has variance
+$\sum_{h\in\mathcal H_2}\lambda_h^2\to0$ and is $o_p(1)$. For $h\in\mathcal H_1$, put
+$\xi_h=(\bar x_{s_h}-\bar x_h)/\{(1-f_h)S^2_{x,h}/n_h\}^{1/2}$. Hájek's condition for asymptotic
+normality of a simple random sample mean \citep{hajek1960} requires $n_h\to\infty$,
+$N_h-n_h\to\infty$ and, for every $\eta>0$,
+\[
+\frac{1}{(N_h-1)S^2_{x,h}}\sum_{i\in U_h:\ |x_i-\bar x_h|>\eta\{n_h(1-f_h)\}^{1/2}S_{x,h}}(x_i-\bar x_h)^2\to0 .
+\]
+The first two hold by (A1) ($N_h-n_h\ge\varepsilon N_h\ge\varepsilon n_h$). Because
+$|x_i-\bar x_h|\le2\|a\|_1\le2CB$ and $n_h(1-f_h)S^2_{x,h}\to\infty$ by (A4), the index set of the
+sum is empty for all large $\nu$, so the third holds as well, and $\xi_h\to N(0,1)$. The $\xi_h$
+are independent, and $\Lambda/V^{1/2}=\sum_{h\in\mathcal H_1}\lambda_h\xi_h+o_p(1)$. By Lévy's
+continuity theorem the characteristic functions $\varphi_h$ of $\xi_h$ converge to
+$e^{-u^2/2}$ uniformly on compact sets, hence
+$E\exp(iu\sum_{\mathcal H_1}\lambda_h\xi_h)=\prod_{\mathcal H_1}\varphi_h(\lambda_hu)\to
+\prod_{\mathcal H_1}e^{-\lambda_{h,\infty}^2u^2/2}=e^{-u^2/2}$, using
+$\sum_{\mathcal H_1}\lambda_{h,\infty}^2=1$. This proves (c).
+
+\emph{(d)} Let $\hat a=\nabla\phi(\hat\tau)$ and let $\hat\Sigma_h$ be the sample covariance matrix
+of $t_i(Y_i)$ in the sample from stratum $h$. Since $\hat z_i=\hat a^\top t_i/N$,
+\[
+\hat V=\sum_hW_h^2\frac{1-f_h}{n_h}\hat a^\top\hat\Sigma_h\hat a,\qquad
+V=\sum_hW_h^2\frac{1-f_h}{n_h}a^\top\Sigma_ha,
+\]
+and strata with $f_h=1$ contribute zero to both. Hence
+$|\hat V-V|\le r^2\max_h|\hat a^\top\hat\Sigma_h\hat a-a^\top\Sigma_ha|$.
+
+\begin{lemma}\label{prop:lemma-cov}
+Under (A1), $\hat\Sigma_h-\Sigma_h\to0$ in probability for every $h$.
+\end{lemma}
+\begin{proof}
+For coordinates $c,d$,
+$\hat\Sigma_{h,cd}=\frac{n_h}{n_h-1}\{\overline{(t_ct_d)}_{s_h}-\bar t_{c,s_h}\bar t_{d,s_h}\}$ and
+$\Sigma_{h,cd}=\frac{N_h}{N_h-1}\{\overline{(t_ct_d)}_{h}-\bar t_{c,h}\bar t_{d,h}\}$. The variables
+$t_c$, $t_d$ and $t_ct_d$ take values in $\{0,1\}$, so each sample mean differs from its population
+mean by $O_p(n_h^{-1/2})$. The factors $n_h/(n_h-1)$ and $N_h/(N_h-1)$ tend to one, and the products
+are of bounded variables, so the difference tends to zero in probability.
+\end{proof}
+
+By part (b), $\hat\tau-\tau\to0$ in probability, and $\nabla\phi$ is uniformly continuous on $K$, so
+$\hat a-a\to0$ in probability. All entries of $\hat a$, $a$, $\hat\Sigma_h$, $\Sigma_h$ are bounded
+on $\mathcal E$, and with the lemma, $\max_h|\hat a^\top\hat\Sigma_h\hat a-a^\top\Sigma_ha|=o_p(1)$.
+With (A3), $|\hat V/V-1|\le r^2o_p(1)/(cr^2)=o_p(1)$. Finally
+$(\hat\theta-\theta)/\hat V^{1/2}=\{(\hat\theta-\theta)/V^{1/2}\}(V/\hat V)^{1/2}\to N(0,1)$ by (c)
+and Slutsky's lemma, which gives the coverage statement. $\square$
+
+\subsection{Proof of Proposition~\ref{prop:influence}}
+
+Fix $g$ and the pair $(m,j)$. The estimand $\theta^{TPR}_{mj}=\sum_{g'}s_{g'}(TP_{mg'}-TP_{jg'})/P_{g'}$
+depends on $T$ through $TP_{mg'}$, $TP_{jg'}$ and $P_{g'}$, with partial derivatives
+$s_{g'}/P_{g'}$, $-s_{g'}/P_{g'}$ and $-s_{g'}(TP_{mg'}-TP_{jg'})/P_{g'}^2=-s_{g'}\delta_{g'}/P_{g'}$.
+Instance $i$ with $G_i=g$ contributes $Y_i\hat y_{mi}$, $Y_i\hat y_{ji}$ and $Y_i$ to the totals
+of its own group and nothing to the totals of the other group. By \eqref{eq:influence},
+$z^{TPR}_i=s_g\{Y_i\hat y_{mi}-Y_i\hat y_{ji}-\delta_gY_i\}/P_g=s_gY_i(D_i-\delta_g)/P_g$. Summing
+over the group gives $s_g\{(TP_{mg}-TP_{jg})-\delta_gP_g\}/P_g=0$. The FPR case is identical with
+$1-Y_i$, $Q_g$ and $\gamma_g$. For the error, $|\hat y-Y|=\hat y+Y-2\hat yY$ for binary values,
+so $|\hat y_{mi}-Y_i|-|\hat y_{ji}-Y_i|=(\hat y_{mi}-\hat y_{ji})(1-2Y_i)$ and
+$z^{ERR}_i=D_i(1-2Y_i)/N$.
+
+For the stratum variances let $u_i=Y_i(D_i-\delta_g)$, so $z^{TPR}_i=s_gu_i/P_g$. Because
+$Y_i^2=Y_i$, $\bar u_h=c_h-\delta_g\pi_h$ and $\overline{u^2}_h=r_h-2\delta_gc_h+\delta_g^2\pi_h$,
+using $D_i^2=|D_i|$. Therefore
+\[
+\overline{u^2}_h-\bar u_h^2=r_h-2\delta_gc_h+\delta_g^2\pi_h-c_h^2+2\delta_gc_h\pi_h-\delta_g^2\pi_h^2
+=(r_h-c_h^2)+\delta_g^2\pi_h(1-\pi_h)-2\delta_gc_h(1-\pi_h),
+\]
+and multiplying by $\kappa_h/P_g^2$ gives \eqref{eq:stratvar-tpr}. For the error,
+$\{D_i(1-2Y_i)\}^2=|D_i|$, so the variance with divisor $N_h$ is $\rho_h-e_h^2$, which gives
+\eqref{eq:stratvar-err}. If $D_i=0$ on $U_h$ then $r_h=c_h=\rho_h=e_h=0$, and \eqref{eq:agree-var}
+follows; for FPR the label variance of $1-Y$ is again $\pi_h(1-\pi_h)$. When $K_i\in\{0,M\}$ all
+models predict the same label, so every pair agrees. $\square$
+
+\subsection{Proof of Proposition~\ref{prop:allocation}}
+
+\emph{(a)} The term $\sum_hN_hA_h^2$ does not depend on $n$. For any $n_h>0$ with $\sum_hn_h=L$, the
+Cauchy--Schwarz inequality gives
+\[
+\Big(\sum_hN_hA_h\Big)^2=\Big(\sum_h\frac{N_hA_h}{\sqrt{n_h}}\sqrt{n_h}\Big)^2\le
+\Big(\sum_h\frac{N_h^2A_h^2}{n_h}\Big)\Big(\sum_hn_h\Big)=\Phi_0(n)\,L,
+\]
+with equality if and only if $N_hA_h/\sqrt{n_h}$ is proportional to $\sqrt{n_h}$, that is
+$n_h\propto N_hA_h$. With the budget constraint this gives $n^\ast$ and the value of $\Phi(n^\ast)$.
+Equivalently, a Lagrange multiplier $\mu$ for $\sum_hn_h=L$ gives the stationarity condition
+$-N_h^2A_h^2/n_h^2+\mu=0$, that is $n_h=N_hA_h/\sqrt\mu$.
+
+\emph{(b)} $\Phi_0$ is convex on $(0,\infty)^H$ (strictly convex in the coordinates with $A_h>0$)
+and the constraints are linear, so the Karush--Kuhn--Tucker conditions are necessary and sufficient.
+With multipliers $\mu$ for the budget and $\alpha_h,\beta_h\ge0$ for $n_h\ge\ell_h$ and
+$n_h\le N_h$, they read $-N_h^2A_h^2/n_h^2+\mu-\alpha_h+\beta_h=0$ with complementary slackness. If
+neither bound is active, $n_h=N_hA_h/\lambda$ with $\lambda=\sqrt\mu$; if the upper bound is active,
+$\beta_h\ge0$ forces $N_hA_h/\lambda\ge N_h$; if the lower bound is active, $\alpha_h\ge0$ forces
+$N_hA_h/\lambda\le\ell_h$. In all cases $n_h=\min\{N_h,\max(\ell_h,N_hA_h/\lambda)\}$. The map
+$\lambda\mapsto\sum_hn_h(\lambda)$ is continuous and non-increasing, from $\sum_hN_h\ge L$ as
+$\lambda\to0$ to $\sum_h\ell_h\le L$ as $\lambda\to\infty$, so a solution exists.
+
+\emph{(c)} If $\tilde n_h\ge n_h-1$ and $n_h\ge n_0>1$, then
+$1/\tilde n_h\le1/(n_h-1)=(1/n_h)\,n_h/(n_h-1)\le(1/n_h)\,n_0/(n_0-1)$ for every $h$; multiply by
+$N_h^2A_h^2$ and sum. The implementation first rounds down and then distributes the remaining
+labels, so $\tilde n_h\ge\lfloor n_h\rfloor\ge n_h-1$.
+
+\emph{(d)} Without finite-population corrections, $V^{SRS}_t=N^2\sigma^2_t/L$, so
+$w_tV_t=(N^2/L)V_t/V^{SRS}_t=(N^2/L)/\mathrm{Eff}_t$. Summing over $t$ gives
+$\Phi_0(n)L/N^2=\sum_t1/\mathrm{Eff}_t$, and at $n^\ast$,
+$\sum_t1/\mathrm{Eff}_t=(\sum_hN_hA_h)^2/N^2=(\sum_hW_hA_h)^2$. For the lower bound, the
+within-stratum variances satisfy $\sum_hW_h\sigma^2_{ht}\le\sigma^2_t$ (the between-strata part of
+the variance decomposition is non-negative), so by Jensen's inequality
+\[
+\Big(\sum_hW_hA_h\Big)^2\le\sum_hW_hA_h^2=\sum_t\frac{\sum_hW_h\sigma^2_{ht}}{\sigma^2_t}\le|\mathcal T| .\qquad\square
+\]
+
+\subsection{Proof of Corollary~\ref{prop:deff}}
+
+\emph{Equation \eqref{eq:deff-general}.} Without finite-population corrections,
+$V^{SRS}_t=N^2\sigma^2_t/L$ and, by Proposition~\ref{prop:allocation}(a) applied to the single
+target, $V_t(n^\ast)=(\sum_hN_h\sigma_{ht})^2/L$; the ratio is \eqref{eq:deff-general}. The variance
+decomposition $\sigma_t^2=\sum_hW_h\sigma_{ht}^2+\sum_hW_h(\bar z_h-\bar z)^2$ and Jensen's inequality
+$\sum_hW_h\sigma_{ht}^2\ge(\sum_hW_h\sigma_{ht})^2$ give $\mathrm{Eff}_t\ge1$, with equality if and
+only if both inequalities are equalities.
+
+\emph{Refinement.} If a stratum $h$ is split into $h'$ and $h''$, the same two inequalities
+applied within $h$ give $W_h\sigma_h\ge W_{h'}\sigma_{h'}+W_{h''}\sigma_{h''}$, so the denominator of
+\eqref{eq:deff-general} cannot increase.
+
+\emph{(a)} By Proposition~\ref{prop:influence} the influence values of $\theta^{TPR}_{mj}$ have mean
+zero in each group, hence overall, and $N^{-1}\sum_iz_i^2=N^{-1}\sum_gN_g\overline{u^2}_g/P_g^2$,
+where $\overline{u^2}_g=r_g-2\delta_g\cdot\delta_gp_g+\delta_g^2p_g=r_g-\delta_g^2p_g$ is the group mean
+of $u_i^2$ (we used $N_g^{-1}\sum_{G_i=g}Y_iD_i=\delta_gp_g$). With $P_g=N\zeta_gp_g$,
+$\sigma_t^2=N^{-2}\sum_g(r_g-\delta_g^2p_g)/(\zeta_gp_g^2)$. In the stratum $\mathcal D_g$,
+$|D_i|=1$, so $r_h=\pi_h=\pi_{\mathcal D,g}$ and $c_h=c_{\mathcal D,g}=\delta_gp_gN_g/(N_g\rho_g)$;
+\eqref{eq:stratvar-tpr} with divisor $N_h$ gives $\sigma_{\mathcal D_g}=\sigma_{\mathcal D,g}/P_g$, and
+$W_{\mathcal D_g}\sigma_{\mathcal D_g}=\zeta_g\rho_g\sigma_{\mathcal D,g}/(N\zeta_gp_g)=
+\rho_g\sigma_{\mathcal D,g}/(Np_g)$. In $\mathcal A_g$, the number of positives is
+$N_g(p_g-r_g)$, so its positive rate is $\pi_{\mathcal A,g}$, and \eqref{eq:agree-var} gives
+$W_{\mathcal A_g}\sigma_{\mathcal A_g}=(1-\rho_g)|\delta_g|\{\pi_{\mathcal A,g}(1-\pi_{\mathcal A,g})\}^{1/2}/(Np_g)$.
+Inserting into \eqref{eq:deff-general}, the factors $N^{-2}$ cancel and \eqref{eq:deff-tpr} follows.
+For the error difference, $z_i=D_i(1-2Y_i)/N$ vanishes on $\mathcal A_g$, takes values $\pm1/N$ on
+$\mathcal D_g$ with mean $\mu_g/N$, so $\sigma_{\mathcal D_g}=(1-\mu_g^2)^{1/2}/N$, and
+$\sigma_t^2=(\rho-\theta^2)/N^2$ because $z_i^2=|D_i|/N^2$; \eqref{eq:deff-err} follows. The last
+statement of (a) is the refinement property.
+
+\emph{(b)} With $\delta_g=0$, $c_{\mathcal D,g}=0$ and $\sigma^2_{\mathcal D,g}=\pi_{\mathcal D,g}=r_g/\rho_g$,
+so $\rho_g\sigma_{\mathcal D,g}=(\rho_gr_g)^{1/2}$ and the agreement terms vanish. With $\rho_g=\rho$,
+$\mathrm{Eff}^{TPR}=\sum_gr_g/(\zeta_gp_g^2)\big/\{\rho(\sum_g\sqrt{r_g}/p_g)^2\}=\Gamma/\rho$. By
+Cauchy--Schwarz, $(\sum_g\sqrt{\zeta_g}\cdot\sqrt{r_g}/(\sqrt{\zeta_g}p_g))^2\le\sum_g\zeta_g\cdot
+\sum_gr_g/(\zeta_gp_g^2)$, so $\Gamma\ge1$. Applying \eqref{eq:deff-general} to the two strata
+$\{G=0\}$, $\{G=1\}$, whose influence values have mean zero and variances $r_g/(N\zeta_gp_g)^2$, gives
+exactly $\Gamma$. For the error difference with $\mu_g=0$ (hence $\theta=\sum_g\zeta_g\rho_g\mu_g=0$),
+\eqref{eq:deff-err} equals $\rho/\rho^2=1/\rho$.
+
+\emph{(c)} With one group, $\zeta=1$, $\delta=\rho\pi_{\mathcal D}a/p$ and
+$c_{\mathcal D}=a\pi_{\mathcal D}$. The numerator of \eqref{eq:deff-tpr} is
+$(\rho\pi_{\mathcal D}-\delta^2p)/p^2=\rho\pi_{\mathcal D}\{1+O(\rho)\}/p^2$. Since $\delta=O(\rho)$,
+$\sigma^2_{\mathcal D}=\pi_{\mathcal D}-a^2\pi_{\mathcal D}^2+O(\rho)=\pi_{\mathcal D}\beta^2+O(\rho)$, and
+$(1-\rho)|\delta|\{\pi_{\mathcal A}(1-\pi_{\mathcal A})\}^{1/2}=\rho\sqrt{\pi_{\mathcal D}}\,\lambda+O(\rho^2)$.
+The denominator is therefore $\rho^2\pi_{\mathcal D}(\beta+\lambda)^2\{1+O(\rho)\}/p^2$ (assuming
+$\beta+\lambda>0$, which fails only in the degenerate case $|a|=\pi_{\mathcal D}=1$), and the ratio is
+\eqref{eq:deff-lambda}. The value of $p=\rho\pi_{\mathcal D}+(1-\rho)\pi_{\mathcal A}$ changes by
+$O(\rho)$, which is absorbed in the $O(\rho)$ term.
+
+\emph{(d)} When $\rho_g=1$ the strata $\mathcal A_g$ are empty and $\mathcal D_g$ is the whole group,
+so the design is stratification by group, and \eqref{eq:deff-tpr}, \eqref{eq:deff-err} are continuous
+in $\rho_g$. For $\delta_g=0$ the limit of \eqref{eq:deff-tpr} is $\Gamma$ by (b). For the error
+difference with $\rho_g=1$, $\mu_g$ is the group-wise error difference and the limit is
+$(1-\theta^2)/(\sum_g\zeta_g\sqrt{1-\mu_g^2})^2$, which equals one when $\mu_0=\mu_1=\theta$.
+
+\emph{Equation \eqref{eq:deff-mixed}.} If $e_h=0$ for all $h$, \eqref{eq:stratvar-err} gives
+$\sigma^2_{ht}=\rho_h/N^2$, and $\sigma^2_t=\rho/N^2$ with $\theta=0$. Since $0\le\rho_h\le1$,
+$\sqrt{\rho_h}\ge\rho_h$, so $(\sum_hW_h\sqrt{\rho_h})^2\ge\rho^2$ and $\mathrm{Eff}\le1/\rho$; Jensen's
+inequality gives $(\sum_hW_h\sqrt{\rho_h})^2\le\rho$ and $\mathrm{Eff}\ge1$. Equality in the upper bound
+requires $\rho_h\in\{0,1\}$ for every $h$. For \eqref{eq:deff-sandwich}, let $\mathcal H_D$ be the
+strata with $0<K<M$, so that $\sum_{h\in\mathcal H_D}W_h=\rho_{\rm any}$ and $\rho_h=0$ outside
+$\mathcal H_D$. Cauchy--Schwarz gives
+$(\sum_{h\in\mathcal H_D}W_h^{1/2}\cdot W_h^{1/2}\rho_h^{1/2})^2\le\rho_{\rm any}\sum_hW_h\rho_h=\rho_{\rm any}\rho$,
+so $\mathrm{Eff}\ge\rho/(\rho_{\rm any}\rho)=1/\rho_{\rm any}$, with equality if and only if $\rho_h$ is
+constant on $\mathcal H_D$. (When strata are merged across $K=0$ or $K=M$ and $0<K<M$ because of the
+minimum stratum size, $\rho_{\rm any}$ is replaced by the total share of the strata that contain
+any instance with $0<K<M$.) $\square$
+
+\subsection{Proof of Proposition~\ref{prop:proxy}}
+
+\emph{(a)} The proxy is a fixed function of the pool, so $\tilde n$ satisfies (A1) whenever the
+minimum per stratum is at least two; Proposition~\ref{prop:validity} applies without change.
+
+\emph{(b)} With $\tilde n_h=LN_h\tilde A_h/\sum_kN_k\tilde A_k$,
+\[
+\Phi_0(\tilde n)=\sum_h\frac{N_h^2A_h^2}{\tilde n_h}=\frac1L\Big(\sum_kN_k\tilde A_k\Big)\Big(\sum_h\frac{N_hA_h^2}{\tilde A_h}\Big),
+\]
+and
+$\Phi_0(n^\ast)=L^{-1}(\sum_hN_hA_h)^2$ by Proposition~\ref{prop:allocation}(a). Writing
+$\tilde A_h=x_hA_h$, $\sum_hN_h\tilde A_h=(\sum_kN_kA_k)\sum_h\omega_hx_h$ and
+$\sum_hN_hA_h^2/\tilde A_h=(\sum_kN_kA_k)\sum_h\omega_h/x_h$, which gives \eqref{eq:proxy-loss}. By
+Cauchy--Schwarz,
+$1=(\sum_h\omega_h\sqrt{x_h}/\sqrt{x_h})^2\le(\sum_h\omega_hx_h)(\sum_h\omega_h/x_h)$, with equality if and only if $x_h$ is constant on the strata with $\omega_h>0$.
+
+\emph{(c)} For $x\in[x_{\min},x_{\max}]$, $(x-x_{\min})(x_{\max}-x)\ge0$, that is
+$x+x_{\min}x_{\max}/x\le x_{\min}+x_{\max}$. Averaging with weights $\omega_h$,
+$\sum\omega_hx_h+x_{\min}x_{\max}\sum\omega_h/x_h\le x_{\min}+x_{\max}$. By the arithmetic--geometric
+mean inequality the left side is at least
+$2\{x_{\min}x_{\max}(\sum\omega_hx_h)(\sum\omega_h/x_h)\}^{1/2}$; squaring gives the bound.
+
+\emph{(d)} Proportional allocation corresponds to $\tilde A_h\equiv1$, i.e.\ $x_h=1/A_h$, which gives
+the stated comparison. For the negative statement consider two strata of equal size $N/2$ with
+equal true values $A_1=A_2$ and equal means, so that SRS, proportional allocation and the optimal
+allocation coincide. If the proxy gives $\tilde A_1\approx0$, stratum 1 receives the minimum $\ell$
+labels and stratum 2 receives $L-\ell$, and
+$\Phi_0(\tilde n)/\Phi_0(n^\ast)=\frac{L}{4}\{1/\ell+1/(L-\ell)\}$, which is about $L/(4\ell)$; with
+$L=1000$ and $\ell=10$ the weighted variance is 25 times that of SRS.
+
+\emph{(e)} Since $n_h\ge\eta n^{\rm prop}_h$ and $n_h\ge(1-\eta)\tilde n_h$,
+$1/n_h\le1/(\eta n^{\rm prop}_h)$ and $1/n_h\le1/\{(1-\eta)\tilde n_h\}$; multiply by $N_h^2A_h^2$ and
+sum. For the comparison of proportional allocation with SRS, fix a target and write $S^2$, $S^2_h$,
+$\bar z$, $\bar z_h$ for its variances and means. The analysis-of-variance identity
+$(N-1)S^2=\sum_h(N_h-1)S_h^2+\sum_hN_h(\bar z_h-\bar z)^2$ gives
+\[
+NS^2-\sum_hN_hS^2_h=\frac{N}{N-1}\sum_hN_h(\bar z_h-\bar z)^2-\sum_h\frac{N-N_h}{N-1}S_h^2
+\ge-\sum_hS^2_h\ge-\frac{1}{\min_hN_h}\sum_hN_hS^2_h .
+\]
+With $f=L/N$, proportional allocation has variance $V^{\rm prop}=(1-f)(N/L)\sum_hN_hS^2_h$ and SRS has
+$V^{SRS}=(1-f)(N/L)NS^2$, so $V^{\rm prop}(1-1/\min_hN_h)\le V^{SRS}$. Summing over targets with weights
+$w_t$ gives the same inequality for the weighted variance, and combining with the first part proves
+(e). $\square$

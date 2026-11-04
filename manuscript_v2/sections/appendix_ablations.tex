@@ -1,1 +1,208 @@
-% appendix_ablations (to be written)
+\section{Ablations: full tables}
+\label{sec:app-ablations}
+
+This appendix gives the per-cell results behind Section~\ref{sec:ablations}: 29 setting--budget cells, $R=150$ replications and $B=999$ bootstrap resamples. All values are stored in
+\path{results/label_ablations.json}, which is produced by the script
+\path{experiments/label_ablations.py}; its \texttt{report} mode prints the tables and draws the figures. Abbreviations: Credit = Credit card default, Law = Law school, Elec.\ = Electricity.
+
+\paragraph{Implementation details.} Stratifiers: the binary stratifier crosses group with the indicator $0<K_i<M$. The three-model pattern uses the models with the highest agreement between $\hat y_{mi}$ and $\mathbf 1\{\pi_i\ge 0.5\}$ (chosen without labels; e.g.\ histogram GB, random forest and MLP in Adult-sex), with the eight patterns ordered by their number of ones so that merging of small strata goes to a neighbouring pattern. Proxy bins split each $(G,K)$ cell at the quantiles of $\pi_i$ within the cell. All stratifiers merge strata below 50 units within group, as in the default. When $H$ strata at 10 labels would use more than 80\% of the budget, the floor is lowered to $\max(2,\lfloor 0.8L/H\rfloor)$. This affects only the proxy-bin stratifiers at $L\le 500$ (floors 3--9) and the grid designs with floor 20 at $L=250$ (floors 10--18). Proxies: ``single model'' uses the predicted probabilities of the first logistic regression or of Gaussian naive Bayes; ``noise'' adds $N(0,2^2)$ to $\mathrm{logit}(\pi_i)$; ``shuffle'' permutes $\pi$ within each group (fixed seed). Satterthwaite degrees of freedom are $\nu=(\sum_h a_h s^2_{z,h})^2/\sum_h (a_h s^2_{z,h})^2/(n_h-1)$ with $a_h=N_h^2(1-n_h/N_h)/n_h$, computed per target. The bootstrap resamples $n_h$ units with replacement within each stratum and takes the 2.5\% and 97.5\% quantiles of the plug-in estimate. The proxy variance floor is defined in Section~\ref{sec:ablations}. A3 subsets were drawn once per size with seed 20261104 and are the same in every setting.
+
+\begin{table}[!htbp]
+\centering\scriptsize
+\caption{Efficiency relative to SRS (median over the 108 targets of $\mathrm{MSE}_{\mathrm{SRS}}/\mathrm{MSE}$) for every cell, stratifier (A1) and proxy (A2). Pat.: default; Bin.: group $\times$ agree/disagree; J3: three-model pattern; KP2, KP3: $K\times$ 2 or 3 proxy bins; LR, NB: single-model proxies; C: constant 0.5; Sh.: shuffled; Noi.: logit noise; Rev.: $1-\pi$; Prop.: proportional; Orc.: true-label allocation.}
+\label{tab:abl-app-eff}
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{lrrrrrrrrrrrrrr}
+\toprule
+Setting & $L$ & Pat. & Bin. & J3 & KP2 & KP3 & LR & NB & C & Sh. & Noi. & Rev. & Prop. & Orc. \\
+\midrule
+Adult-sex & 250 & 3.63 & 1.56 & 1.29 & 3.77 & 4.04 & 3.69 & 3.67 & 3.71 & 3.40 & 3.13 & 3.47 & 2.81 & 3.79 \\
+Adult-sex & 500 & 3.90 & 1.73 & 1.43 & 3.88 & 3.87 & 3.93 & 4.07 & 3.90 & 3.83 & 3.79 & 3.71 & 2.25 & 3.99 \\
+Adult-sex & 1000 & 4.48 & 1.79 & 1.51 & 4.82 & 4.99 & 4.59 & 4.73 & 4.31 & 4.13 & 4.39 & 4.55 & 1.81 & 4.60 \\
+Adult-race & 250 & 6.02 & 2.55 & 1.82 & 5.56 & 5.33 & 5.60 & 6.39 & 4.97 & 5.50 & 5.80 & 5.60 & 4.63 & 5.16 \\
+Adult-race & 500 & 6.30 & 2.69 & 2.01 & 5.58 & 5.12 & 6.82 & 6.72 & 6.10 & 6.15 & 5.93 & 6.12 & 3.28 & 6.27 \\
+Adult-race & 1000 & 8.30 & 3.00 & 2.62 & 7.76 & 6.88 & 6.53 & 7.09 & 7.53 & 7.27 & 7.22 & 7.18 & 2.75 & 7.61 \\
+Bank & 250 & 7.58 & 6.26 & 2.42 & 6.84 & 7.17 & 7.21 & 7.39 & 7.27 & 7.59 & 7.12 & 7.80 & 5.66 & 7.53 \\
+Bank & 500 & 8.00 & 5.52 & 2.58 & 8.13 & 7.15 & 7.90 & 7.58 & 8.54 & 8.26 & 8.65 & 8.78 & 3.61 & 7.99 \\
+Bank & 1000 & 9.85 & 7.79 & 2.72 & 10.41 & 11.05 & 9.62 & 8.99 & 9.58 & 10.44 & 9.06 & 10.25 & 2.67 & 10.96 \\
+Credit & 250 & 2.83 & 1.56 & 1.64 & 2.90 & 3.25 & 3.26 & 3.58 & 3.07 & 2.95 & 3.20 & 3.55 & 3.01 & 3.08 \\
+Credit & 500 & 3.97 & 1.49 & 1.61 & 3.48 & 3.39 & 3.71 & 3.88 & 4.02 & 3.83 & 4.18 & 3.85 & 2.58 & 3.60 \\
+Credit & 1000 & 4.20 & 1.61 & 1.71 & 4.12 & 4.11 & 3.85 & 3.95 & 4.32 & 4.06 & 3.84 & 4.46 & 2.12 & 4.00 \\
+Law & 250 & 15.71 & 4.87 & 1.90 & 15.49 & 14.28 & 20.57 & 19.58 & 18.78 & 17.67 & 17.18 & 20.07 & 6.27 & 23.82 \\
+Law & 500 & 36.85 & 4.97 & 1.86 & 39.52 & 21.97 & 31.40 & 27.43 & 34.92 & 36.97 & 38.05 & 31.87 & 5.59 & 38.30 \\
+Law & 1000 & 78.85 & 8.57 & 2.15 & 89.20 & 116.24 & 96.94 & 82.83 & 74.60 & 60.27 & 68.27 & 72.81 & 6.22 & 146.50 \\
+MAGIC & 250 & 2.56 & 2.08 & 1.08 & 2.76 & 2.58 & 2.43 & 2.54 & 2.41 & 2.48 & 2.29 & 2.42 & 2.19 & 2.46 \\
+MAGIC & 500 & 2.53 & 2.10 & 1.24 & 2.66 & 2.65 & 2.97 & 2.83 & 2.84 & 2.68 & 2.70 & 2.72 & 1.70 & 2.79 \\
+MAGIC & 1000 & 3.15 & 2.54 & 1.21 & 3.56 & 3.30 & 3.26 & 3.24 & 3.09 & 3.44 & 3.46 & 3.24 & 1.49 & 3.36 \\
+EEG & 250 & 1.72 & 1.25 & 0.97 & 2.09 & 2.13 & 1.70 & 1.66 & 1.79 & 1.72 & 1.70 & 1.65 & 1.51 & 1.74 \\
+EEG & 500 & 1.75 & 1.26 & 0.95 & 1.92 & 2.01 & 1.70 & 1.71 & 1.63 & 1.67 & 1.73 & 1.63 & 1.42 & 1.79 \\
+EEG & 1000 & 1.95 & 1.45 & 1.20 & 2.46 & 2.40 & 1.91 & 2.04 & 1.96 & 1.94 & 1.90 & 2.18 & 1.47 & 2.09 \\
+Phoneme & 250 & 2.48 & 2.29 & 1.23 & 2.15 & 1.79 & 2.44 & 2.58 & 2.50 & 2.37 & 2.46 & 2.48 & 1.55 & 2.31 \\
+Phoneme & 500 & 3.59 & 3.10 & 1.27 & 3.34 & 3.02 & 3.48 & 3.60 & 3.55 & 3.58 & 3.38 & 3.79 & 1.46 & 3.45 \\
+Spambase & 250 & 5.55 & 3.48 & 1.40 & 4.12 & 3.05 & 5.68 & 6.57 & 5.26 & 5.14 & 5.52 & 5.99 & 1.80 & 6.01 \\
+Churn & 250 & 6.51 & 6.46 & 1.62 & 5.79 & 4.75 & 6.83 & 10.27 & 6.94 & 7.27 & 6.36 & 6.21 & 1.90 & 6.48 \\
+Churn & 500 & 31.59 & 37.97 & 1.59 & 26.24 & 17.36 & 58.94 & $>$1000 & $>$1000 & 274.06 & 53.55 & 32.37 & 1.60 & 51.74 \\
+Elec. & 250 & 2.73 & 2.44 & 0.97 & 2.67 & 2.96 & 2.82 & 2.59 & 2.79 & 2.71 & 2.79 & 2.78 & 2.38 & 2.68 \\
+Elec. & 500 & 2.82 & 2.53 & 1.18 & 2.77 & 2.76 & 2.66 & 2.77 & 2.87 & 2.87 & 2.67 & 2.97 & 1.87 & 2.93 \\
+Elec. & 1000 & 3.37 & 2.65 & 1.37 & 3.25 & 3.14 & 3.35 & 3.26 & 3.23 & 2.99 & 3.21 & 3.28 & 1.49 & 3.17 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\scriptsize
+\caption{Coverage of the default design per cell (A4). $H$: number of strata after merging. Mean: Wald coverage averaged over targets; the remaining coverage columns give the worst target under Wald, $t$ (Satterthwaite), stratified bootstrap and Wald with the proxy variance floor; Width: average width of floored intervals relative to Wald. Last two columns: worst-target coverage of SRS with Wald and with the floor. The Monte Carlo reference for the worst of 108 targets at exact 95\% coverage is 0.90.}
+\label{tab:abl-app-cov}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lrrrrrrrrrr}
+\toprule
+ & & & & \multicolumn{4}{c}{Worst target, PATTERN} & & \multicolumn{2}{c}{Worst, SRS} \\
+\cmidrule(lr){5-8}\cmidrule(lr){10-11}
+Setting & $L$ & $H$ & Mean & Wald & $t$ & Boot. & Floor & Width & Wald & Floor \\
+\midrule
+Adult-sex & 250 & 19 & 0.944 & 0.753 & 0.767 & 0.807 & 0.927 & 1.24 & 0.540 & 0.607 \\
+Adult-sex & 500 & 19 & 0.945 & 0.880 & 0.887 & 0.893 & 0.893 & 1.08 & 0.733 & 0.733 \\
+Adult-sex & 1000 & 19 & 0.946 & 0.873 & 0.873 & 0.900 & 0.900 & 1.04 & 0.867 & 0.867 \\
+Adult-race & 250 & 17 & 0.945 & 0.873 & 0.887 & 0.893 & 0.893 & 1.13 & 0.733 & 0.733 \\
+Adult-race & 500 & 17 & 0.954 & 0.907 & 0.907 & 0.913 & 0.907 & 1.05 & 0.720 & 0.720 \\
+Adult-race & 1000 & 17 & 0.948 & 0.913 & 0.913 & 0.940 & 0.920 & 1.05 & 0.873 & 0.873 \\
+Bank & 250 & 16 & 0.939 & 0.860 & 0.860 & 0.893 & 0.907 & 1.23 & 0.416 & 0.611 \\
+Bank & 500 & 16 & 0.940 & 0.860 & 0.860 & 0.913 & 0.907 & 1.14 & 0.553 & 0.593 \\
+Bank & 1000 & 16 & 0.947 & 0.900 & 0.900 & 0.940 & 0.907 & 1.05 & 0.800 & 0.800 \\
+Credit & 250 & 19 & 0.946 & 0.853 & 0.860 & 0.660 & 0.913 & 1.08 & 0.373 & 0.893 \\
+Credit & 500 & 19 & 0.953 & 0.913 & 0.913 & 0.800 & 0.913 & 1.01 & 0.540 & 0.887 \\
+Credit & 1000 & 19 & 0.952 & 0.913 & 0.913 & 0.933 & 0.913 & 1.00 & 0.713 & 0.907 \\
+Law & 250 & 10 & 0.944 & 0.633 & 0.633 & 0.700 & 0.960 & 1.77 & 0.267 & 0.567 \\
+Law & 500 & 10 & 0.971 & 0.920 & 0.920 & 0.947 & 0.927 & 1.90 & 0.400 & 0.673 \\
+Law & 1000 & 10 & 0.968 & 0.900 & 0.907 & 0.953 & 0.940 & 2.37 & 0.640 & 0.867 \\
+MAGIC & 250 & 19 & 0.945 & 0.820 & 0.833 & 0.747 & 0.927 & 1.07 & 0.540 & 0.907 \\
+MAGIC & 500 & 19 & 0.938 & 0.880 & 0.880 & 0.887 & 0.893 & 1.02 & 0.753 & 0.913 \\
+MAGIC & 1000 & 19 & 0.945 & 0.887 & 0.887 & 0.933 & 0.893 & 1.01 & 0.900 & 0.900 \\
+EEG & 250 & 18 & 0.948 & 0.907 & 0.913 & 0.900 & 0.913 & 1.16 & 0.893 & 0.893 \\
+EEG & 500 & 18 & 0.947 & 0.907 & 0.907 & 0.920 & 0.913 & 1.12 & 0.907 & 0.907 \\
+EEG & 1000 & 18 & 0.949 & 0.900 & 0.900 & 0.933 & 0.900 & 1.07 & 0.887 & 0.887 \\
+Phoneme & 250 & 14 & 0.948 & 0.907 & 0.907 & 0.920 & 0.907 & 1.06 & 0.813 & 0.887 \\
+Phoneme & 500 & 14 & 0.950 & 0.900 & 0.907 & 0.967 & 0.907 & 1.05 & 0.907 & 0.907 \\
+Spambase & 250 & 9 & 0.943 & 0.900 & 0.900 & 0.920 & 0.907 & 1.06 & 0.800 & 0.827 \\
+Churn & 250 & 6 & 0.942 & 0.473 & 0.473 & 0.473 & 0.920 & 1.49 & 0.140 & 0.867 \\
+Churn & 500 & 6 & 0.927 & 0.800 & 0.800 & 0.960 & 0.860 & 1.26 & 0.260 & 0.880 \\
+Elec. & 250 & 20 & 0.948 & 0.893 & 0.893 & 0.893 & 0.893 & 1.03 & 0.820 & 0.880 \\
+Elec. & 500 & 20 & 0.949 & 0.860 & 0.860 & 0.873 & 0.913 & 1.02 & 0.873 & 0.913 \\
+Elec. & 1000 & 20 & 0.953 & 0.900 & 0.900 & 0.933 & 0.907 & 1.00 & 0.907 & 0.907 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\scriptsize
+\caption{Worst-target Wald coverage over the grid of label floors (min $n_h$) and collapse thresholds (A4). The column $(10,50)$ is the default.}
+\label{tab:abl-app-grid}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lrrrrrrrrrr}
+\toprule
+ & & \multicolumn{3}{c}{min $n_h=5$} & \multicolumn{3}{c}{min $n_h=10$} & \multicolumn{3}{c}{min $n_h=20$} \\
+\cmidrule(lr){3-5}\cmidrule(lr){6-8}\cmidrule(lr){9-11}
+Setting & $L$ & 25 & 50 & 100 & 25 & 50 & 100 & 25 & 50 & 100 \\
+\midrule
+Adult-sex & 250 & 0.88 & 0.81 & 0.85 & 0.77 & 0.75 & 0.85 & 0.78 & 0.73 & 0.75 \\
+Adult-sex & 500 & 0.88 & 0.89 & 0.91 & 0.88 & 0.88 & 0.89 & 0.85 & 0.91 & 0.91 \\
+Adult-sex & 1000 & 0.90 & 0.90 & 0.89 & 0.90 & 0.87 & 0.91 & 0.91 & 0.91 & 0.90 \\
+Adult-race & 250 & 0.85 & 0.89 & 0.89 & 0.85 & 0.87 & 0.91 & 0.81 & 0.83 & 0.91 \\
+Adult-race & 500 & 0.90 & 0.91 & 0.91 & 0.88 & 0.91 & 0.89 & 0.91 & 0.89 & 0.89 \\
+Adult-race & 1000 & 0.89 & 0.89 & 0.88 & 0.90 & 0.91 & 0.90 & 0.90 & 0.90 & 0.90 \\
+Bank & 250 & 0.83 & 0.79 & 0.78 & 0.81 & 0.86 & 0.85 & 0.84 & 0.85 & 0.82 \\
+Bank & 500 & 0.85 & 0.85 & 0.89 & 0.89 & 0.86 & 0.83 & 0.87 & 0.83 & 0.85 \\
+Bank & 1000 & 0.90 & 0.90 & 0.89 & 0.90 & 0.90 & 0.87 & 0.87 & 0.91 & 0.87 \\
+Credit & 250 & 0.79 & 0.81 & 0.78 & 0.83 & 0.85 & 0.77 & 0.87 & 0.89 & 0.83 \\
+Credit & 500 & 0.88 & 0.91 & 0.91 & 0.90 & 0.91 & 0.91 & 0.90 & 0.89 & 0.89 \\
+Credit & 1000 & 0.91 & 0.90 & 0.89 & 0.89 & 0.91 & 0.91 & 0.91 & 0.87 & 0.91 \\
+Law & 250 & 0.80 & 0.68 & 0.77 & 0.79 & 0.63 & 0.73 & 0.85 & 0.62 & 0.87 \\
+Law & 500 & 0.33 & 0.89 & 0.91 & 0.28 & 0.92 & 0.87 & 0.26 & 0.89 & 0.90 \\
+Law & 1000 & 0.67 & 0.93 & 0.91 & 0.65 & 0.90 & 0.91 & 0.67 & 0.89 & 0.84 \\
+MAGIC & 250 & 0.85 & 0.87 & 0.83 & 0.83 & 0.82 & 0.83 & 0.85 & 0.84 & 0.86 \\
+MAGIC & 500 & 0.90 & 0.90 & 0.90 & 0.89 & 0.88 & 0.91 & 0.92 & 0.91 & 0.91 \\
+MAGIC & 1000 & 0.93 & 0.91 & 0.91 & 0.91 & 0.89 & 0.89 & 0.89 & 0.91 & 0.90 \\
+EEG & 250 & 0.89 & 0.90 & 0.89 & 0.89 & 0.91 & 0.89 & 0.90 & 0.89 & 0.88 \\
+EEG & 500 & 0.89 & 0.89 & 0.90 & 0.91 & 0.91 & 0.91 & 0.90 & 0.90 & 0.90 \\
+EEG & 1000 & 0.90 & 0.91 & 0.91 & 0.90 & 0.90 & 0.92 & 0.89 & 0.91 & 0.89 \\
+Phoneme & 250 & 0.89 & 0.89 & 0.89 & 0.88 & 0.91 & 0.91 & 0.88 & 0.88 & 0.89 \\
+Phoneme & 500 & 0.89 & 0.87 & 0.90 & 0.89 & 0.90 & 0.89 & 0.90 & 0.89 & 0.88 \\
+Spambase & 250 & 0.89 & 0.89 & 0.87 & 0.90 & 0.90 & 0.87 & 0.86 & 0.85 & 0.83 \\
+Churn & 250 & 0.55 & 0.49 & 0.47 & 0.57 & 0.47 & 0.43 & 0.53 & 0.53 & 0.51 \\
+Churn & 500 & 0.69 & 0.75 & 0.85 & 0.59 & 0.80 & 0.83 & 0.69 & 0.72 & 0.87 \\
+Elec. & 250 & 0.89 & 0.89 & 0.91 & 0.89 & 0.89 & 0.90 & 0.90 & 0.89 & 0.89 \\
+Elec. & 500 & 0.91 & 0.91 & 0.91 & 0.91 & 0.86 & 0.93 & 0.89 & 0.89 & 0.91 \\
+Elec. & 1000 & 0.91 & 0.91 & 0.93 & 0.91 & 0.90 & 0.91 & 0.90 & 0.90 & 0.90 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\scriptsize
+\caption{Equalised-odds gaps per cell (A5). Margin: true $EO$ gap between the best and the next distinct model (in Law school six models tie at $EO_m=0$, so identifying a best model is trivial). $P(\mathrm{best})$: probability that the estimated smallest-gap model has the smallest true gap. $\tau$: mean Kendall $\tau$. Eff.: median over models of $\mathrm{MSE}_{\mathrm{SRS}}/\mathrm{MSE}$ of $\widehat{EO}_m$ for PATTERN and for the gap-targeted allocation.}
+\label{tab:abl-app-eo}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lrrrrrrrrrrr}
+\toprule
+ & & & \multicolumn{5}{c}{$P(\mathrm{best})$} & \multicolumn{2}{c}{$\tau$} & \multicolumn{2}{c}{Eff.} \\
+\cmidrule(lr){4-8}\cmidrule(lr){9-10}\cmidrule(lr){11-12}
+Setting & $L$ & Margin & SRS & GROUP & PAT. & Gap & Orc. & SRS & PAT. & PAT. & Gap \\
+\midrule
+Adult-sex & 250 & 0.002 & 0.19 & 0.23 & 0.29 & 0.31 & 0.26 & 0.06 & 0.24 & 1.98 & 2.05 \\
+Adult-sex & 500 & 0.002 & 0.27 & 0.25 & 0.33 & 0.45 & 0.43 & 0.20 & 0.37 & 2.12 & 2.83 \\
+Adult-sex & 1000 & 0.002 & 0.32 & 0.45 & 0.48 & 0.49 & 0.55 & 0.30 & 0.56 & 1.95 & 2.67 \\
+Adult-race & 250 & 0.025 & 0.13 & 0.13 & 0.27 & 0.31 & 0.29 & 0.03 & 0.19 & 5.70 & 5.43 \\
+Adult-race & 500 & 0.025 & 0.18 & 0.21 & 0.37 & 0.33 & 0.40 & 0.09 & 0.29 & 4.97 & 5.52 \\
+Adult-race & 1000 & 0.025 & 0.22 & 0.29 & 0.57 & 0.53 & 0.56 & 0.14 & 0.46 & 3.05 & 4.26 \\
+Bank & 250 & 0.002 & 0.11 & 0.19 & 0.20 & 0.19 & 0.21 & 0.01 & 0.13 & 2.98 & 3.88 \\
+Bank & 500 & 0.002 & 0.17 & 0.16 & 0.27 & 0.24 & 0.29 & 0.10 & 0.13 & 2.73 & 5.05 \\
+Bank & 1000 & 0.002 & 0.12 & 0.19 & 0.40 & 0.34 & 0.39 & 0.11 & 0.29 & 3.00 & 5.84 \\
+Credit & 250 & 0.000 & 0.15 & 0.16 & 0.11 & 0.16 & 0.17 & 0.05 & 0.23 & 0.86 & 1.36 \\
+Credit & 500 & 0.000 & 0.16 & 0.16 & 0.13 & 0.15 & 0.18 & 0.07 & 0.22 & 1.36 & 1.54 \\
+Credit & 1000 & 0.000 & 0.10 & 0.15 & 0.13 & 0.10 & 0.10 & 0.09 & 0.23 & 1.93 & 2.38 \\
+Law & 250 & 0.002 & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & 0.87 & 0.99 & 37.64 & 7.74 \\
+Law & 500 & 0.002 & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & 0.90 & 1.00 & 88.43 & 10.19 \\
+Law & 1000 & 0.002 & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & 0.94 & 1.00 & 208.35 & 9.61 \\
+MAGIC & 250 & 0.008 & 0.17 & 0.17 & 0.39 & 0.34 & 0.33 & 0.40 & 0.48 & 0.92 & 1.38 \\
+MAGIC & 500 & 0.008 & 0.29 & 0.35 & 0.56 & 0.55 & 0.65 & 0.49 & 0.58 & 0.95 & 1.46 \\
+MAGIC & 1000 & 0.008 & 0.57 & 0.43 & 0.76 & 0.69 & 0.75 & 0.60 & 0.70 & 0.81 & 1.61 \\
+EEG & 250 & 0.039 & 1.00 & 1.00 & 0.99 & 0.99 & 0.97 & 0.64 & 0.68 & 1.21 & 1.69 \\
+EEG & 500 & 0.039 & 0.98 & 1.00 & 1.00 & 1.00 & 1.00 & 0.74 & 0.77 & 1.47 & 1.56 \\
+EEG & 1000 & 0.039 & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & 0.80 & 0.85 & 1.33 & 1.25 \\
+Phoneme & 250 & 0.027 & 0.28 & 0.39 & 0.46 & 0.34 & 0.44 & 0.45 & 0.50 & 1.42 & 1.45 \\
+Phoneme & 500 & 0.027 & 0.47 & 0.45 & 0.51 & 0.59 & 0.55 & 0.53 & 0.60 & 0.99 & 2.16 \\
+Spambase & 250 & 0.027 & 0.31 & 0.34 & 0.76 & 0.67 & 0.71 & 0.35 & 0.73 & 1.83 & 2.23 \\
+Churn & 250 & 0.002 & 0.17 & 0.15 & 0.29 & 0.23 & 0.28 & 0.04 & 0.06 & 3.08 & 2.95 \\
+Churn & 500 & 0.002 & 0.17 & 0.22 & 0.45 & 0.51 & 0.39 & 0.06 & 0.19 & 2.71 & 3.30 \\
+Elec. & 250 & 0.007 & 0.35 & 0.33 & 0.35 & 0.41 & 0.35 & 0.62 & 0.69 & 0.70 & 1.12 \\
+Elec. & 500 & 0.007 & 0.46 & 0.47 & 0.49 & 0.47 & 0.54 & 0.77 & 0.77 & 0.53 & 1.13 \\
+Elec. & 1000 & 0.007 & 0.57 & 0.57 & 0.59 & 0.60 & 0.65 & 0.83 & 0.89 & 0.51 & 1.48 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\scriptsize
+\caption{Model subsets (A3) at $L=250$: for each of the nine random subsets (three of each size $M$), the share of the pool on which the subset's models do not all agree and the median-over-targets efficiency of PATTERN relative to SRS, written as share/efficiency. Model indices: 0 logistic regression, 1 strongly regularised logistic regression, 2 tree of depth 3, 3 tree of depth 12, 4 random forest, 5 histogram gradient boosting, 6 25-NN, 7 Gaussian naive Bayes, 8 MLP; --: all models agree everywhere (dropped); $10^4$: clipped.}
+\label{tab:abl-app-models}
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{lccccccccc}
+\toprule
+ & \multicolumn{3}{c}{$M=2$} & \multicolumn{3}{c}{$M=3$} & \multicolumn{3}{c}{$M=5$} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}\cmidrule(lr){8-10}
+Setting & \{6,8\} & \{7,8\} & \{2,7\} & \{0,5,7\} & \{2,6,7\} & \{3,4,5\} & \{0,2,5,7,8\} & \{3,5,6,7,8\} & \{0,2,3,4,5\} \\
+\midrule
+Adult-sex & 0.06/10.8 & 0.40/2.7 & 0.46/3.4 & 0.46/3.3 & 0.48/3.0 & 0.08/11.8 & 0.49/3.2 & 0.49/3.1 & 0.12/6.2 \\
+Adult-race & 0.06/34.5 & 0.41/3.6 & 0.46/5.1 & 0.45/4.4 & 0.48/4.1 & 0.08/15.0 & 0.49/5.8 & 0.49/4.5 & 0.12/10.8 \\
+Bank & 0.07/7.0 & 0.12/10.9 & 0.12/5.9 & 0.13/9.4 & 0.14/6.1 & 0.07/14.7 & 0.16/8.4 & 0.17/7.4 & 0.09/11.1 \\
+Credit & 0.04/23.3 & 0.47/1.3 & 0.48/1.5 & 0.52/3.0 & 0.50/3.5 & 0.09/10.2 & 0.53/3.7 & 0.54/3.0 & 0.12/7.0 \\
+Law & 0.06/343 & 0.17/45.8 & 0.17/35.8 & 0.17/$10^4$ & 0.19/13.0 & -- & 0.17/$10^4$ & 0.19/30.9 & -- \\
+MAGIC & 0.10/6.7 & 0.22/4.1 & 0.24/2.6 & 0.29/2.9 & 0.28/3.3 & 0.11/9.4 & 0.36/2.7 & 0.31/3.0 & 0.29/3.0 \\
+EEG & 0.09/16.6 & 0.44/1.7 & 0.47/1.5 & 0.55/2.2 & 0.61/2.1 & 0.18/5.8 & 0.69/1.7 & 0.56/2.6 & 0.56/1.9 \\
+Phoneme & 0.07/23.7 & 0.13/12.2 & 0.15/9.1 & 0.25/4.1 & 0.23/4.4 & 0.15/10.8 & 0.31/3.2 & 0.31/3.1 & 0.34/3.2 \\
+Spambase & 0.09/11.9 & 0.17/6.1 & 0.22/7.0 & 0.20/11.8 & 0.28/6.7 & 0.09/12.8 & 0.26/7.7 & 0.28/7.1 & 0.15/6.5 \\
+Churn & 0.10/7.8 & 0.11/12.9 & 0.07/114 & 0.15/9.7 & 0.08/54.7 & 0.06/1432 & 0.17/8.4 & 0.18/7.5 & 0.16/9.3 \\
+Elec. & 0.10/8.5 & 0.15/4.5 & 0.12/4.7 & 0.21/4.4 & 0.21/3.5 & 0.16/6.2 & 0.25/3.5 & 0.30/2.6 & 0.25/3.4 \\
+\bottomrule
+\end{tabular}
+\end{table}

@@ -281,7 +281,10 @@ def part_c(R, rng_master):
     seed = int(rng_master.integers(1 << 30)); rng = np.random.default_rng(seed)
     q = np.array([[0.70, 0.50], [0.60, 0.60], [0.55, 0.45], [0.50, 0.65], [0.40, 0.55]])
     pred, p, g, y = make_pool(0.05, 5, q, rng)
-    proxies = {"oracle": y.astype(float), "uninformative": np.full(len(y), y.mean()), "inverted": 1 - p}
+    K = pred.sum(1)
+    proxies = {"oracle": y.astype(float), "uninformative": np.full(len(y), y.mean()), "inverted": 1 - p,
+               # adversarial: claims that disputed instances are almost surely negative, agreed ones a coin flip
+               "adversarial": np.where((K == 0) | (K == pred.shape[1]), 0.5, 0.001)}
     est, Z, truth, sp, designs = syn_setup("proxy", pred, p, g, y, proxies=proxies)
     L = 1000; ids, Nh, Sh2 = strat_var(Z, sp)
     S2 = Z.var(0, ddof=1); w = 1 / S2
@@ -295,21 +298,19 @@ def part_c(R, rng_master):
     out = dict(N=len(y), L=L, R=R, seed=seed, arms={})
     phi_or = phi(designs["oracle"][3])
     mse_or = mse_eff(th["srs"], th["oracle"], truth)[2]
-    for name in ("pattern", "oracle", "uninformative", "inverted", "proportional"):
+    for name in ("pattern", "oracle", "uninformative", "inverted", "adversarial", "proportional"):
         nh = designs[name][3]
         eff_o, _, mse_m = mse_eff(th["srs"], th[name], truth)
-        a = np.sqrt(np.maximum(nh, 1e-12)) / Nh                                   # implied A_h (n_h ~ N_h a_h)
         out["arms"][name] = dict(
             loss_pred=phi(nh) / phi_or,                                           # weighted variance relative to oracle
             loss_obs=float((w * mse_m).sum() / (w * mse_or).sum()),
             eff_obs_median=float(np.median(eff_o)), eff_lin_median=float(np.median(eff_lin(Z, sp, nh, L)[0])),
             eff_obs_harm=float(len(eff_o) / np.sum(1 / eff_o)),
             eff_lin_harm=float(len(eff_o) / np.sum(1 / eff_lin(Z, sp, nh, L)[0])),
+            eff_obs_min=float(eff_o.min()), share_worse_than_srs=float(np.mean(eff_o < 1)),
+            kantorovich=float(((nh / Nh / B).max() + (nh / Nh / B).min()) ** 2 / (4 * (nh / Nh / B).max() * (nh / Nh / B).min())),
             nh=nh.tolist())
         print("proxy", name, {k: (round(v, 3) if isinstance(v, float) else None) for k, v in out["arms"][name].items()}, flush=True)
-    # Kantorovich bound for the default proxy, ratio a_h / b_h over strata (no-fpc version of the loss)
-    nh = designs["pattern"][3]; x = (nh / Nh) / B
-    out["kantorovich_bound_default"] = float((x.max() + x.min()) ** 2 / (4 * x.max() * x.min()))
     out["Nh"] = Nh.tolist(); out["A_true"] = B.tolist()
     return out
 

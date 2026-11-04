@@ -1,1 +1,143 @@
-% ablations (to be written)
+\section{Ablations and robustness}
+\label{sec:ablations}
+
+This section varies one ingredient of the PATTERN design at a time and asks two questions: does the estimator remain valid, and how much efficiency is gained or lost relative to the default? The default is the design of the main study: strata $(G_i,K_i)$ with strata smaller than 50 merged within group, weighted generalised Neyman allocation \citep{neyman1934} computed with the ensemble-mean proxy $\pi_i$, a floor of 10 labels per stratum, and 95\% Wald intervals from the linearisation variance. All results are from \texttt{experiments/label\_ablations.py} (helpers in \texttt{tcs/labeling\_variants.py}) and are stored in \texttt{results/label\_ablations.json}.
+
+\paragraph{Protocol.} We use the eleven cached pools and budgets $L\in\{250,500,1000\}$ with $L\le N/4$, which gives 29 (setting, budget) cells; $R=150$ replications per cell and design. With $M=9$ models there are 108 comparison targets ($\theta^{TPR}_{mj},\theta^{FPR}_{mj},\theta^{ERR}_{mj}$ for 36 pairs). Efficiency is the per-target ratio $\mathrm{MSE}_{\mathrm{SRS}}/\mathrm{MSE}_{\mathrm{design}}$ computed on the replications in which both estimates are defined, summarised by its median over targets and then by its median over cells; per-target ratios are clipped to $[10^{-4},10^{4}]$ because some designs make a target exact. ``Relative to default'' is the median over targets of $\mathrm{MSE}_{\mathrm{PATTERN}}/\mathrm{MSE}_{\mathrm{variant}}$, so values above one favour the variant. Coverage is reported as the mean over targets and as the worst target. With $R=150$ the Monte Carlo standard error of a single coverage is about 0.018, and the minimum over 108 independent targets that all cover exactly 95\% has mean 0.900 (5\% quantile 0.88) in a simulation stored with the results. A worst-target coverage near 0.90 is therefore consistent with nominal behaviour; values well below 0.88 are not. A design that uses more strata than the budget can feed at 10 labels each gets a smaller floor ($\lfloor 0.8L/H\rfloor$, at least 2). Undefined estimates (a denominator total estimated as zero) occurred in at most 0.7\% of replications for any design.
+
+\subsection{Stratifier and proxy (A1, A2)}
+
+Table~\ref{tab:abl-design} compares four alternative stratifiers and eight alternative allocation proxies; per-cell values are in Table~\ref{tab:abl-app-eff} of the appendix. The binary stratifier (group $\times$ unanimous/not) keeps 71\% of the default's precision (median), and the joint prediction pattern of the three models agreeing most often with the thresholded ensemble mean keeps only 37\%. That stratifier isolates disagreement among three models, but most of the 36 pairs involve the other six models. Refining the default by splitting each $(G,K)$ cell at the median of $\pi$ (\textsc{K$\times$proxy-2}) is a tie: median relative efficiency 1.00, better in 15 of 29 cells, 0.98 at $L=250$ and 1.05 at $L=1000$. Tertile bins do better only at $L=1000$ (1.02) and lose at $L=500$ (0.89), because the extra strata eat the budget through the per-stratum floor. The count $K_i$ is therefore the part of the stratifier that matters; within-$K$ proxy bins add little.
+
+The allocation is remarkably insensitive to the proxy. Replacing $\pi_i$ by a single model's probabilities (logistic regression or Gaussian naive Bayes), by the constant 0.5, by $\pi$ shuffled within group, by logit noise with standard deviation 2, or even by the reversed proxy $1-\pi_i$ changes the median efficiency by at most 4\% at any budget, and every variant beats the default in about a quarter to a half of the cells. The allocation computed with the true labels (ORACLE-ALLOC) is only 1\% better in the median. This is consistent with the structure of the estimands. The influence values $z_i$ vary within a stratum mainly through the differences $\hat y_{mi}-\hat y_{ji}$, which are known without labels, so any proxy that is not degenerate puts labels where models disagree. What does matter is the Neyman step itself: proportional allocation over the same strata keeps only 52\% of the default's precision. Coverage is unaffected by the proxy in all but one cell (mean coverage 0.941--0.947 for every proxy). The exception is Churn at $L=500$, where the constant and naive Bayes proxies label the small disagreement strata exhaustively. This makes many $\theta^{ERR}$ targets exact (efficiency over 1000 relative to SRS), but it leaves the large unanimous strata with only the floor of 10 labels, and for 36--37\% of (replication, target) pairs the estimated standard error is exactly zero. Mean coverage in that cell falls to 0.78--0.80. Validity is preserved in expectation (the totals remain unbiased whatever the proxy), but very aggressive allocations amplify the degenerate-variance problem studied in A4.
+
+\begin{table}[t]
+\centering\small
+\caption{Stratifier (A1) and proxy (A2) ablations. Efficiency vs SRS: median over cells of the median over targets of $\mathrm{MSE}_{\mathrm{SRS}}/\mathrm{MSE}$. Rel.: median over all 29 cells of the median-over-targets $\mathrm{MSE}_{\mathrm{PATTERN}}/\mathrm{MSE}_{\mathrm{variant}}$; Win: share of cells with Rel.\ $>1$. Coverage: mean over cells of the mean over targets (mean) and of the worst target (worst), nominal 0.95. Source: \texttt{results/label\_ablations.json}.}
+\label{tab:abl-design}
+\begin{tabular}{lccccccc}
+\toprule
+ & \multicolumn{3}{c}{Efficiency vs SRS} & & & \multicolumn{2}{c}{Coverage} \\
+\cmidrule(lr){2-4}\cmidrule(lr){7-8}
+Variant & $L=250$ & 500 & 1000 & Rel. & Win & mean & worst \\
+\midrule
+PATTERN (default) & 3.63 & 3.93 & 4.34 & 1.00 & -- & 0.947 & 0.858 \\
+\addlinespace
+\multicolumn{8}{l}{\emph{A1: stratifier (ensemble-mean proxy)}}\\
+Group $\times$ agree/disagree & 2.44 & 2.61 & 2.60 & 0.71 & 0.00 & 0.949 & 0.832 \\
+Group $\times$ pattern of 3 models & 1.40 & 1.51 & 1.61 & 0.37 & 0.00 & 0.940 & 0.759 \\
+Group $\times K\times$ 2 proxy bins & 3.77 & 3.68 & 4.47 & 1.00 & 0.52 & 0.946 & 0.856 \\
+Group $\times K\times$ 3 proxy bins & 3.25 & 3.63 & 4.55 & 0.97 & 0.41 & 0.948 & 0.863 \\
+\addlinespace
+\multicolumn{8}{l}{\emph{A2: allocation proxy (default strata)}}\\
+Single model (logistic) & 3.69 & 3.82 & 4.22 & 0.99 & 0.41 & 0.946 & 0.862 \\
+Single model (naive Bayes) & 3.67 & 3.97 & 4.34 & 1.01 & 0.52 & 0.941 & 0.854 \\
+Constant 0.5 & 3.71 & 3.96 & 4.31 & 0.98 & 0.45 & 0.941 & 0.849 \\
+$\pi$ shuffled within group & 3.40 & 3.83 & 4.10 & 0.98 & 0.38 & 0.944 & 0.852 \\
+$\pi$ with logit noise (sd 2) & 3.20 & 3.98 & 4.11 & 0.98 & 0.24 & 0.945 & 0.858 \\
+Reversed, $1-\pi$ & 3.55 & 3.82 & 4.50 & 1.00 & 0.48 & 0.947 & 0.857 \\
+True labels (ORACLE-ALLOC) & 3.79 & 3.80 & 4.30 & 1.01 & 0.52 & 0.947 & 0.865 \\
+No proxy (proportional) & 2.38 & 2.06 & 1.96 & 0.52 & 0.03 & 0.945 & 0.818 \\
+\addlinespace
+\multicolumn{8}{l}{\emph{References}}\\
+GROUP & 1.04 & 1.01 & 1.06 & 0.26 & 0.00 & 0.941 & 0.723 \\
+PATTERN, gap-targeted allocation (A5) & 2.85 & 2.78 & 2.91 & 0.74 & 0.00 & 0.944 & 0.836 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Number of compared models (A3)}
+
+For $M\in\{2,3,5\}$ we drew three random subsets of the nine models per size (fixed seed), rebuilt strata, proxy and estimands from the subset only, and compared PATTERN with SRS on the $3\binom{M}{2}$ comparison targets. Subsets in which all models agree on every instance (two Law school subsets) are dropped, since every target is then exactly zero. Table~\ref{tab:abl-models} and Figure~\ref{fig:abl-models} show that the gain is governed by the share of the pool on which the compared models disagree, not by $M$ as such. Across configurations the Spearman correlation between log efficiency and the disagreement share is $-0.81$, $-0.79$ and $-0.78$ at $L=250$, 500 and 1000, and within settings at $L=250$ it is negative in all eleven settings (median $-0.50$). At $L=250$, comparing two models that disagree on 4--10\% of the pool gives efficiencies between 7 and 343. When the compared models disagree on 40--80\% of instances (EEG, Credit card default, Adult) the gain falls to 1.3--6. Smaller $M$ helps only because fewer models disagree less often. The points at the clipping line ($10^4$) are Law school subsets in which some compared models predict identically within a group, so some targets are estimated exactly by PATTERN but not by SRS. Coverage is not affected by $M$ (mean 0.942--0.948). The worst-target figures in Table~\ref{tab:abl-models} cannot be compared across rows, because the number of targets grows from 3 to 108.
+
+\begin{table}[t]
+\centering\small
+\caption{Number of compared models (A3). Configs: (setting, budget, subset) combinations; disagreement: median share of the pool on which not all $M$ models agree. Efficiency: median over configurations of the median-over-targets $\mathrm{MSE}_{\mathrm{SRS}}/\mathrm{MSE}_{\mathrm{PATTERN}}$. Coverage: PATTERN, Wald.}
+\label{tab:abl-models}
+\begin{tabular}{rccccccc}
+\toprule
+ & & & \multicolumn{3}{c}{Efficiency vs SRS} & \multicolumn{2}{c}{Coverage} \\
+\cmidrule(lr){4-6}\cmidrule(lr){7-8}
+$M$ & Configs & Disagreement & $L=250$ & 500 & 1000 & mean & worst \\
+\midrule
+2 & 87 & 0.133 & 7.04 & 11.21 & 7.84 & 0.942 & 0.915 \\
+3 & 84 & 0.193 & 6.14 & 7.47 & 4.93 & 0.944 & 0.903 \\
+5 & 84 & 0.294 & 4.10 & 4.92 & 4.68 & 0.948 & 0.898 \\
+9 & 29 & 0.396 & 3.63 & 3.93 & 4.34 & 0.947 & 0.858 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/abl_models_disagreement.pdf}
+\caption{Efficiency of PATTERN relative to SRS (median over targets) against the share of the pool on which the compared models do not all agree, for random subsets of $M$ models in every setting (A3). Both axes are logarithmic; the dotted line marks parity and the dashed line the clipping value $10^4$.}
+\label{fig:abl-models}
+\end{figure}
+
+\subsection{Small-sample inference (A4)}
+
+The main study reports worst-target coverage down to about 0.5 at $L=250$ in Churn and Law school. The same pattern appears here: worst-target Wald coverage 0.473 for Churn and 0.633 for Law school at $L=250$, and 0.753 for Adult-sex (Table~\ref{tab:abl-app-cov}). In Churn, Law school, Credit card default and Phoneme the worst target has a true value close to zero ($|\theta|\le 0.002$). The mechanism is a stratum in which the few sampled units show no variation in $z_i$, typically because no sampled positive (or negative) falls where the two models disagree. The stratum's sample variance is then exactly zero, the interval collapses, and it misses a small non-zero truth. Neither of the standard small-sample corrections addresses this. A $t$ quantile with \citet{satterthwaite1946} degrees of freedom widens intervals by about 1\% and leaves the worst cells unchanged. The stratified bootstrap percentile interval \citep{efron1979}, which resamples within strata with $B=999$ and so ignores the finite-population correction \citep[a rescaled version is discussed by][]{raowu1988}, is also unchanged in the worst cells and is worse than Wald in Credit card default and MAGIC at $L=250$ (Figure~\ref{fig:abl-coverage}). A grid over the label floor ($5,10,20$) and the collapse threshold ($25,50,100$) does not help either. No combination raises the minimum over cells above 0.573 at $L=250$, and the threshold 25 makes the worst Law school target much worse at $L\ge 500$ (0.26--0.33 at $L=500$, about 0.66 at $L=1000$; Table~\ref{tab:abl-app-grid}). The grid does not move efficiency much (median relative efficiency 0.92--1.05).
+
+We therefore also evaluated a label-free remedy that targets the mechanism directly. We call it the proxy variance floor. In a stratum whose sample variance $s^2_{z,h}$ of the influence values is exactly zero, we replace it by $\tilde S^2_{z,h}=\nabla f(\hat T)^\top\tilde\Sigma_h\nabla f(\hat T)$, where $\tilde\Sigma_h$ is the within-stratum covariance of $t_i(Y_i)$ when the $Y_i$ are independent Bernoulli$(\pi_i)$, the same quantity the allocation already uses. Strata with $s^2_{z,h}>0$ are untouched, and the point estimate does not change. The floor applies only on an event whose probability vanishes as $n_h$ grows whenever the true within-stratum variance is positive, so the asymptotic theory is unaffected. Table~\ref{tab:abl-inference} shows that it raises the mean worst-target coverage at $L=250$ from 0.807 to 0.915 and the minimum over cells from 0.473 to 0.893, at an average interval-width cost of 21\% (median 13\%). At $L\ge 500$ it raises the minimum from 0.800 to 0.860. Mean coverage moves from 0.945--0.951 to 0.958--0.965, so the intervals become mildly conservative on average. They are clearly conservative in Law school (mean coverage 0.99, widths 1.8--2.4 times Wald), where most strata are unanimous and the proxy overstates the label variance there. The floor gives similar coverage on the binary, \textsc{K$\times$proxy-2} and grid designs (Table~\ref{tab:abl-inference}), and it also repairs part of the much worse SRS coverage (minimum 0.140 to 0.567). We designed the floor after seeing the failure on these pools, so these numbers are in-sample. A confirmation on independent data or in the simulation design would be needed before it is adopted.
+
+\begin{table}[t]
+\centering\small
+\caption{Small-sample inference (A4), default design unless stated. Mean: mean over cells and targets; worst: mean over cells of the worst-target coverage; min: minimum over cells of the worst-target coverage. Small pools: Churn, Spambase, Phoneme, Law school. Width: average interval width relative to Wald over all cells.}
+\label{tab:abl-inference}
+\begin{tabular}{lcccccccc}
+\toprule
+ & \multicolumn{3}{c}{$L=250$, all} & \multicolumn{2}{c}{$L=250$, small} & \multicolumn{2}{c}{$L\ge 500$} & \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-6}\cmidrule(lr){7-8}
+Method & mean & worst & min & worst & min & worst & min & Width \\
+\midrule
+Wald (default) & 0.945 & 0.807 & 0.473 & 0.728 & 0.473 & 0.890 & 0.800 & 1.00 \\
+$t$, Satterthwaite df & 0.948 & 0.812 & 0.473 & 0.728 & 0.473 & 0.891 & 0.800 & 1.01 \\
+Stratified bootstrap & 0.953 & 0.801 & 0.473 & 0.753 & 0.473 & 0.919 & 0.800 & -- \\
+Wald + proxy floor & 0.965 & 0.915 & 0.893 & 0.923 & 0.907 & 0.906 & 0.860 & 1.19 \\
+\addlinespace
+\multicolumn{9}{l}{\emph{Proxy floor on other designs}}\\
+Group $\times$ agree/disagree & 0.957 & 0.899 & 0.880 & 0.900 & 0.880 & 0.907 & 0.873 & 1.04 \\
+Group $\times K\times$ 2 proxy bins & 0.968 & 0.921 & 0.887 & 0.920 & 0.887 & 0.906 & 0.853 & 1.23 \\
+min $n_h$ 20, collapse 100 & 0.962 & 0.912 & 0.893 & 0.915 & 0.893 & 0.901 & 0.840 & 1.15 \\
+\addlinespace
+\multicolumn{9}{l}{\emph{SRS for reference}}\\
+SRS, Wald & 0.922 & 0.576 & 0.140 & 0.505 & 0.140 & 0.735 & 0.260 & 1.00 \\
+SRS, Wald + proxy floor & 0.936 & 0.788 & 0.567 & 0.787 & 0.567 & 0.841 & 0.593 & 1.01 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/abl_coverage_L250.pdf}
+\caption{Worst-target coverage of the default design at $L=250$ in each setting under four interval methods (A4). Dashed line: nominal 0.95; dotted line: expected minimum over 108 targets of 150-replicate coverage if every target covered exactly 95\% (0.90).}
+\label{fig:abl-coverage}
+\end{figure}
+
+\subsection{The equalised-odds gap (A5)}
+
+The estimands of the method are smooth comparison contrasts. Practitioners also look at each model's equalised-odds gap $EO_m=\max(|\Delta^{TPR}_m|,|\Delta^{FPR}_m|)$ \citep{hardt2016} and rank models by it. We computed the plug-in $\widehat{EO}_m=f_{EO}(\hat T)$ from the same samples and recorded its RMSE, the probability that the model with the smallest estimated gap is a model with the smallest true gap, and Kendall's $\tau$ \citep{kendall1938} between estimated and true gaps. We also included a variant of PATTERN whose allocation targets the $2M$ per-model gaps $\Delta^{TPR}_m,\Delta^{FPR}_m$ instead of the comparison contrasts (``gap-targeted''). Table~\ref{tab:abl-eo} summarises the results; per-cell values are in Table~\ref{tab:abl-app-eo}.
+
+The plug-in $\widehat{EO}_m$ is biased upwards, as a maximum of absolute values must be (mean bias over cells and models 0.042 under SRS and 0.026 under PATTERN). PATTERN is more accurate than SRS in the median (efficiency 1.80--1.94) and identifies the best model more often (mean 0.46 vs 0.35 at $L=250$; 0.40 vs 0.26 when Law school and EEG are excluded). Those two settings are easy: in Law school six models share the true minimum $EO_m=0$, and in EEG the best model leads by 0.039. Ranking agreement improves from $\tau=0.32$--0.48 to 0.45--0.62. The gain is not uniform, however. In 8 of 29 cells (all MAGIC and Electricity cells, Credit card default at $L=250$, Phoneme at $L=500$) PATTERN estimates $EO_m$ less precisely than SRS, by a factor down to 0.51. The default allocation spends labels on disagreement, whereas the per-model gap of a single model depends on all of its positive predictions. The gap-targeted allocation is never worse than SRS for $EO_m$ (median efficiency 2.05--2.53, more than the default), but it pays for this on the comparison contrasts, keeping only 74\% of the default's precision (Table~\ref{tab:abl-design}). Identifying the fairest model remains hard in every design when the true margin between the two best models is 0.002 or less (Adult-sex, Bank, Credit card default, Churn; Law school also has a margin of 0.002 but six models tie at zero): there the probability of picking the right model is at most 0.55 even at the largest budget.
+
+\begin{table}[t]
+\centering\small
+\caption{Equalised-odds gap (A5). Eff.: median over cells of the median over models of $\mathrm{MSE}_{\mathrm{SRS}}/\mathrm{MSE}$ for $\widehat{EO}_m$; $P$: mean probability that the estimated smallest-gap model has the smallest true gap; $\tau$: mean Kendall $\tau$ between estimated and true $EO_m$.}
+\label{tab:abl-eo}
+\begin{tabular}{lccccccccc}
+\toprule
+ & \multicolumn{3}{c}{$L=250$} & \multicolumn{3}{c}{$L=500$} & \multicolumn{3}{c}{$L=1000$} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}\cmidrule(lr){8-10}
+Design & Eff. & $P$ & $\tau$ & Eff. & $P$ & $\tau$ & Eff. & $P$ & $\tau$ \\
+\midrule
+SRS & 1.00 & 0.35 & 0.32 & 1.00 & 0.42 & 0.39 & 1.00 & 0.49 & 0.48 \\
+GROUP & 1.07 & 0.37 & 0.34 & 1.10 & 0.43 & 0.42 & 1.63 & 0.51 & 0.52 \\
+PATTERN & 1.83 & 0.46 & 0.45 & 1.80 & 0.51 & 0.49 & 1.94 & 0.62 & 0.62 \\
+PATTERN, gap-targeted & 2.05 & 0.45 & 0.43 & 2.49 & 0.53 & 0.52 & 2.53 & 0.59 & 0.62 \\
+ORACLE-ALLOC & 2.25 & 0.46 & 0.43 & 1.64 & 0.54 & 0.51 & 2.12 & 0.62 & 0.62 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Summary.} The design is robust where robustness was in doubt and fragile where it was expected to be robust. Efficiency hardly depends on the quality of the proxy: a constant, a corrupted or even a reversed proxy loses at most a few per cent, and allocating with the true labels gains about 1\%. It depends mainly on the $K$-count stratifier, on Neyman rather than proportional allocation, and on how rarely the compared models disagree. None of the variants beat the default stratifier or proxy consistently, so we keep them. The weak point is small-sample inference for near-zero contrasts. Neither $t$ quantiles nor the bootstrap nor a different minimum stratum size fixes it. A label-free proxy variance floor for strata with zero sample variance does fix it on these pools, at a modest cost in width outside Law school. Finally, if the equalised-odds gaps themselves are of primary interest, an allocation that targets the per-model gaps is preferable to the default.

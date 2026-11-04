@@ -1,1 +1,356 @@
-% theory (to be written)
+% ---------------------------------------------------------------------------------------------
+% Theory. Notation as in docs/notation_v2.md. Full proofs: sections/appendix_proofs.tex.
+% Bibliography entries: refs_theory.bib.
+% ---------------------------------------------------------------------------------------------
+\section{Theory}\label{sec:theory}
+
+This section collects the statistical properties of the design. We work in the design-based
+framework of survey sampling \citep{cochran1977,sarndal1992}: the pool $U$, the predictions
+$\hat y_{mi}$, the probabilities $\hat p_{mi}$, the groups $G_i$ and the labels $Y_i$ are fixed
+numbers, and the only randomness is the selection of the labelled sample. Two facts make this
+framework convenient. First, the strata and the allocation are computed from
+$(\hat y_{mi},\hat p_{mi},G_i)_{i\in U}$ alone, so they are fixed before any label is seen.
+Second, no model for $Y$ given the predictions is needed for validity; the proxy $\pi_i$ enters
+only through the allocation, and Section~\ref{sec:theory-proxy} shows that a wrong proxy costs
+efficiency but not validity. Section~\ref{sec:theory-asym} gives unbiasedness, consistency and
+asymptotic normality; Section~\ref{sec:theory-structure} the structure of the influence values
+that drives the gains; Section~\ref{sec:theory-alloc} the allocation; Section~\ref{sec:theory-deff}
+the design effect as a function of the disagreement rate. Proofs are in
+Appendix~\ref{sec:theory-proofs}.
+
+\subsection{Set-up}\label{sec:theory-setup}
+
+Write $t_i(Y_i)=Y_iu_i+(1-Y_i)v_i\in\mathbb{R}^C$ for the vector of contributions of instance $i$
+to the totals, $T=\sum_{i\in U}t_i(Y_i)$, and $\tau=T/N$. All entries of $u_i,v_i$ lie in $\{0,1\}$,
+so $\|t_i\|_\infty\le 1$. Every comparison estimand is a smooth function of the totals,
+$\theta=f(T)$, and is scale free in the sense that $f(T)=\phi(T/N)$: the group rates are ratios of
+totals and $\theta^{ERR}_{mj}=(E_m-E_j)/N$. The function $\phi$ is infinitely differentiable on the
+set where the denominators $P_g/N$ and $Q_g/N$ are positive. The \emph{influence value} of
+instance $i$ for a scalar estimand $\theta=f(T)$ is
+\begin{equation}\label{eq:influence}
+z_i=\nabla f(T)^{\top}t_i(Y_i)=N^{-1}\nabla\phi(\tau)^{\top}t_i(Y_i).
+\end{equation}
+Strata $h=1,\dots,H$ partition $U$ into sets $U_h$ of sizes $N_h$, with $W_h=N_h/N$; $n_h$ labels
+are drawn from $U_h$ by simple random sampling without replacement, independently across strata
+(STSI). For any variable $x$ we write $\bar x_h=N_h^{-1}\sum_{U_h}x_i$,
+$S^2_{x,h}=(N_h-1)^{-1}\sum_{U_h}(x_i-\bar x_h)^2$ and $f_h=n_h/N_h$, and $\bar x_{s_h}$, $s^2_{x,h}$
+for the corresponding sample mean and sample variance. The estimators are
+\begin{equation}\label{eq:ht}
+\hat T=\sum_{h=1}^HN_h\bar t_{s_h},\qquad \hat\theta=f(\hat T),\qquad
+\hat V=\sum_{h=1}^H N_h^2\,\frac{1-f_h}{n_h}\,s^2_{\hat z,h},\quad
+\hat z_i=\nabla f(\hat T)^{\top}t_i(Y_i).
+\end{equation}
+$\hat T$ is the Horvitz--Thompson estimator \citep{horvitz1952} for the inclusion probabilities
+$n_h/N_h$, and $\hat V$ is the usual linearisation (Taylor) variance estimator
+\citep[Ch.~5]{sarndal1992}. Its population counterpart is the linearised variance
+\begin{equation}\label{eq:linvar}
+V(\theta;n)=\sum_{h=1}^HN_h^2\,\frac{1-f_h}{n_h}\,S^2_{z,h}.
+\end{equation}
+
+\subsection{Unbiasedness, consistency and asymptotic normality}\label{sec:theory-asym}
+
+Asymptotic statements refer to a sequence of pools $U_\nu$, $\nu=1,2,\dots$, with $N_\nu\to\infty$
+and a fixed number $H$ of strata; the index $\nu$ is suppressed. Let
+$r^2=\sum_hW_h^2/n_h$, which is the order of $\operatorname{Var}(\hat\tau_c)$ for a generic total.
+
+\begin{assumption}\label{prop:assumptions}
+\begin{enumerate}
+\item[(A1)] \emph{Design.} Strata and sample sizes are functions of
+$(\hat y_{mi},\hat p_{mi},G_i)_{i\in U}$ only; $2\le n_h\le N_h$; $\min_hn_h\to\infty$; and
+$f_h\le 1-\varepsilon$ for some $\varepsilon>0$ and all strata that are not fully enumerated
+(strata with $n_h=N_h$ are known exactly and contribute no variance).
+\item[(A2)] \emph{Limits.} $\tau_\nu\to\tau_\infty$, and $P_g/N\ge c$, $Q_g/N\ge c$ for some
+$c>0$, $g\in\{0,1\}$.
+\item[(A3)] \emph{Non-degeneracy.} The linearised variance \eqref{eq:linvar} of the estimand of
+interest satisfies $V(\theta;n)\ge c\,r^2$ for some $c>0$.
+\item[(A4)] \emph{Lindeberg-type condition.} For every stratum $h$, either
+$n_h(1-f_h)S^2_{z,h}N^2\to\infty$, or the stratum's share of the variance,
+$N_h^2(1-f_h)S^2_{z,h}/\{n_hV(\theta;n)\}$, tends to zero.
+\end{enumerate}
+\end{assumption}
+
+(A1) excludes the use of labels in the design. (A2) asks that each group contains a non-vanishing
+fraction of positives and negatives, so that the group rates are well defined. (A3) excludes
+estimands whose influence values are (nearly) identically zero, for instance two models that
+make identical predictions, in which case $\hat\theta=\theta=0$ trivially. (A4) is a simple
+sufficient form of the condition of \citet{hajek1960} for the central limit theorem under simple
+random sampling without replacement; because the contributions are bounded, Hájek's condition holds
+in every stratum whose scaled variance diverges, and (A4) only rules out strata that carry a
+non-vanishing share of the variance while containing a bounded effective number of observations.
+Asymptotics for stratified sampling with a fixed or growing number of strata are treated by
+\citet{bickel1984}; for the linearisation variance estimator see \citet{krewski1981}, whose regime
+(many strata, few draws per stratum) is complementary to ours (few strata, many draws per stratum).
+
+\begin{proposition}[Validity]\label{prop:validity}
+\begin{enumerate}
+\item[(a)] If $n_h\ge1$ for all $h$, then $E(\hat T)=T$ and
+$\operatorname{Cov}(\hat T)=\sum_hN_h^2(1-f_h)n_h^{-1}\Sigma_h$, with $\Sigma_h$ the population
+covariance matrix of $t_i(Y_i)$ in stratum $h$. This holds for any strata and any allocation that
+do not depend on the labels, in particular for any proxy.
+\item[(b)] Under (A1)--(A2), $\hat\theta-\theta=O_p(r)$; in particular $\hat\theta$ is consistent.
+\item[(c)] Under (A1)--(A4), $(\hat\theta-\theta)/V(\theta;n)^{1/2}\to N(0,1)$ in distribution.
+\item[(d)] Under (A1)--(A3), $\hat V/V(\theta;n)\to1$ in probability. Consequently, under
+(A1)--(A4) the Wald interval $\hat\theta\pm z_{1-\alpha/2}\hat V^{1/2}$ has asymptotic coverage
+$1-\alpha$.
+\end{enumerate}
+\end{proposition}
+
+\emph{Proof sketch.} (a) is the classical unbiasedness of the stratified expansion estimator
+\citep[Ch.~5]{cochran1977}. For (b), each coordinate of $\hat\tau-\tau$ has variance at most
+$r^2$ because the contributions are bounded; a second-order Taylor expansion of $\phi$ around
+$\tau$, valid by (A2), gives $\hat\theta-\theta=\nabla\phi(\tau)^\top(\hat\tau-\tau)+O_p(r^2)$.
+For (c), the leading term is a sum of $H$ independent stratum means; each is asymptotically
+normal by Hájek's theorem, and (A3) makes the $O_p(r^2)$ remainder negligible relative to the
+standard deviation. For (d), the stratum sample covariance matrices are consistent for $\Sigma_h$
+and $\nabla\phi(\hat\tau)\to\nabla\phi(\tau_\infty)$; (A3) turns the resulting $o_p(r^2)$ error
+into a ratio statement. $\square$
+
+The ratio $\hat\theta$ is not exactly unbiased; its bias is $O(r^2)$, which by (A3) is of smaller
+order than its standard deviation. The joint version for the vector of all comparison estimands
+follows from the Cramér--Wold device, provided (A3) and (A4) hold for every fixed linear
+combination.
+
+\subsection{Structure of the influence values}\label{sec:theory-structure}
+
+For a pair $(m,j)$ let $D_i=\hat y_{mi}-\hat y_{ji}\in\{-1,0,1\}$, and write
+$\delta_g=TPR_{mg}-TPR_{jg}$ and $\gamma_g=FPR_{mg}-FPR_{jg}$ for the group-wise components, so
+that $\theta^{TPR}_{mj}=\delta_1-\delta_0$ and $\theta^{FPR}_{mj}=\gamma_1-\gamma_0$.
+
+\begin{proposition}[Influence values]\label{prop:influence}
+For every instance $i$ with $G_i=g$,
+\begin{equation}\label{eq:infl-forms}
+z^{TPR}_i=s_g\,\frac{Y_i(D_i-\delta_g)}{P_g},\qquad
+z^{FPR}_i=s_g\,\frac{(1-Y_i)(D_i-\gamma_g)}{Q_g},\qquad
+z^{ERR}_i=\frac{D_i(1-2Y_i)}{N},
+\end{equation}
+with $s_1=1$, $s_0=-1$. The influence values of $\theta^{TPR}$ and $\theta^{FPR}$ sum to zero
+within each group. For a stratum $h$ inside group $g$, let $\pi_h=\bar Y_h$,
+$\rho_h=N_h^{-1}\sum_{U_h}|D_i|$ (the pair's disagreement rate in the stratum),
+$r_h=N_h^{-1}\sum_{U_h}Y_i|D_i|$ and $c_h=N_h^{-1}\sum_{U_h}Y_iD_i$. Then, with
+$\kappa_h=N_h/(N_h-1)$,
+\begin{align}
+S^2_{z^{TPR},h}&=\frac{\kappa_h}{P_g^2}\Big\{(r_h-c_h^2)+\delta_g^2\pi_h(1-\pi_h)
+-2\delta_g\,c_h(1-\pi_h)\Big\},\label{eq:stratvar-tpr}\\
+S^2_{z^{ERR},h}&=\frac{\kappa_h}{N^2}\Big\{\rho_h-e_h^2\Big\},\qquad
+e_h=N_h^{-1}\textstyle\sum_{U_h}D_i(1-2Y_i),\label{eq:stratvar-err}
+\end{align}
+and $S^2_{z^{FPR},h}$ is \eqref{eq:stratvar-tpr} with $Y$ replaced by $1-Y$, $P_g$ by $Q_g$ and
+$\delta_g$ by $\gamma_g$. In particular, in a stratum in which $m$ and $j$ agree on every
+instance (always the case for $K_i\in\{0,M\}$),
+\begin{equation}\label{eq:agree-var}
+S^2_{z^{TPR},h}=\kappa_h\Big(\frac{\delta_g}{P_g}\Big)^2\pi_h(1-\pi_h),\qquad
+S^2_{z^{FPR},h}=\kappa_h\Big(\frac{\gamma_g}{Q_g}\Big)^2\pi_h(1-\pi_h),\qquad
+S^2_{z^{ERR},h}=0 .
+\end{equation}
+\end{proposition}
+
+The proof is a direct calculation (Appendix~\ref{sec:theory-proofs}). Equation \eqref{eq:agree-var}
+is the structural fact behind the design. Where all models agree, the numerators of the
+comparison estimands receive nothing, and the only remaining influence is the denominator term
+$-s_g\delta_gY_i/P_g$: label variability $\pi_h(1-\pi_h)$ scaled by the square of the group-wise
+target component. Comparisons between competitive models have $|\delta_g|$ of a few hundredths, so
+these strata, which typically contain most of the pool, carry a variance that is smaller by two
+orders of magnitude than the per-instance variance in the disagreement strata, where
+\eqref{eq:stratvar-tpr} is dominated by $r_h$, the share of positives on which the pair disagrees.
+For the error difference the agreement strata carry no variance at all.
+
+\subsection{Allocation}\label{sec:theory-alloc}
+
+Let $w_t\ge0$ be weights on a finite set of targets $t$ with linearised variances
+$V_t(n)=\sum_hN_h^2(1/n_h-1/N_h)S^2_{ht}$, and let
+$A_h=(\sum_tw_tS^2_{ht})^{1/2}$. The weighted objective is
+\begin{equation}\label{eq:objective}
+\Phi(n)=\sum_tw_tV_t(n)=\sum_h\frac{N_h^2A_h^2}{n_h}-\sum_hN_hA_h^2 .
+\end{equation}
+
+\begin{proposition}[Weighted Neyman allocation]\label{prop:allocation}
+\begin{enumerate}
+\item[(a)] Over real $n_h>0$ with $\sum_hn_h=L$, $\Phi$ is minimised by
+$n_h^\ast=L\,N_hA_h/\sum_kN_kA_k$, with $\Phi(n^\ast)=(\sum_hN_hA_h)^2/L-\sum_hN_hA_h^2$.
+\item[(b)] With bounds $\ell_h\le n_h\le N_h$ ($\ell_h$ a minimum per stratum,
+$\sum_h\ell_h\le L\le N$), the minimiser is $n_h=\min\{N_h,\max(\ell_h,N_hA_h/\lambda)\}$ with
+$\lambda>0$ chosen so that $\sum_hn_h=L$.
+\item[(c)] If an integer allocation $\tilde n$ satisfies $\tilde n_h\ge n_h-1$ and
+$n_h\ge n_0>1$ for all $h$, then $\Phi_0(\tilde n)\le\{n_0/(n_0-1)\}\Phi_0(n)$, where
+$\Phi_0(n)=\sum_hN_h^2A_h^2/n_h$ is the part of $\Phi$ that depends on $n$.
+\item[(d)] Ignore finite-population corrections and compute variances with divisors $N_h$ and
+$N$. With $w_t=1/\sigma^2_t$, $\sigma^2_t$ the population variance of target $t$'s influence
+values,
+\[
+\Phi_0(n)\,L/N^2=\sum_t1/\mathrm{Eff}_t(n),\qquad \mathrm{Eff}_t=V^{SRS}_t/V_t .
+\]
+At the optimum the harmonic mean efficiency over the $|\mathcal T|$ targets equals
+$|\mathcal T|/(\sum_hW_hA_h)^2\ge1$.
+\end{enumerate}
+\end{proposition}
+
+Part (a) is Neyman's allocation \citep{neyman1934} for a weighted sum of variances; the proof is
+one application of the Cauchy--Schwarz inequality,
+$(\sum_hN_hA_h)^2=(\sum_h\{N_hA_hn_h^{-1/2}\}n_h^{1/2})^2\le\Phi_0(n)\,L$, with equality if and only
+if $n_h\propto N_hA_h$. Part (b) follows from the Karush--Kuhn--Tucker conditions of a convex
+problem; strata that would receive more than $N_h$ labels are enumerated and the remainder is
+re-allocated, which is what the iterative capping in our implementation does. Part (c) bounds the
+cost of rounding: with the minimum of 10 labels per stratum it is at most a factor $10/9$ on the
+weighted variance, and much less in practice; exact integer optimisation is possible
+\citep{wright2012} but unnecessary. Part (d) explains the default weights: with $w_t=1/S_t^2$ the
+allocation minimises the sum of inverse efficiencies over all comparison estimands, so no target is
+neglected because it happens to be measured on a small scale.
+
+In the design the $S^2_{ht}$ are unknown. They are replaced by their expectations under the
+working model $Y_i\sim\text{Bernoulli}(\pi_i)$ independently, with the gradient evaluated at the
+model-expected totals; up to terms of order $1/N_h$ this is the anticipated variance of
+\citet{isaki1982}. Proposition~\ref{prop:allocation} is then applied with these anticipated
+values $\tilde A_h$ in place of $A_h$.
+
+\subsection{Design effect and the disagreement rate}\label{sec:theory-deff}
+
+Let $\sigma^2_{ht}=(1-1/N_h)S^2_{ht}$ and $\sigma^2_t=(1-1/N)S^2_t$ be the variances with divisor
+$N_h$ and $N$. For a single target allocated by its own Neyman rule, and with $L/N\to0$, the
+efficiency relative to SRS is
+\begin{equation}\label{eq:deff-general}
+\mathrm{Eff}_t=\frac{\sigma_t^2}{(\sum_hW_h\sigma_{ht})^2}\;\ge\;1,
+\end{equation}
+because
+$\sigma_t^2=\sum_hW_h\sigma_{ht}^2+\sum_hW_h(\bar z_h-\bar z)^2\ge(\sum_hW_h\sigma_{ht})^2$; equality
+holds only if all within-stratum standard deviations are equal and the stratum means coincide.
+Combined with Proposition~\ref{prop:influence}, \eqref{eq:deff-general} gives explicit formulas.
+We state them for an idealised design in which, within each group, the strata separate the
+instances on which $m$ and $j$ disagree (set $\mathcal D_g$, share $\rho_g$ of group $g$) from
+those on which they agree (set $\mathcal A_g$). This is exactly the pattern design when $M=2$; for
+$M>2$ it describes a design stratified for the pair $(m,j)$, and is discussed below.
+Finite-population corrections are ignored ($L/N\to0$ and $n_h/N_h\to0$); they are retained in
+the exact linearised efficiency used in Section~\ref{sec:simulation}.
+
+\begin{corollary}[Design effect as a function of the disagreement rate]\label{prop:deff}
+Let $\zeta_g=N_g/N$, $p_g=P_g/N_g$, $r_g=N_g^{-1}\sum_{G_i=g}Y_i|D_i|$ (positives on which the pair
+disagrees, as a share of the group), $\pi_{\mathcal D,g}=r_g/\rho_g$,
+$\pi_{\mathcal A,g}=(p_g-r_g)/(1-\rho_g)$ and $a_g=c_{\mathcal D,g}/\pi_{\mathcal D,g}$, where
+$c_{\mathcal D,g}=\delta_gp_g/\rho_g$ is the mean of $Y_iD_i$ over $\mathcal D_g$; $a_g\in[-1,1]$
+is the net share of disputed positives on which $m$ is right and $j$ wrong.
+\begin{enumerate}
+\item[(a)] For $\theta^{TPR}_{mj}$, with own-target Neyman allocation on the strata
+$\{\mathcal A_g,\mathcal D_g\}_{g=0,1}$ and $L/N\to0$,
+\begin{equation}\label{eq:deff-tpr}
+\mathrm{Eff}^{TPR}=\frac{\sum_g(r_g-\delta_g^2p_g)/(\zeta_gp_g^2)}
+{\Big[\sum_g\big\{\rho_g\sigma_{\mathcal D,g}+(1-\rho_g)|\delta_g|
+\sqrt{\pi_{\mathcal A,g}(1-\pi_{\mathcal A,g})}\big\}/p_g\Big]^2},
+\end{equation}
+$\sigma^2_{\mathcal D,g}=\pi_{\mathcal D,g}-c_{\mathcal D,g}^2+\delta_g^2\pi_{\mathcal D,g}(1-\pi_{\mathcal D,g})
+-2\delta_gc_{\mathcal D,g}(1-\pi_{\mathcal D,g})$. The same holds for $\theta^{FPR}_{mj}$ with $Y$
+replaced by $1-Y$. For $\theta^{ERR}_{mj}$, with $\rho=\sum_g\zeta_g\rho_g$ and $\mu_g$ the mean of
+$D_i(1-2Y_i)$ over $\mathcal D_g$,
+\begin{equation}\label{eq:deff-err}
+\mathrm{Eff}^{ERR}=\frac{\rho-(\theta^{ERR}_{mj})^2}{\big(\sum_g\zeta_g\rho_g\sqrt{1-\mu_g^2}\big)^2}.
+\end{equation}
+Any further split of $\mathcal A_g$ or $\mathcal D_g$ (for example $\mathcal A_g$ into $K=0$ and
+$K=M$) can only increase \eqref{eq:deff-tpr} and \eqref{eq:deff-err}.
+\item[(b)] \emph{Small targets.} If $\delta_g=0$ and $\rho_g=\rho$ for both groups, then
+\begin{equation}\label{eq:deff-small}
+\mathrm{Eff}^{TPR}=\frac1\rho\,\Gamma,\qquad
+\Gamma=\frac{\sum_gr_g/(\zeta_gp_g^2)}{(\sum_g\sqrt{r_g}/p_g)^2}\ge1,
+\end{equation}
+where $\Gamma$ is the efficiency of Neyman allocation between the two groups alone; and if
+$\theta^{ERR}_{mj}=0=\mu_g$, then $\mathrm{Eff}^{ERR}=1/\rho$.
+\item[(c)] \emph{Target size.} For one group (drop $g$), with $\pi_{\mathcal D}$,
+$\pi_{\mathcal A}$ and $a$ held fixed, as $\rho\to0$,
+\begin{equation}\label{eq:deff-lambda}
+\mathrm{Eff}^{TPR}=\frac{1+O(\rho)}{\rho\,(\beta+\lambda)^2},\qquad
+\beta=\sqrt{1-a^2\pi_{\mathcal D}},\qquad
+\lambda=\frac{|a|\sqrt{\pi_{\mathcal D}\,\pi_{\mathcal A}(1-\pi_{\mathcal A})}}{p}.
+\end{equation}
+Since $\delta=\rho\pi_{\mathcal D}a/p$, the target is proportional to $\rho$ and to $a$. A more
+one-sided disagreement set (larger $|a|$, hence a larger target) changes the gain by the bounded
+factor $(\beta+\lambda)^{-2}$, which is below one when the agreement region is noisy
+($\lambda>1-\beta$), but it does not change the order $1/\rho$.
+\item[(d)] \emph{When the gain vanishes.} As $\rho_g\to1$ the agreement strata disappear and
+\eqref{eq:deff-tpr} and \eqref{eq:deff-err} tend to the efficiency of stratification by
+group alone (for the rate differences with $\delta_g=0$ this is $\Gamma$; for the error difference
+it equals 1 when $\mu_0=\mu_1$). The gain beyond group stratification is therefore governed by $1-\rho$: it is large when
+the compared models disagree on a small share of the pool, it is reduced by a constant factor
+when the pair's disagreements are one-sided ($|a_g|$ near 1) and the agreement region has
+substantial label noise, and it disappears when the models disagree almost everywhere.
+\end{enumerate}
+\end{corollary}
+
+The heuristic \emph{efficiency $\approx1/\rho$} is thus exact for an error difference with a
+two-sided disagreement set ($\mu_g=0$), and correct up to the group factor $\Gamma$ and the
+target-size factor $(\beta+\lambda)^{-2}$ for the rate differences. For a pair that disagrees on
+5\% of the pool it promises a gain of the order of 20 relative to SRS, and of 2.5 for a pair that
+disagrees on 40\%.
+
+For $M>2$ the pattern strata $(G_i,K_i)$ do not separate the disagreements of a particular pair:
+an instance with $K_i=4$ out of nine may or may not be disputed by $m$ and $j$. The general
+formula \eqref{eq:deff-general} still applies with the stratum variances of
+Proposition~\ref{prop:influence}. For an error difference whose disagreements are two-sided within
+every stratum ($e_h=0$ for all $h$, hence $\theta^{ERR}_{mj}=0$), $\sigma^2_{ht}\propto\rho_h$
+and \eqref{eq:deff-general} becomes
+\begin{equation}\label{eq:deff-mixed}
+\mathrm{Eff}^{ERR}=\frac{\rho}{(\sum_hW_h\sqrt{\rho_h})^2},\qquad 1\le\mathrm{Eff}^{ERR}\le\frac1\rho,
+\end{equation}
+since $\rho_h\le\sqrt{\rho_h}$ and $(\sum_hW_h\sqrt{\rho_h})^2\le\sum_hW_h\rho_h=\rho$. The bound $1/\rho$ is
+attained only when every stratum is either entirely disputed or entirely agreed; the pattern
+strata approach it to the extent that the pair's disagreements concentrate in a few values of
+$K$. A lower bound of the same type holds for the pattern strata. Let $\rho_{\rm any}$ be the share
+of instances on which not all $M$ models agree, i.e.\ with $0<K_i<M$. The pair can disagree only
+there, so $\rho_h=0$ in the strata with $K\in\{0,M\}$, and Cauchy--Schwarz over the remaining strata
+gives $(\sum_hW_h\sqrt{\rho_h})^2\le\rho_{\rm any}\,\rho$, hence
+\begin{equation}\label{eq:deff-sandwich}
+\frac{1}{\rho_{\rm any}}\;\le\;\mathrm{Eff}^{ERR}\;\le\;\frac{1}{\rho},
+\end{equation}
+with equality on the left when the pair's disagreements are spread evenly over the strata with
+$0<K<M$ ($\rho_h=\rho/\rho_{\rm any}$ there). With nine models $\rho_{\rm any}$ is large (between
+0.18 and 0.73 in our pools) while the pairwise $\rho$ is small, and the position of a pair within
+this interval measures how well the counts $K$ locate its disagreements. Two further losses separate \eqref{eq:deff-tpr} and \eqref{eq:deff-err} from the efficiency of the implemented
+design: a single allocation serves all $3\binom M2$ comparison estimands
+(Proposition~\ref{prop:allocation}(d)), and it is computed from the proxy
+(Section~\ref{sec:theory-proxy}). The exact linearised efficiency of the implemented design is
+$N^2(1/L-1/N)S^2_t/V_t(n)$ with $V_t$ from \eqref{eq:linvar}; Section~\ref{sec:simulation}
+compares it, and the closed forms above, with Monte Carlo results.
+
+\subsection{Misspecified proxy}\label{sec:theory-proxy}
+
+Let $\tilde n$ be the allocation computed from the anticipated values $\tilde A_h$, and $A_h$ the
+values computed from the true labels, both with the same weights.
+
+\begin{proposition}[Imperfect proxy]\label{prop:proxy}
+\begin{enumerate}
+\item[(a)] Proposition~\ref{prop:validity} holds for $\tilde n$ whatever the proxy, provided
+$\tilde n_h\ge2$ in every stratum (guaranteed by the minimum of 10 labels).
+\item[(b)] Ignoring caps, minima and rounding, the relative loss in the weighted variance is
+\begin{equation}\label{eq:proxy-loss}
+\frac{\Phi_0(\tilde n)}{\Phi_0(n^\ast)}=
+\frac{(\sum_hN_h\tilde A_h)(\sum_hN_hA_h^2/\tilde A_h)}{(\sum_hN_hA_h)^2}
+=\Big(\sum_h\omega_hx_h\Big)\Big(\sum_h\omega_h/x_h\Big)\ge1,
+\end{equation}
+with $\omega_h=N_hA_h/\sum_kN_kA_k$ and $x_h=\tilde A_h/A_h$. The loss is zero if and only if
+$\tilde A_h\propto A_h$; a proxy that is wrong by a common factor costs nothing.
+\item[(c)] If $x_{\min}\le x_h\le x_{\max}$, the loss is at most
+$(x_{\max}+x_{\min})^2/(4x_{\max}x_{\min})$ (Kantorovich inequality). For instance, if every
+anticipated value $\tilde A_h$ is within a factor 2 of $A_h$ up to a common scale
+($x_{\max}/x_{\min}\le4$), the weighted variance is at most $25/16$ times the optimum on the same
+strata, so the design keeps at least 64\% of the efficiency of the optimal allocation, whatever
+the number of strata.
+\item[(d)] Proportional allocation is the special case $\tilde A_h\equiv1$. Neither allocation
+dominates the other for every population: \eqref{eq:proxy-loss} is smaller for the proxy
+allocation if and only if
+\[
+\Big(\sum_h\omega_hx_h\Big)\Big(\sum_h\omega_h/x_h\Big)\le\Big(\sum_h\omega_h/A_h\Big)\Big(\sum_h\omega_hA_h\Big).
+\]
+A proxy that is badly wrong in a high-variance stratum can make the design worse than
+proportional allocation, and, through the minimum of $\ell$ labels in that stratum, worse than SRS.
+\item[(e)] A defensive mixture $n_h=\eta\,n^{\rm prop}_h+(1-\eta)\tilde n_h$, $0<\eta<1$, satisfies
+$\Phi_0(n)\le\Phi_0(n^{\rm prop})/\eta$ and $\Phi_0(n)\le\Phi_0(\tilde n)/(1-\eta)$; since
+proportional allocation is never worse than SRS up to the factor $(1-1/\min_hN_h)^{-1}$, the
+mixture is never worse than $1/\eta$ times SRS in the weighted variance, up to the same factor.
+\end{enumerate}
+\end{proposition}
+
+What can be guaranteed is therefore validity (part (a)) and a loss that is controlled by how far
+the anticipated stratum standard deviations are from proportional to the true ones (parts (b) and
+(c)). What cannot be guaranteed for the implemented rule is improvement over SRS for every
+population; that requires a defensive component as in part (e). Two features make large losses
+unlikely in our setting. The dominant part of the structure, namely which strata carry the
+numerators of the comparison estimands, is determined by the predictions and does not depend on the
+proxy (Proposition~\ref{prop:influence}); and the proxy enters $\tilde A_h$ only through
+$\pi_h(1-\pi_h)$ and $r_h$, which are smooth in the proxy probabilities. Section~\ref{sec:simulation}
+quantifies the loss for good, uninformative and adversarial proxies.
