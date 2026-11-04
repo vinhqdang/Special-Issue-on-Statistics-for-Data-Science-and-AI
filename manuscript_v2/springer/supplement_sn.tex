@@ -201,8 +201,9 @@ assumed about the proxy beyond its being label-free. The case $\psi\equiv0$ is t
 \emph{(b)} Let $\hat\tau=\hat T_\psi/N$. By (a), each coordinate satisfies
 $\operatorname{Var}(\hat\tau_c)=\sum_hW_h^2(1-f_h)S^2_{\xi_c,h}/n_h\le2r^2$, so
 $\|\hat\tau-\tau\|=O_p(r)$ by Chebyshev's inequality, and $r^2\le\sum_hW_h^2/\min_kn_k\le
-1/\min_kn_k\to0$ by (A1). Let $K=\{x\in[0,1]^C:x_{P_g}\ge c/2,\ x_{Q_g}\ge c/2,\ g=0,1\}$, where
-$x_{P_g}$, $x_{Q_g}$ denote the coordinates of the denominators. $K$ is compact and convex, and
+1/\min_kn_k\to0$ by (A1). Let $K=\{x\in[-1,2]^C:x_{P_g}\ge c/2,\ x_{Q_g}\ge c/2,\ g=0,1\}$, where
+$x_{P_g}$, $x_{Q_g}$ denote the coordinates of the denominators (the box is larger than $[0,1]^C$ because
+$\hat\tau$, unlike $\tau$, can leave $[0,1]^C$: the proxy correction $\bar\psi_h-\bar\psi_{s_h}$ is not a mean of the contributions). $K$ is compact and convex, and
 $\phi$ is a rational function whose denominators are bounded away from zero on $K$, so its first
 and second derivatives are bounded on $K$, say by $B$. By (A2) $\tau\in K$ with the denominators at
 least $c$; on the event $\mathcal E=\{\|\hat\tau-\tau\|_\infty\le c/2\}$, whose probability tends to
@@ -211,6 +212,13 @@ one, the segment from $\tau$ to $\hat\tau$ lies in $K$, and Taylor's theorem giv
 \big|\hat\theta_\psi-\theta-\nabla\phi(\tau)^\top(\hat\tau-\tau)\big|\le\tfrac{B}{2}\,C\,\|\hat\tau-\tau\|^2=O_p(r^2).
 \end{equation}
 Therefore $\hat\theta_\psi-\theta=O_p(r)+O_p(r^2)=O_p(r)\to0$.
+
+\emph{Bias.} The statement of Section~\Mref{sec:theory-asym} that a ratio-type estimand has bias $O(r^2)$ needs a convention on $\mathcal E^c$, where the ratio may be undefined or
+arbitrarily large: let $\hat\theta_\psi$ be truncated to the range of the estimand (an interval of length at most $4$ for every comparison estimand), so that $|\hat\theta_\psi-\theta|\le4$. (The code returns \texttt{NaN} when a
+denominator total is not positive and counts it as an undefined estimate; the convention is used only for this statement.) Since $E(\hat\tau-\tau)=0$ by (a),
+$|E\{a^\top(\hat\tau-\tau)\mathbf 1_{\mathcal E}\}|=|E\{a^\top(\hat\tau-\tau)\mathbf 1_{\mathcal E^c}\}|\le2CB\,P(\mathcal E^c)$, because $|\hat\tau_c-\tau_c|\le2$ for every coordinate and $\|a\|_1\le CB$,
+and Chebyshev's inequality with the variance bound above gives $P(\mathcal E^c)\le8Cr^2/c^2$. On $\mathcal E$ the remainder is at most $(B/2)C\|\hat\tau-\tau\|^2$, with expectation $O(r^2)$, and on $\mathcal E^c$ the
+truncated error is at most $4P(\mathcal E^c)=O(r^2)$. Hence $|E(\hat\theta_\psi)-\theta|=O(r^2)$, with constants that depend on $B$, $C$ and $c$ only, and by (A3) this is $o(V_\psi^{1/2})$.
 
 \emph{(c)} Let $a=\nabla\phi(\tau)$ (it depends on $\nu$ and is bounded by $B$), $x_i=a^\top\xi_i$,
 and $\Lambda=a^\top(\hat\tau-\tau)=\sum_hW_h(\bar x_{s_h}-\bar x_h)$. Since $e_i=x_i/N$,
@@ -229,9 +237,10 @@ $\sum_{h\in\mathcal H_2}\lambda_h^2\to0$ and is $o_p(1)$. For $h\in\mathcal H_1$
 $\chi_h=(\bar x_{s_h}-\bar x_h)/\{(1-f_h)S^2_{x,h}/n_h\}^{1/2}$. Hájek's condition for asymptotic
 normality of a simple random sample mean \citep{hajek1960} requires $n_h\to\infty$,
 $N_h-n_h\to\infty$ and, for every $\eta>0$,
-\[
-\frac{1}{(N_h-1)S^2_{x,h}}\sum_{i\in U_h:\ |x_i-\bar x_h|>\eta\{n_h(1-f_h)\}^{1/2}S_{x,h}}(x_i-\bar x_h)^2\to0 .
-\]
+\begin{align*}
+&\frac{1}{(N_h-1)S^2_{x,h}}\sum_{\substack{i\in U_h:\\ |x_i-\bar x_h|>\eta m_hS_{x,h}}}(x_i-\bar x_h)^2\to0,\\
+&\text{with } m_h=\{n_h(1-f_h)\}^{1/2}.
+\end{align*}
 The first two hold by (A1) ($N_h-n_h\ge\varepsilon N_h\ge\varepsilon n_h$). Because
 $|x_i-\bar x_h|\le2\|a\|_1\le2CB$ and $n_h(1-f_h)S^2_{x,h}\to\infty$ by (A4), the index set of the
 sum is empty for all large $\nu$, so the third holds as well, and $\chi_h\to N(0,1)$. The $\chi_h$
@@ -244,10 +253,10 @@ $\sum_{\mathcal H_1}\lambda_{h,\infty}^2=1$. This proves (c).
 
 \emph{(d)} Let $\hat a=\nabla\phi(\hat\tau)$ and let $\hat\Sigma_h$ be the sample covariance matrix
 of $\xi_i$ in the sample from stratum $h$. Since $\hat e_i=\hat a^\top\xi_i/N$,
-\[
-\hat V_\psi=\sum_hW_h^2\frac{1-f_h}{n_h}\hat a^\top\hat\Sigma_h\hat a,\qquad
-V_\psi=\sum_hW_h^2\frac{1-f_h}{n_h}a^\top\Sigma^\xi_ha,
-\]
+\begin{align*}
+\hat V_\psi&=\sum_hW_h^2\frac{1-f_h}{n_h}\hat a^\top\hat\Sigma_h\hat a,\\
+V_\psi&=\sum_hW_h^2\frac{1-f_h}{n_h}a^\top\Sigma^\xi_ha,
+\end{align*}
 and strata with $f_h=1$ contribute zero to both. Hence
 $|\hat V_\psi-V_\psi|\le r^2\max_h|\hat a^\top\hat\Sigma_h\hat a-a^\top\Sigma^\xi_ha|$.
 
@@ -286,10 +295,12 @@ $z^{ERR}_i=D_i(1-2Y_i)/N$.
 For the stratum variances let $u_i=Y_i(D_i-\delta_g)$, so $z^{TPR}_i=s_gu_i/P_g$. Because
 $Y_i^2=Y_i$, $\bar u_h=c_h-\delta_g\pi_h$ and $\overline{u^2}_h=r_h-2\delta_gc_h+\delta_g^2\pi_h$,
 using $D_i^2=|D_i|$. Therefore
-\[
-\overline{u^2}_h-\bar u_h^2=r_h-2\delta_gc_h+\delta_g^2\pi_h-c_h^2+2\delta_gc_h\pi_h-\delta_g^2\pi_h^2
-=(r_h-c_h^2)+\delta_g^2\pi_h(1-\pi_h)-2\delta_gc_h(1-\pi_h),
-\]
+\begin{align*}
+\overline{u^2}_h-\bar u_h^2&=r_h-2\delta_gc_h+\delta_g^2\pi_h\\
+&\quad-c_h^2+2\delta_gc_h\pi_h-\delta_g^2\pi_h^2\\
+&=(r_h-c_h^2)+\delta_g^2\pi_h(1-\pi_h)\\
+&\quad-2\delta_gc_h(1-\pi_h),
+\end{align*}
 and multiplying by $\kappa_h/P_g^2$ gives (\Mref{eq:stratvar-tpr}). For the error,
 $\{D_i(1-2Y_i)\}^2=|D_i|$, so the variance with divisor $N_h$ is $\rho_h-e_h^2$, which gives
 (\Mref{eq:stratvar-err}). If $D_i=0$ on $U_h$ then $r_h=c_h=\rho_h=e_h=0$, and (\Mref{eq:agree-var})
@@ -315,10 +326,10 @@ $\square$
 
 \emph{(a)} The term $\sum_hN_hA_h^2$ does not depend on $n$. For any $n_h>0$ with $\sum_hn_h=L$, the
 Cauchy--Schwarz inequality gives
-\[
-\Big(\sum_hN_hA_h\Big)^2=\Big(\sum_h\frac{N_hA_h}{\sqrt{n_h}}\sqrt{n_h}\Big)^2\le
-\Big(\sum_h\frac{N_h^2A_h^2}{n_h}\Big)\Big(\sum_hn_h\Big)=\Phi_0(n)\,L,
-\]
+\begin{align*}
+\Big(\sum_hN_hA_h\Big)^2&=\Big(\sum_h\frac{N_hA_h}{\sqrt{n_h}}\sqrt{n_h}\Big)^2\\
+&\le\Big(\sum_h\frac{N_h^2A_h^2}{n_h}\Big)\Big(\sum_hn_h\Big)=\Phi_0(n)\,L,
+\end{align*}
 with equality if and only if $N_hA_h/\sqrt{n_h}$ is proportional to $\sqrt{n_h}$, that is
 $n_h\propto N_hA_h$. With the budget constraint this gives $n^\ast$ and the value of $\Phi(n^\ast)$.
 Equivalently, a Lagrange multiplier $\mu$ for $\sum_hn_h=L$ gives the stationarity condition
@@ -332,7 +343,10 @@ neither bound is active, $n_h=N_hA_h/\lambda$ with $\lambda=\sqrt\mu$; if the up
 $\beta_h\ge0$ forces $N_hA_h/\lambda\ge N_h$; if the lower bound is active, $\alpha_h\ge0$ forces
 $N_hA_h/\lambda\le\ell_h$. In all cases $n_h=\min\{N_h,\max(\ell_h,N_hA_h/\lambda)\}$. The map
 $\lambda\mapsto\sum_hn_h(\lambda)$ is continuous and non-increasing, from $\sum_hN_h\ge L$ as
-$\lambda\to0$ to $\sum_h\ell_h\le L$ as $\lambda\to\infty$, so a solution exists.
+$\lambda\to0$ to $\sum_h\ell_h\le L$ as $\lambda\to\infty$, so a solution exists (we assume $\ell_h\le N_h$, $\sum_h\ell_h\le L\le\sum_hN_h$ and $A_h>0$; a stratum with $A_h=0$ receives
+$\ell_h$ and the argument applies to the remaining strata). The implemented allocation (\texttt{\_round\_alloc} in \texttt{tcs/labeling.py}) is a close heuristic to this solution and not exactly it: it
+gives every stratum its floor $\min(N_h,10)$ first, distributes the remaining labels in proportion to $N_hA_h$ with iterative capping at $N_h$, and then rounds. It
+coincides with (b) when no lower bound is active and in general differs from it by the shift of the floor. Every validity statement of the paper holds for any label-free allocation, so this affects efficiency only.
 
 \emph{(c)} If $\tilde n_h\ge n_h-1$ and $n_h\ge n_0>1$, then
 $1/\tilde n_h\le1/(n_h-1)=(1/n_h)\,n_h/(n_h-1)\le(1/n_h)\,n_0/(n_0-1)$ for every $h$; multiply by
@@ -347,9 +361,10 @@ $\Phi_0(n)L/N^2=\sum_t1/\mathrm{Eff}_t$, and at $n^\ast$
 \] For the lower bound, the
 within-stratum variances satisfy $\sum_hW_h\sigma^2_{ht}\le\sigma^2_t$ (the between-strata part of
 the variance decomposition is non-negative), so by Jensen's inequality
-\[
-\Big(\sum_hW_hA_h\Big)^2\le\sum_hW_hA_h^2=\sum_t\frac{\sum_hW_h\sigma^2_{ht}}{\sigma^2_t}\le|\mathcal T| .\qquad\square
-\]
+\begin{align*}
+\Big(\sum_hW_hA_h\Big)^2&\le\sum_hW_hA_h^2\\
+&=\sum_t\frac{\sum_hW_h\sigma^2_{ht}}{\sigma^2_t}\le|\mathcal T| .\qquad\square
+\end{align*}
 
 \subsection{Proof of Proposition~\ref{prop:alloc-dif}}
 
@@ -421,9 +436,10 @@ inequality gives $(\sum_hW_h\sqrt{\rho_h})^2\le\rho$ and $\mathrm{Eff}\ge1$. Equ
 requires $\rho_h\in\{0,1\}$ for every $h$. For \eqref{eq:deff-sandwich}, let $\mathcal H_D$ be the
 strata with $0<K<M$, so that $\sum_{h\in\mathcal H_D}W_h=\rho_{\rm any}$ and $\rho_h=0$ outside
 $\mathcal H_D$. Cauchy--Schwarz gives
-\[
-\Big(\sum_{h\in\mathcal H_D}W_h^{1/2}\cdot W_h^{1/2}\rho_h^{1/2}\Big)^2\le\rho_{\rm any}\sum_hW_h\rho_h=\rho_{\rm any}\rho,
-\]
+\begin{align*}
+\Big(\sum_{h\in\mathcal H_D}W_h^{1/2}\cdot W_h^{1/2}\rho_h^{1/2}\Big)^2&\le\rho_{\rm any}\sum_hW_h\rho_h\\
+&=\rho_{\rm any}\rho,
+\end{align*}
 so $\mathrm{Eff}\ge\rho/(\rho_{\rm any}\rho)=1/\rho_{\rm any}$, with equality if and only if $\rho_h$ is
 constant on $\mathcal H_D$. (When strata are merged across $K=0$ or $K=M$ and $0<K<M$ because of the
 minimum stratum size, $\rho_{\rm any}$ is replaced by the total share of the strata that contain
@@ -440,14 +456,15 @@ minimum per stratum is at least two; Proposition~\Mref{prop:validity} applies wi
 \]
 and $\Phi_0(n^\ast)=L^{-1}(\sum_hN_hA_h)^2$ by Proposition~\Mref{prop:allocation}(a). Writing
 $\tilde A_h=x_hA_h$,
-\[
-\sum_hN_h\tilde A_h=\Big(\sum_kN_kA_k\Big)\sum_h\omega_hx_h,\qquad
+\begin{gather*}
+\sum_hN_h\tilde A_h=\Big(\sum_kN_kA_k\Big)\sum_h\omega_hx_h,\\
 \sum_h\frac{N_hA_h^2}{\tilde A_h}=\Big(\sum_kN_kA_k\Big)\sum_h\frac{\omega_h}{x_h},
-\]
+\end{gather*}
 which gives \eqref{eq:proxy-loss}. By Cauchy--Schwarz,
-\[
-1=\Big(\sum_h\omega_h\sqrt{x_h}\big/\sqrt{x_h}\Big)^2\le\Big(\sum_h\omega_hx_h\Big)\Big(\sum_h\omega_h/x_h\Big),
-\]
+\begin{align*}
+1&=\Big(\sum_h\sqrt{\omega_hx_h}\sqrt{\omega_h/x_h}\Big)^2\\
+&\le\Big(\sum_h\omega_hx_h\Big)\Big(\sum_h\omega_h/x_h\Big),
+\end{align*}
 with equality if and only if $x_h$ is constant on the strata with $\omega_h>0$.
 
 \emph{(c)} For $x\in[x_{\min},x_{\max}]$, $(x-x_{\min})(x_{\max}-x)\ge0$, that is
@@ -466,17 +483,22 @@ $L=1000$ and $\ell=10$ the weighted variance is 25 times that of SRS.
 
 \emph{(e)} Since $n_h\ge\eta n^{\rm prop}_h$ and $n_h\ge(1-\eta)\tilde n_h$,
 $1/n_h\le1/(\eta n^{\rm prop}_h)$ and $1/n_h\le1/\{(1-\eta)\tilde n_h\}$; multiply by $N_h^2A_h^2$ and
-sum. For the comparison of proportional allocation with SRS, fix a target and write $S^2$, $S^2_h$,
+sum; this gives the two bounds on $\Phi_0$. For the comparison of proportional allocation with SRS, fix a target and write $S^2$, $S^2_h$,
 $\bar z$, $\bar z_h$ for its variances and means. The analysis-of-variance identity
 $(N-1)S^2=\sum_h(N_h-1)S_h^2+\sum_hN_h(\bar z_h-\bar z)^2$ gives
-\[
-NS^2-\sum_hN_hS^2_h=\frac{N}{N-1}\sum_hN_h(\bar z_h-\bar z)^2-\sum_h\frac{N-N_h}{N-1}S_h^2
-\ge-\sum_hS^2_h\ge-\frac{1}{\min_hN_h}\sum_hN_hS^2_h .
-\]
+\begin{align*}
+NS^2-\sum_hN_hS^2_h&=\frac{N}{N-1}\sum_hN_h(\bar z_h-\bar z)^2\\
+&\quad-\sum_h\frac{N-N_h}{N-1}S_h^2\\
+&\ge-\sum_hS^2_h\\
+&\ge-\frac{1}{\min_hN_h}\sum_hN_hS^2_h .
+\end{align*}
 With $f=L/N$, proportional allocation has variance $V^{\rm prop}=(1-f)(N/L)\sum_hN_hS^2_h$ and SRS has
 $V^{SRS}=(1-f)(N/L)NS^2$, so $V^{\rm prop}(1-1/\min_hN_h)\le V^{SRS}$. Summing over targets with weights
-$w_t$ gives the same inequality for the weighted variance, and combining with the first part proves
-(e). $\square$
+$w_t$ gives the same inequality for the weighted variance $\Phi^{\rm SRS}$. To pass from $\Phi_0$ to the weighted variance $\Phi=\Phi_0-\sum_hN_hA_h^2$ with finite-population corrections, note that
+$\Phi_0(n^{\rm prop})=(N/L)\sum_hN_hA_h^2$, so $\sum_hN_hA_h^2=\{f/(1-f)\}\,\Phi(n^{\rm prop})$ with $f=L/N$, and
+$\Phi(n)\le\Phi_0(n^{\rm prop})/\eta-\sum_hN_hA_h^2=\Phi(n^{\rm prop})\{1/\eta+(1/\eta-1)f/(1-f)\}=\Phi(n^{\rm prop})\,(1-\eta f)/\{\eta(1-f)\}$.
+Combining with $\Phi(n^{\rm prop})\le\Phi^{\rm SRS}/(1-1/\min_hN_h)$ proves (e): the bound $1/\eta$ holds as stated for $\Phi_0$ (finite-population corrections ignored) and, with them, with
+$1/\eta$ replaced by $(1-\eta f)/\{\eta(1-f)\}=\eta^{-1}\{1+O(f)\}$. $\square$
 
 \subsection{Proof of Propositions~\Mref{prop:dif-var} and~\ref{prop:dif-var-ext}}
 
@@ -562,8 +584,8 @@ feature that the plain values lack: the label enters only through $Y_i-\pi_i$.
 \begin{proposition}[Residual influence values]\label{prop:residual}
 Let $d_i=\nabla f(T)^\top(u_i-v_i)$, which does not depend on the labels. Then $e_i=(Y_i-\pi_i)\,d_i$, and for $G_i=g$
 \begin{align}
-e^{TPR}_i&=s_g\frac{(Y_i-\pi_i)(D_i-\delta_g)}{P_g},\qquad
-e^{FPR}_i=s_g\frac{\{(1-Y_i)-(1-\pi_i)\}(D_i-\gamma_g)}{Q_g},\notag\\
+e^{TPR}_i&=s_g\frac{(Y_i-\pi_i)(D_i-\delta_g)}{P_g},\notag\\
+e^{FPR}_i&=s_g\frac{\{(1-Y_i)-(1-\pi_i)\}(D_i-\gamma_g)}{Q_g},\notag\\
 e^{ERR}_i&=-\frac{2(Y_i-\pi_i)D_i}{N},\label{eq:resid-forms}
 \end{align}
 and $\tilde z_i=z_i-e_i$ equals (\Mref{eq:infl-forms}) with $Y_i$ replaced by $\pi_i$. In a stratum where the pair agrees,
@@ -571,10 +593,11 @@ $e^{ERR}_i=0$ for every $i$: the stratum contributes neither variance nor error 
 Under the working model that $Y_1,\dots,Y_N$ are independent with $P(Y_i=1)=\pi_i$ (the proxy is calibrated), with expectation $E_\pi$,
 the gradient evaluated at the non-random model-expected totals $T_\pi=\sum_{i\in U}\psi_i$ (as in the design; this changes $d_i$ by a relative $O(r)$ only),
 and with $\bar\sigma^2_h=N_h^{-1}\sum_{U_h}\pi_i(1-\pi_i)d_i^2$ and $C_h=\mathrm{Cov}_h(z,\tilde z)$ the stratum covariance,
-\begin{equation}\label{eq:resid-moments}
-E_\pi(e_i)=0,\quad \mathrm{Var}_\pi(e_i)=\pi_i(1-\pi_i)d_i^2,\qquad
-E_\pi S^2_{e,h}=\bar\sigma^2_h,\quad E_\pi S^2_{z,h}=S^2_{\tilde z,h}+\bar\sigma^2_h,\quad E_\pi C_h=S^2_{\tilde z,h}.
-\end{equation}
+\begin{align}
+&E_\pi(e_i)=0,\quad \mathrm{Var}_\pi(e_i)=\pi_i(1-\pi_i)d_i^2,\notag\\
+&E_\pi S^2_{e,h}=\bar\sigma^2_h,\quad E_\pi S^2_{z,h}=S^2_{\tilde z,h}+\bar\sigma^2_h,\notag\\
+&E_\pi C_h=S^2_{\tilde z,h}.\label{eq:resid-moments}
+\end{align}
 \end{proposition}
 
 \subsection{Difference estimator: coefficient and calibrated form}\label{si:theory-dif}
@@ -609,8 +632,8 @@ Under the setting of Proposition~\Mref{prop:dif-deff}, for $\theta^{TPR},\theta^
 the stratum mean of $\pi_i(1-\pi_i)$. In a \emph{disagreement stratum} ($|D_i|=1$ on $U_h$, $D_i$ and $\pi_i$ uncorrelated within the stratum,
 $\bar a$ the stratum mean of $D_i$, and $\delta_g,\gamma_g$ negligible),
 \begin{align}
-1+\nu^{TPR}&=\frac{\bar\pi(1-\bar\pi\bar a^2)}{\overline{\pi(1-\pi)}},\qquad
-1+\nu^{FPR}=\frac{(1-\bar\pi)\{1-(1-\bar\pi)\bar a^2\}}{\overline{\pi(1-\pi)}},\notag\\
+1+\nu^{TPR}&=\frac{\bar\pi(1-\bar\pi\bar a^2)}{\overline{\pi(1-\pi)}},\notag\\
+1+\nu^{FPR}&=\frac{(1-\bar\pi)\{1-(1-\bar\pi)\bar a^2\}}{\overline{\pi(1-\pi)}},\notag\\
 1+\nu^{ERR}&=\frac{1-\bar a^2(1-2\bar\pi)^2}{4\,\overline{\pi(1-\pi)}} .\label{eq:dif-closed}
 \end{align}
 In an \emph{agreement stratum} ($D_i=0$) the error difference has $e_i=\tilde z_i=0$, and for the rate differences
@@ -638,7 +661,7 @@ removes more of the proxy's within-stratum signal (a finer partition of the prox
 
 \subsection{Misspecified proxy for the difference estimator}\label{si:theory-dif-proxy}
 
-\begin{proposition}[Misspecified proxy for the difference estimator]\label{prop:dif-proxy}
+\begin{proposition}[Misspecified proxy]\label{prop:dif-proxy}
 \begin{enumerate}
 \item[(a)] For every proxy, $\hat T_\psi$ is design-unbiased and $\hat V_\psi$ is a consistent variance estimator
 (Proposition~\Mref{prop:validity}). Misspecification can affect efficiency only.
@@ -704,9 +727,10 @@ probability of a sample without positives is $(1-\pi)^{n_h}$, which is the zero-
 (iii) \emph{Exact proxies}: if $\pi_i\in\{0,1\}$ equals $Y_i$ then $e_i\equiv0$ and
 (A3) fails; the estimator is then exact, but the proxy is unlikely to be exact on the whole pool. The floor of Section~\Mref{sec:ablations} carries over: replace $s^2_{\hat e,h}$ by the anticipated
 residual variance
-\begin{equation}\label{eq:floor}
-\tilde s^2_{h}=N_h^{-1}\sum_{i\in U_h}\pi_i(1-\pi_i)\hat d_i^{\,2},\qquad \hat d_i=\nabla f(\hat T_\psi)^\top(u_i-v_i),
-\end{equation}
+\begin{align}
+\tilde s^2_{h}&=N_h^{-1}\sum_{i\in U_h}\pi_i(1-\pi_i)\hat d_i^{\,2},\label{eq:floor}\\
+\hat d_i&=\nabla f(\hat T_\psi)^\top(u_i-v_i),\notag
+\end{align}
 whenever $s^2_{\hat e,h}=0$ (or, more conservatively, use $\max\{s^2_{\hat e,h},\eta\tilde s^2_h\}$ with $\eta\in(0,1]$). Because $\tilde s^2_h=0$ exactly when $d_i\equiv0$ on $U_h$, structural zeros
 are untouched. The floor is label-free, never decreases $\hat V_\psi$, leaves the point estimate unchanged, and (Supplementary Section~\ref{si:proofs}) does not affect
 Proposition~\Mref{prop:validity}(c)--(d): the floor is active with probability tending to zero in every stratum with $S^2_{e,h}$ bounded away from zero, and in strata
@@ -728,10 +752,11 @@ sharpness gives a well-defined allocation.
 Let $n^\psi$ be the optimal allocation for the difference estimator ($A_h=A^\psi_h$, $A^{\psi\,2}_h=\sum_tw_tS^2_{e,ht}$) and $\tilde n^0$ the allocation obtained from the
 plain anticipated variances. Put $\tilde\nu_h=\sum_tw_tS^2_{\tilde z,ht}/\sum_tw_t\bar\sigma^2_{ht}$, $x_h=(1+\tilde\nu_h)^{1/2}$ and assume the anticipated values are exact for the
 residual variances ($\tilde A^\psi_h=A^\psi_h$). Ignoring caps, minima and rounding, the weighted variance of the difference estimator with the \emph{wrong} (plain) allocation satisfies
-\begin{equation}\label{eq:alloc-loss}
-\frac{\Phi_\psi(\tilde n^0)}{\Phi_\psi(n^\psi)}=\Big(\sum_h\omega_hx_h\Big)\Big(\sum_h\omega_h/x_h\Big)\le\frac{(x_{\max}+x_{\min})^2}{4x_{\max}x_{\min}},\qquad
-\omega_h=\frac{N_hA^\psi_h}{\sum_kN_kA^\psi_k},
-\end{equation}
+\begin{align}
+\frac{\Phi_\psi(\tilde n^0)}{\Phi_\psi(n^\psi)}&=\Big(\sum_h\omega_hx_h\Big)\Big(\sum_h\omega_h/x_h\Big)\notag\\
+&\le\frac{(x_{\max}+x_{\min})^2}{4x_{\max}x_{\min}},\notag\\
+\omega_h&=\frac{N_hA^\psi_h}{\sum_kN_kA^\psi_k},\label{eq:alloc-loss}
+\end{align}
 with equality to one iff $\tilde\nu_h$ is constant over the strata with $\omega_h>0$. The same expressions hold, with $x_h$ replaced by $1/x_h$ and
 $\omega_h\propto N_hA^0_h$, for the plain estimator allocated with the residual variances. Consequently, if $\tilde\nu_h\in[0,\nu_{\max}]$, the loss from
 using the wrong rule is at most $\{1+(1+\nu_{\max})^{1/2}\}^2/\{4(1+\nu_{\max})^{1/2}\}$ in either direction, for instance $9/8$ for $\nu_{\max}=3$.
@@ -771,10 +796,9 @@ is the net share of disputed positives on which $m$ is right and $j$ wrong.
 $\{\mathcal A_g,\mathcal D_g\}_{g=0,1}$ and $L/N\to0$,
 \begin{equation}\label{eq:deff-tpr}
 \mathrm{Eff}^{TPR}=\frac{\sum_g(r_g-\delta_g^2p_g)/(\zeta_gp_g^2)}
-{\Big[\sum_g\big\{\rho_g\sigma_{\mathcal D,g}+(1-\rho_g)|\delta_g|
-\sqrt{\pi_{\mathcal A,g}(1-\pi_{\mathcal A,g})}\big\}/p_g\Big]^2},
+{\big[\sum_g\{\rho_g\sigma_{\mathcal D,g}+(1-\rho_g)\sigma_{\mathcal A,g}\}/p_g\big]^2},
 \end{equation}
-$\sigma^2_{\mathcal D,g}=\pi_{\mathcal D,g}-c_{\mathcal D,g}^2+\delta_g^2\pi_{\mathcal D,g}(1-\pi_{\mathcal D,g})
+$\sigma_{\mathcal A,g}=|\delta_g|\{\pi_{\mathcal A,g}(1-\pi_{\mathcal A,g})\}^{1/2}$ and $\sigma^2_{\mathcal D,g}=\pi_{\mathcal D,g}-c_{\mathcal D,g}^2+\delta_g^2\pi_{\mathcal D,g}(1-\pi_{\mathcal D,g})
 -2\delta_gc_{\mathcal D,g}(1-\pi_{\mathcal D,g})$. The same holds for $\theta^{FPR}_{mj}$ with $Y$
 replaced by $1-Y$. For $\theta^{ERR}_{mj}$, with $\rho=\sum_g\zeta_g\rho_g$ and $\mu_g$ the mean of
 $D_i(1-2Y_i)$ over $\mathcal D_g$,
@@ -792,11 +816,11 @@ where $\Gamma$ is the efficiency of Neyman allocation between the two groups alo
 $\theta^{ERR}_{mj}=0=\mu_g$, then $\mathrm{Eff}^{ERR}=1/\rho$.
 \item[(c)] \emph{Target size.} For one group (drop $g$), with $\pi_{\mathcal D}$,
 $\pi_{\mathcal A}$ and $a$ held fixed, as $\rho\to0$,
-\begin{equation}\label{eq:deff-lambda}
-\mathrm{Eff}^{TPR}=\frac{1+O(\rho)}{\rho\,(\beta+\lambda)^2},\qquad
-\beta=\sqrt{1-a^2\pi_{\mathcal D}},\qquad
-\lambda=\frac{|a|\sqrt{\pi_{\mathcal D}\,\pi_{\mathcal A}(1-\pi_{\mathcal A})}}{p}.
-\end{equation}
+\begin{align}
+\mathrm{Eff}^{TPR}&=\frac{1+O(\rho)}{\rho\,(\beta+\lambda)^2},\notag\\
+\beta&=\sqrt{1-a^2\pi_{\mathcal D}},\notag\\
+\lambda&=\frac{|a|\sqrt{\pi_{\mathcal D}\,\pi_{\mathcal A}(1-\pi_{\mathcal A})}}{p}.\label{eq:deff-lambda}
+\end{align}
 Since $\delta=\rho\pi_{\mathcal D}a/p$, the target is proportional to $\rho$ and to $a$. A more
 one-sided disagreement set (larger $|a|$, hence a larger target) changes the gain by the bounded
 factor $(\beta+\lambda)^{-2}$, which is below one when the agreement region is noisy
@@ -859,11 +883,11 @@ difference estimator is Proposition~\ref{prop:dif-proxy}.
 \item[(a)] Proposition~\Mref{prop:validity} holds for $\tilde n$ whatever the proxy, provided
 $\tilde n_h\ge2$ in every stratum (guaranteed by the minimum of 10 labels).
 \item[(b)] Ignoring caps, minima and rounding, the relative loss in the weighted variance is
-\begin{equation}\label{eq:proxy-loss}
-\frac{\Phi_0(\tilde n)}{\Phi_0(n^\ast)}=
-\frac{(\sum_hN_h\tilde A_h)(\sum_hN_hA_h^2/\tilde A_h)}{(\sum_hN_hA_h)^2}
-=\Big(\sum_h\omega_hx_h\Big)\Big(\sum_h\omega_h/x_h\Big)\ge1,
-\end{equation}
+\begin{align}
+\frac{\Phi_0(\tilde n)}{\Phi_0(n^\ast)}&=
+\frac{(\sum_hN_h\tilde A_h)(\sum_hN_hA_h^2/\tilde A_h)}{(\sum_hN_hA_h)^2}\notag\\
+&=\Big(\sum_h\omega_hx_h\Big)\Big(\sum_h\omega_h/x_h\Big)\ge1,\label{eq:proxy-loss}
+\end{align}
 with $\omega_h=N_hA_h/\sum_kN_kA_k$ and $x_h=\tilde A_h/A_h$. The loss is zero if and only if
 $\tilde A_h\propto A_h$; a proxy that is wrong by a common factor costs nothing.
 \item[(c)] If $x_{\min}\le x_h\le x_{\max}$, the loss is at most
@@ -875,15 +899,17 @@ the number of strata.
 \item[(d)] Proportional allocation is the special case $\tilde A_h\equiv1$. Neither allocation
 dominates the other for every population: \eqref{eq:proxy-loss} is smaller for the proxy
 allocation if and only if
-\[
-\Big(\sum_h\omega_hx_h\Big)\Big(\sum_h\omega_h/x_h\Big)\le\Big(\sum_h\omega_h/A_h\Big)\Big(\sum_h\omega_hA_h\Big).
-\]
+\begin{align*}
+&\Big(\sum_h\omega_hx_h\Big)\Big(\sum_h\omega_h/x_h\Big)\\
+&\quad\le\Big(\sum_h\omega_h/A_h\Big)\Big(\sum_h\omega_hA_h\Big).
+\end{align*}
 A proxy that is badly wrong in a high-variance stratum can make the design worse than
 proportional allocation, and, through the minimum of $\ell$ labels in that stratum, worse than SRS.
 \item[(e)] A defensive mixture $n_h=\eta\,n^{\rm prop}_h+(1-\eta)\tilde n_h$, $0<\eta<1$, satisfies
 $\Phi_0(n)\le\Phi_0(n^{\rm prop})/\eta$ and $\Phi_0(n)\le\Phi_0(\tilde n)/(1-\eta)$; since
 proportional allocation is never worse than SRS up to the factor $(1-1/\min_hN_h)^{-1}$, the
-mixture is never worse than $1/\eta$ times SRS in the weighted variance, up to the same factor.
+mixture is never worse than $1/\eta$ times SRS in the weighted variance without finite-population corrections, and with them (sampling fraction $f=L/N$) never worse than $(1-\eta f)/\{\eta(1-f)\}$ times SRS,
+both up to the same factor; the second bound is $\eta^{-1}\{1+O(f)\}$.
 \end{enumerate}
 \end{proposition}
 
@@ -1059,7 +1085,7 @@ grey dashed: $1/\rho$. Source: \texttt{results/theory\_check.json}.}
 
 \paragraph{Efficiency scales as $1/\rho$.} In all three families the efficiency falls in proportion
 to $1/\rho$ over a forty-fold range of $\rho$ (Figure~\ref{fig:sim-rho}). With two models and
-moderate gaps, $\rho$ times the median observed efficiency is between 0.86 and 1.13 for
+moderate gaps, $\rho$ times the median observed efficiency (over all targets of the scenario, the three types of estimand pooled; Table~\ref{tab:sim-syn} shows them separately) is between 0.86 and 1.13 for
 $\rho\ge2\%$, so the rule of thumb is accurate to about 15\%; at $\rho=1\%$ it is 1.9, because the
 budget of 1000 labels is then about half the size of the disagreement region and the
 finite-population correction roughly doubles the gain. LIN agrees with the observed efficiencies
@@ -1276,11 +1302,11 @@ This section gives the full definitions of the baselines compared in Section~\Mr
 
 
 \paragraph{B1: importance sampling for active comparison.} \citet{sawade2012active} compare the risks of two fixed models by drawing $n$ instances with replacement from an instrumental distribution $q$ and estimating each risk by the self-normalised weighted mean $\sum_k \ell_k/q_k\big/\sum_k 1/q_k$ (with $p(x)=1/N$ on a pool). Their Theorem~1 shows that the asymptotic variance of the estimated risk difference is minimised by $q^*(x)\propto p(x)\{\mathbb E[(\ell_1-\ell_2-\Delta)^2\mid x]\}^{1/2}$. They replace $p(y\mid x)$ by an equal mixture of the models' predictive distributions, and for $k$ models they use the equal mixture of the pairwise-optimal distributions. We keep all of this and change only the quantity being compared. With replacement draws $i_1,\dots,i_n\sim q$, our totals are the Hájek (self-normalised) estimators
-\[
-\hat T^{\mathrm{IS}}=N\,\frac{\sum_{k=1}^n t_{i_k}(Y_{i_k})/q_{i_k}}{\sum_{k=1}^n 1/q_{i_k}},
-\qquad
-\hat\theta-\theta\approx\frac1n\sum_{k=1}^n \frac{a_{i_k}}{q_{i_k}},\quad a_i=\nabla f(T)^{\top}\{t_i(Y_i)-T/N\}.
-\]
+\begin{align*}
+\hat T^{\mathrm{IS}}&=N\,\frac{\sum_{k=1}^n t_{i_k}(Y_{i_k})/q_{i_k}}{\sum_{k=1}^n 1/q_{i_k}},\\
+\hat\theta-\theta&\approx\frac1n\sum_{k=1}^n \frac{a_{i_k}}{q_{i_k}},\\
+a_i&=\nabla f(T)^{\top}\{t_i(Y_i)-T/N\}.
+\end{align*}
 For $\theta^{\mathrm{ERR}}_{mj}$, $a_i=\{|\hat y_{mi}-Y_i|-|\hat y_{ji}-Y_i|-\theta^{\mathrm{ERR}}_{mj}\}/N$, which is exactly Sawade et al.'s centred loss difference. For $\theta^{\mathrm{TPR}}_{mj}$, the self-normalisation is automatic because $f$ is a ratio, and $a_i=\sum_g s_g\,\mathbf 1\{G_i=g\}\,Y_i\{(\hat y_{mi}-\hat y_{ji})-(\mathrm{TPR}_{mg}-\mathrm{TPR}_{jg})\}/P_g$. The asymptotic variance is $n^{-1}\sum_i\mathbb E[a_i^2]/q_i$ \citep{hansen1943}, so the single-estimand optimum is $q_i\propto\{\mathbb E_\pi a_i^2\}^{1/2}$, with the expectation taken under $Y_i\sim\mathrm{Bernoulli}(\pi_i)$ and $a$ evaluated at the proxy totals. This is our adaptation to TPR and FPR gaps. For a pair $(m,j)$ we combine its three estimands as $q^{(mj)}_i\propto\{\sum_{k\in(m,j)}w_k\mathbb E_\pi a_{ik}^2\}^{1/2}$. The design distribution is the equal mixture over the 36 pairs, as in Sawade et al., mixed with the uniform distribution with weight $0.05$ so that every $q_i$ is bounded away from zero. Draws continue until $L$ distinct instances are labelled; repeated draws reuse the label. The median number of draws was $1.12L$ (range $1.02L$--$1.48L$), so B1 effectively gets more than $L$ draws for $L$ labels. The variance is estimated by $n^{-1}$ times the sample variance of $\hat a_{i_k}/q_{i_k}$.
 
 \paragraph{B2: proxy-score stratification.} The classic approach to estimating a classifier's metrics with few labels stratifies on the classifier's score and allocates optimally \citep{bennett2010online,kumar2018classifier}. We form strata as group $\times$ within-group quantile bins of $\pi_i$ (10 bins, Score-10; and 5 bins, Score-5), merge strata smaller than 50 as for PATTERN, and use the same estimator (\Mref{eq:HT}), variance (\Mref{eq:var}) and proxy-Neyman allocation (\Mref{eq:alloc}). B2 therefore differs from PATTERN only in the strata. It uses the proxy strongly but ignores which models disagree.
@@ -1331,7 +1357,7 @@ Electricity & 2.86 & 0.79 & 0.59 & 0.80 & 0.73 & 0.64 & \textbf{1.21} & 1.49 & 1
 
 \paragraph{Coverage and failures.} Over all 35 cells the mean 95\% coverage is 0.925 (SRS), 0.947 (PATTERN), 0.950 (IS), 0.941 (Score-10), 0.942 (Dis-25), 0.929 (PPI++), 0.924 (StratPPI), 0.946 (PATTERN-DIF) and 0.929 (PATTERN-PPI). The shortfalls concentrate in the smallest cells. The lowest worst-estimand coverages over all cells are 0.14 for StratPPI (Churn, $L=250$), 0.16 for SRS and for PPI++, 0.17 for Score-10, 0.20 for PATTERN-PPI, 0.45 for Dis-25 and 0.52 for PATTERN (Churn, $L=250$). The tuned estimators (PPI++, StratPPI, PATTERN-PPI) undercover when per-stratum tuning parameters are estimated from a few labels, notably in Law school where PATTERN-PPI covers 0.70 at $L=250$ and StratPPI 0.70--0.87 below $L=2000$. PATTERN-DIF, which fixes $\lambda=1$, keeps the coverage of PATTERN (0.946). Undefined estimates (a group with no sampled positive) occurred in at most 1\% of replications for any method (Dis-25, Adult-race, $L=250$: 1\%; SRS 0.5\%; PATTERN and the others none). Runtimes per replicate (design computation excluded) are 8--11 ms on average for the stratified and importance-sampling designs and 34--51 ms for the PPI-type estimators (Table~\Mref{tab:base-budget}, last column), which tune per estimand and stratum. Design computation is at most 0.6 s per cell for every method.
 
-\paragraph{The model-assisted extension.} PATTERN-DIF and PATTERN-PPI (bottom block of Table~\Mref{tab:base-budget}) improve on PATTERN in every cell except Law school at $L=2000$, where PATTERN is already exact, by a median factor of 1.3--1.6 (by budget) and up to 11 in Law school at $L\le500$; they are the best methods in this study, with efficiency against SRS of 6.6, 6.2, 6.6 and 15.5 for PATTERN-DIF. The estimated-$\lambda$ version adds little over $\lambda=1$ (PATTERN-PPI is within 3\% of PATTERN-DIF in the median) and costs coverage, so we recommend the fixed-$\lambda$ version if the extension is used. Because the extension changes the estimator rather than the design, its variance expressions are those of the difference estimator under stratified sampling \citep{sarndal1992}; its validity as a design-based method in our setting follows from the known proxy totals, but we did not extend the theory of Section~\Mref{sec:theory} to it, and it is reported here as an empirical result.
+\paragraph{The model-assisted extension.} PATTERN-DIF and PATTERN-PPI (bottom block of Table~\Mref{tab:base-budget}) improve on PATTERN in every cell except Law school at $L=2000$, where PATTERN is already exact, by a median factor of 1.3--1.6 (by budget) and up to 11 in Law school at $L\le500$; they are the best methods in this study, with efficiency against SRS of 6.6, 6.2, 6.6 and 15.5 for PATTERN-DIF. The estimated-$\lambda$ version adds little over $\lambda=1$ (PATTERN-PPI is within 3\% of PATTERN-DIF in the median) and costs coverage, so we recommend the fixed-$\lambda$ version if the extension is used. Because the extension changes the estimator rather than the design, its variance expressions are those of the difference estimator under stratified sampling \citep{sarndal1992}. For $\lambda=1$ (PATTERN-DIF) unbiasedness, the variance formula and the asymptotic coverage are covered by Proposition~\Mref{prop:validity} with the proxy mean as $\psi$; for the tuned weights of PATTERN-PPI only the asymptotic statement of Proposition~\ref{prop:dif-lambda} holds, and the finite-sample undercoverage reported above is not covered by the theory.
 
 \paragraph{Limitations (detail).} The comparison is restricted to fixed-budget, one-shot designs on cached pools of nine models with logistic-type probabilities; the proxy is the same for every method, so a better proxy for any of them (for example a calibrated or learned one) could change the ranking, especially for StratPPI and PATTERN-PPI which rely on it directly. The importance-sampling baseline draws with replacement and so spends more than $L$ draws for $L$ labels; counting draws instead of labels would lower its efficiency. $R=200$ replications give Monte Carlo errors of about 10\% on a single mean squared error, so differences between 0.9 and 1.1 in Table~\ref{tab:base-setting} should not be read as ranking. Medians over estimands hide estimand-level differences: on the three types, PATTERN's median efficiency against SRS is 6.2 (TPR), 4.8 (FPR) and 3.8 (ERR), against 3.0, 3.5 and 3.0 for IS and 5.3, 5.2 and 2.3 for StratPPI.
 

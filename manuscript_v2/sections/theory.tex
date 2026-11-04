@@ -10,7 +10,7 @@ the predictions $\hat y_{mi}$, the probabilities $\hat p_{mi}$, the groups $G_i$
 numbers, and the only randomness is the selection of the labelled sample. The strata, the allocation and
 the proxy are computed from $(\hat y_{mi},\hat p_{mi},G_i)_{i\in U}$ alone, so they are fixed before any label is seen,
 and no model for $Y$ given the predictions is needed for validity. Both estimators are unbiased for every proxy; a wrong
-proxy costs efficiency, not validity. Additional results (closed-form design effects, misspecification bounds,
+proxy affects efficiency only. Additional results (closed-form design effects, misspecification bounds,
 tuning of the difference coefficient) are in Supplementary Section~\SIref{si:theory-extra}, and full proofs in
 Supplementary Section~\SIref{si:proofs}.
 
@@ -122,8 +122,8 @@ z^{TPR}_i=s_g\,\frac{Y_i(D_i-\delta_g)}{P_g},\qquad
 z^{FPR}_i=s_g\,\frac{(1-Y_i)(D_i-\gamma_g)}{Q_g},\qquad
 z^{ERR}_i=\frac{D_i(1-2Y_i)}{N}.
 \end{equation}
-For a stratum $h$ inside group $g$ let $\pi_h=\bar Y_h$, $\rho_h=N_h^{-1}\sum_{U_h}|D_i|$ (the disagreement rate of the pair),
-$r_h=N_h^{-1}\sum_{U_h}Y_i|D_i|$, $c_h=N_h^{-1}\sum_{U_h}Y_iD_i$ and $\kappa_h=N_h/(N_h-1)$. Then
+For a stratum $h$ inside group $g$ let $\pi_h=\bar Y_h$ (the stratum prevalence, not the proxy $\pi_i$), $\rho_h=N_h^{-1}\sum_{U_h}|D_i|$ (the disagreement rate of the pair),
+$r_h=N_h^{-1}\sum_{U_h}Y_i|D_i|$, $c_h=N_h^{-1}\sum_{U_h}Y_iD_i$ (a stratum moment, not the weight $c_h$ of \eqref{eq:linvar}) and $\kappa_h=N_h/(N_h-1)$. Then
 \begin{align}
 S^2_{z^{TPR},h}&=\frac{\kappa_h}{P_g^2}\Big\{(r_h-c_h^2)+\delta_g^2\pi_h(1-\pi_h)
 -2\delta_g\,c_h(1-\pi_h)\Big\},\label{eq:stratvar-tpr}\\
@@ -140,9 +140,9 @@ S^2_{z^{ERR},h}=0 .
 \end{proposition}
 
 The proof is a direct calculation (Supplementary Section~\SIref{si:proofs}). Equation \eqref{eq:agree-var} is the structural fact behind the
-design. Where all models agree, the numerators of the comparison estimands receive nothing; what remains is the denominator term, with label
+design. Where all models agree, the numerators of the comparison estimands receive nothing and only the denominator term remains, with label
 variability $\pi_h(1-\pi_h)$ scaled by the square of the group-wise target component. Competitive models have $|\delta_g|$ of a few hundredths,
-so these strata, which typically contain most of the pool, carry a variance two to three orders of magnitude below the disagreement strata,
+so these strata, which contain most of the pool in seven of our eleven settings, carry a per-instance variance that is typically at least two orders of magnitude below that of the disagreement strata (for pairs among the three most accurate models on our real pools),
 where \eqref{eq:stratvar-tpr} is dominated by $r_h$. For the error difference the agreement strata carry no variance at all.
 
 The residual influence values of the difference estimator are $e_i=(Y_i-\pi_i)d_i$ with $d_i=\nabla f(T)^\top(u_i-v_i)$ label-free
@@ -164,8 +164,8 @@ The difference estimator has the smaller linearised variance if and only if the 
 $\beta_h>1/2$ in every stratum. Further parts (optimal coefficient, calibrated form) are Proposition~\SIref{prop:dif-var-ext} in Supplementary Section~\SIref{si:theory-extra}.
 \end{proposition}
 
-The sign of the gain is thus not automatic: it requires the regression slope of $z$ on $\tilde z$ to exceed one half, so that a weakly aligned or
-over-dispersed proxy hurts. With a calibrated proxy, however, the gain is guaranteed and computable without labels.
+The sign of the gain is therefore not automatic: the regression slope of $z$ on $\tilde z$ must exceed one half, and a weakly aligned or
+over-dispersed proxy hurts. With a calibrated proxy the gain is guaranteed and computable without labels.
 
 \begin{proposition}[Design-effect ratio under a calibrated proxy]\label{prop:dif-deff}
 Let the labels be independent Bernoulli$(\pi_i)$ (expectation $E_\pi$), $\nu_h=S^2_{\tilde z,h}/\bar\sigma^2_h$ the signal-to-noise ratio of the proxy
@@ -181,9 +181,9 @@ where $R_h^2=\nu_h/(1+\nu_h)$ is the expected within-stratum squared correlation
 \end{enumerate}
 \end{proposition}
 
-In words, the gain $G\ge1$ is the average of the stratum gains $1/(1-R_h^2)$, weighted by the strata's shares of the residual variance; a calibrated
-proxy never makes the difference estimator worse in expectation. The gain is a \emph{within}-stratum $R^2$, so it comes mostly from the known structure of
-$u_i,v_i$ (the pattern of $D_i$) rather than from sharp proxies. Closed forms for $\theta^{TPR},\theta^{FPR},\theta^{ERR}$
+The gain $G\ge1$ is the average of the stratum gains $1/(1-R_h^2)$, weighted by the strata's shares of the residual variance, so a calibrated
+proxy never makes the difference estimator worse in expectation. The gain is a \emph{within}-stratum $R^2$ and comes mostly from the known structure of
+$u_i,v_i$ (the pattern of $D_i$), not from sharp proxies. Closed forms for $\theta^{TPR},\theta^{FPR},\theta^{ERR}$
 (Proposition~\SIref{prop:dif-closed}) give gains of the order of one to three in disagreement strata, for example $1.4$, $3.3$ and $1.2$ for a constant proxy $\bar\pi=0.3$, and
 they are multiplicative with the stratification gain. Proofs are in Supplementary Section~\SIref{si:proofs}.
 
@@ -234,7 +234,7 @@ Because the $S^2_{ht}$ are unknown, the design replaces them by their expectatio
 \tilde A^{0\,2}_h=\sum_tw_t\big(\bar\sigma^2_{ht}+S^2_{\tilde z,ht}\big)\ \text{(plain rule)},\qquad
 \tilde A^{\psi\,2}_h=\sum_tw_t\bar\sigma^2_{ht}\ \text{(difference rule)}.
 \end{equation}
-The design uses the plain rule (Section~\ref{sec:design}), which is exactly Neyman for the plain estimator and robust to an untrusted proxy. For the difference
+The design uses the plain rule (Section~\ref{sec:design}), which is exactly Neyman for the plain estimator and does not depend on trusting the proxy. For the difference
 estimator the loss from using the plain rule is at most $\{1+(1+\nu_{\max})^{1/2}\}^2/\{4(1+\nu_{\max})^{1/2}\}$ (for example $9/8$ for $\nu_{\max}=3$),
 by Proposition~\SIref{prop:alloc-dif} in Supplementary Section~\SIref{si:theory-extra}.
 
@@ -245,7 +245,7 @@ With $\sigma^2_{ht}$ and $\sigma^2_t$ the variances with divisors $N_h$ and $N$,
 \mathrm{Eff}_t=\frac{\sigma_t^2}{(\sum_hW_h\sigma_{ht})^2}\;\ge\;1,
 \end{equation}
 with equality only if all within-stratum standard deviations are equal and the stratum means coincide. Combined with Proposition~\ref{prop:influence}, this gives explicit
-formulas (Corollary~\SIref{prop:deff} in Supplementary Section~\SIref{si:theory-extra}). Their content is the heuristic \emph{efficiency $\approx1/\rho$}, where $\rho$ is the pair's
+formulas (Corollary~\SIref{prop:deff} in Supplementary Section~\SIref{si:theory-extra}). They reduce to the heuristic \emph{efficiency $\approx1/\rho$}, where $\rho$ is the pair's
 disagreement rate: it is exact for an error difference with a two-sided disagreement set, and holds up to a group factor and a bounded target-size factor for the rate differences. A pair that disagrees on 5\% of the
 pool gains about 20 over SRS, one that disagrees on 40\% about 2.5. For $M>2$ pattern strata give $1/\rho_{\rm any}\le\mathrm{Eff}^{ERR}\le1/\rho$ (equation~\SIref{eq:deff-sandwich}). The difference estimator multiplies these stratification gains by the factor $G$ of
 \eqref{eq:dif-deff}, which is of order one to three and does not grow as $\rho\to0$.
@@ -257,5 +257,5 @@ The relative loss in the weighted variance from using $\tilde A_h$ instead of th
 $(\sum_h\omega_hx_h)(\sum_h\omega_h/x_h)\ge1$ with $\omega_h=N_hA_h/\sum_kN_kA_k$ and $x_h=\tilde A_h/A_h$; it vanishes iff $\tilde A_h\propto A_h$ (a proxy wrong by a common factor
 costs nothing) and is bounded by the Kantorovich ratio $(x_{\max}+x_{\min})^2/(4x_{\max}x_{\min})$, so if every $\tilde A_h$ is within a factor 2 of $A_h$ up to a common scale the design keeps at least 64\% of the
 efficiency of the optimal allocation (Proposition~\SIref{prop:proxy}). What cannot be guaranteed is improvement over SRS for every population: a proxy that is badly wrong in a high-variance stratum
-can do worse than proportional allocation. A defensive mixture $n_h=\eta\,n^{\rm prop}_h+(1-\eta)\tilde n_h$ guarantees a weighted variance at most $1/\eta$ times that of SRS (up to a factor $(1-1/\min_hN_h)^{-1}$). The structure that matters most, which strata carry the numerators, is determined
-by the predictions and not by the proxy (Proposition~\ref{prop:influence}).
+can do worse than proportional allocation. A defensive mixture $n_h=\eta\,n^{\rm prop}_h+(1-\eta)\tilde n_h$ guarantees a weighted variance at most $1/\eta$ times that of SRS when the sampling fraction $L/N$ is small (up to a factor $(1-1/\min_hN_h)^{-1}$); the exact factor with finite-population corrections is $(1-\eta f)/\{\eta(1-f)\}$ for $f=L/N$ (Supplementary Proposition~\SIref{prop:proxy}). Which strata carry the numerators is determined
+by the predictions, not by the proxy (Proposition~\ref{prop:influence}).

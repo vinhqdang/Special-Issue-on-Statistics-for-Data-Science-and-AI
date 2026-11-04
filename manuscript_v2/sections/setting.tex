@@ -1,9 +1,9 @@
 \section{Problem setting}\label{sec:setting}
 
 \subsection{Pool, models and labels}
-We consider a pool $U=\{1,\dots,N\}$ of instances drawn from the deployment population and $M\ge 2$ binary classifiers that have already been trained elsewhere. For every instance $i\in U$ the following quantities are available before any label is collected: the predictions $\hat y_{mi}\in\{0,1\}$ and predicted probabilities $\hat p_{mi}\in[0,1]$ of every model $m=1,\dots,M$, and the value $G_i\in\{0,1\}$ of a binary group attribute. The label $Y_i\in\{0,1\}$ is unknown. It can be obtained for any instance, at a cost of one unit, and the analyst can afford $L\ll N$ labels. The group attribute is assumed to be recorded for all instances, which is the usual situation when a protected attribute is part of the data used for auditing even when it is not used for prediction. The labels are treated as fixed; all randomness comes from the choice of which instances to label. Inference therefore refers to the finite pool, which is the natural target when the pool is the population on which the models will be used, and it extends to the superpopulation in the usual way when the pool is a random sample from it \citep{sarndal1992}.
+We consider a pool $U=\{1,\dots,N\}$ of instances drawn from the deployment population and $M\ge 2$ binary classifiers that have already been trained elsewhere. For every instance $i\in U$ the following quantities are available before any label is collected: the predictions $\hat y_{mi}\in\{0,1\}$ and predicted probabilities $\hat p_{mi}\in[0,1]$ of every model $m=1,\dots,M$, and the value $G_i\in\{0,1\}$ of a binary group attribute. The label $Y_i\in\{0,1\}$ is unknown. It can be obtained for any instance, at a cost of one unit, and the analyst can afford $L\ll N$ labels. The group attribute is assumed to be recorded for all instances, as is usual when a protected attribute is part of the data used for auditing even if it is not used for prediction. The labels are treated as fixed, and all randomness comes from the choice of which instances to label. Inference therefore refers to the finite pool, the natural target when the pool is the population of use, and extends to the superpopulation in the usual way when the pool is a random sample from it \citep{sarndal1992}.
 
-This setting differs from the classical evaluation protocol, in which a labelled test set of fixed size is given and the only question is how to analyse it. Here the question is also how to spend a labelling budget. It also differs from active learning: the models are fixed, and labels are collected only to compare them.
+The classical evaluation protocol starts from a labelled test set of fixed size and asks only how to analyse it; here we also ask how to spend the labelling budget. The setting differs from active learning too: the models are fixed, and labels are collected only to compare them.
 
 \subsection{Totals and estimands}
 All quantities of interest are smooth functions of a small number of population totals, each of which is linear in the labels. For a group $g\in\{0,1\}$ and model $m$ define
@@ -17,7 +17,7 @@ The group-wise true and false positive rates are $\mathrm{TPR}_{mg}=TP_{mg}/P_g$
 \begin{equation}
 \Delta^{\mathrm{TPR}}_m=\mathrm{TPR}_{m1}-\mathrm{TPR}_{m0},\qquad \Delta^{\mathrm{FPR}}_m=\mathrm{FPR}_{m1}-\mathrm{FPR}_{m0},
 \end{equation}
-and the equalised-odds gap is $\mathrm{EO}_m=\max(|\Delta^{\mathrm{TPR}}_m|,|\Delta^{\mathrm{FPR}}_m|)$ \citep{hardt2016}. A model with small gaps treats the two groups more similarly in terms of error rates.
+and the equalised-odds gap is $\mathrm{EO}_m=\max(|\Delta^{\mathrm{TPR}}_m|,|\Delta^{\mathrm{FPR}}_m|)$ \citep{hardt2016}. A model with small gaps has more similar error rates in the two groups.
 
 Our primary estimands are comparisons between models. For a pair $(m,j)$ let
 \begin{equation}\label{eq:theta}
@@ -25,20 +25,20 @@ Our primary estimands are comparisons between models. For a pair $(m,j)$ let
 \theta^{\mathrm{FPR}}_{mj}=\Delta^{\mathrm{FPR}}_m-\Delta^{\mathrm{FPR}}_j,\qquad
 \theta^{\mathrm{ERR}}_{mj}=(E_m-E_j)/N .
 \end{equation}
-A negative $\theta^{\mathrm{TPR}}_{mj}$ means, for instance, that model $m$ has a smaller signed TPR gap than model $j$. We write $\theta=f(T)$ for the vector of all $3\binom{M}{2}$ comparisons, where $f$ is a known smooth map on the region where $P_g,Q_g>0$. The signed gaps rather than their absolute values are used as primary estimands because they are smooth functions of the totals; the non-smooth equalised-odds gap and the ranking of models by it are studied in Section~\ref{sec:ablations}.
+A negative $\theta^{\mathrm{TPR}}_{mj}$ means, for instance, that model $m$ has a smaller signed TPR gap than model $j$. We write $\theta=f(T)$ for the vector of all $3\binom{M}{2}$ comparisons, where $f$ is a known smooth map on the region where $P_g,Q_g>0$. The primary estimands are the signed gaps, because they are smooth functions of the totals; the non-smooth equalised-odds gap and the ranking of models by it are studied in Section~\ref{sec:ablations}.
 
 \subsection{Why comparisons on fairness are label-hungry}
-Under simple random sampling (SRS) of $L$ labels, the TPR of a group is estimated from the positives of that group that happen to be sampled, about $L\,P_g/N$ of them. In the Adult data with sex as the group, female positives make up 3.6\% of the pool, so a budget of 1,000 labels yields on average 36 relevant instances for $\mathrm{TPR}_{m1}$. An earlier analysis of twelve data settings (Section~\ref{sec:intro}) found that certifying a regret of 0.01 in the equalised-odds gap required on the order of $10^5$ randomly sampled labels, against about $10^3$ for the error rate. Simply oversampling the minority group helps less than one might expect, because each group-wise rate is also a ratio whose denominator must be estimated, and because the comparison of two models depends on the difference of their predictions rather than on each prediction separately.
+Under simple random sampling (SRS) of $L$ labels, the TPR of a group is estimated from the positives of that group that happen to be sampled, about $L\,P_g/N$ of them. In the Adult data with sex as the group, female positives make up 3.6\% of the pool, so a budget of 1,000 labels yields on average 36 relevant instances for $\mathrm{TPR}_{m1}$. An earlier study of ours on twelve data settings (described in Section~\ref{sec:intro}; not part of this paper) found that certifying a regret of 0.01 in the equalised-odds gap required on the order of $10^5$ randomly sampled labels, against about $10^3$ for the error rate. Oversampling the minority group alone helps less than might be expected, because each group-wise rate is a ratio whose denominator must also be estimated, and because the comparison of two models depends on the difference of their predictions, not on each prediction separately.
 
 \subsection{Two structural facts}
-Two features of the problem can be exploited by the sampling design.
+The sampling design can exploit two features of the problem.
 
 \emph{Comparisons depend only on disagreements.} Write $s_1=+1$ and $s_0=-1$. Then
 \begin{equation}\label{eq:identity}
 \theta^{\mathrm{TPR}}_{mj}=\sum_{g\in\{0,1\}} \frac{s_g}{P_g}\sum_{i:G_i=g} Y_i\,(\hat y_{mi}-\hat y_{ji}),
 \end{equation}
-and similarly for $\theta^{\mathrm{FPR}}_{mj}$ with $(1-Y_i)$ and $Q_g$, while $N\theta^{\mathrm{ERR}}_{mj}=\sum_i(\hat y_{mi}-\hat y_{ji})(1-2Y_i)$. The numerators vanish on every instance where $m$ and $j$ predict the same label. Competing models that are all reasonably accurate agree on most instances; in our eleven data settings the three most accurate of nine models disagree, averaged over their three pairs, on between 0.0\% and 9.5\% of the pool (Table~\ref{tab:data}). Labels spent on instances where all models agree inform only the denominators $P_g$ and $Q_g$.
+and similarly for $\theta^{\mathrm{FPR}}_{mj}$ with $(1-Y_i)$ and $Q_g$, while $N\theta^{\mathrm{ERR}}_{mj}=\sum_i(\hat y_{mi}-\hat y_{ji})(1-2Y_i)$. The numerators vanish on every instance where $m$ and $j$ predict the same label. Reasonably accurate competing models agree on most instances; in our eleven data settings the three most accurate of nine models disagree, averaged over their three pairs, on between 0.0\% and 9.5\% of the pool (Table~\ref{tab:data} in Section~\ref{sec:empirical}). Labels spent on instances where all models agree inform only the denominators $P_g$ and $Q_g$.
 
 \emph{Everything except the label is known in advance.} The group of every instance and the full vector of predictions are known before labelling. A design can therefore condition on them freely, and on the predicted probabilities, without introducing any bias, because the inclusion probabilities are known.
 
-The design proposed in Section~\ref{sec:design} uses both facts: it stratifies the pool by group and by how many models predict the positive class, and it allocates labels across strata to minimise the variance of all comparisons at once.
+The design of Section~\ref{sec:design} uses both: it stratifies the pool by group and by how many models predict the positive class, and allocates labels across strata to minimise the variance of all comparisons at once.
