@@ -1,195 +1,137 @@
 % ---------------------------------------------------------------------------------------------
-% Theory. Notation as in docs/notation_v2.md (proxy mean written \psi_i, residual \xi_i, to avoid a clash with the
-% map f and the sampling fraction f_h). Full proofs: sections/appendix_proofs.tex. Bibliography: refs_theory.bib.
+% Theory (main text). Notation as in docs/notation_v2.md (proxy mean written \psi_i, residual \xi_i, to avoid a clash with the
+% map f and the sampling fraction f_h). Full proofs: sections/appendix_proofs.tex (SI). Further results: sections/si_theory_extra.tex (SI).
 % The main estimator is the difference estimator (PATTERN-DIF); the plain Horvitz--Thompson estimator is psi = 0.
 % ---------------------------------------------------------------------------------------------
 \section{Theory}\label{sec:theory}
 
-This section collects the statistical properties of the design and of its two estimators, the plain
-Horvitz--Thompson plug-in and the model-assisted difference estimator. We work in the design-based
-framework of survey sampling \citep{cochran1977,sarndal1992}: the pool $U$, the predictions
-$\hat y_{mi}$, the probabilities $\hat p_{mi}$, the groups $G_i$ and the labels $Y_i$ are fixed
-numbers, and the only randomness is the selection of the labelled sample. Two facts make this
-framework convenient. First, the strata, the allocation and the proxy are computed from
-$(\hat y_{mi},\hat p_{mi},G_i)_{i\in U}$ alone, so they are fixed before any label is seen.
-Second, no model for $Y$ given the predictions is needed for validity; the proxy $\pi_i$ enters
-the allocation and, for the difference estimator, the estimator itself, but only through label-free
-quantities. Both estimators are unbiased for the totals for every proxy
-(Section~\ref{sec:theory-asym}); a wrong proxy costs efficiency, not validity
-(Sections~\ref{sec:theory-dif} and~\ref{sec:theory-proxy}). Section~\ref{sec:theory-asym} gives unbiasedness, consistency and
-asymptotic normality; Section~\ref{sec:theory-structure} the structure of the influence values
-that drives the gains; Section~\ref{sec:theory-dif} the comparison of the difference and the plain
-estimator, including tuning of the difference coefficient and zero-variance strata;
-Section~\ref{sec:theory-alloc} the allocation; Section~\ref{sec:theory-deff}
-the design effect as a function of the disagreement rate. Proofs are in
-Appendix~\ref{sec:theory-proofs}.
+We work in the design-based framework of survey sampling \citep{cochran1977,sarndal1992}: the pool $U$,
+the predictions $\hat y_{mi}$, the probabilities $\hat p_{mi}$, the groups $G_i$ and the labels $Y_i$ are fixed
+numbers, and the only randomness is the selection of the labelled sample. The strata, the allocation and
+the proxy are computed from $(\hat y_{mi},\hat p_{mi},G_i)_{i\in U}$ alone, so they are fixed before any label is seen,
+and no model for $Y$ given the predictions is needed for validity. Both estimators are unbiased for every proxy; a wrong
+proxy costs efficiency, not validity. Additional results (closed-form design effects, misspecification bounds,
+tuning of the difference coefficient) are in Supplementary Section~\SIref{si:theory-extra}, and full proofs in
+Supplementary Section~\SIref{si:proofs}.
 
 \subsection{Set-up}\label{sec:theory-setup}
 
-Write $t_i(Y_i)=Y_iu_i+(1-Y_i)v_i\in\mathbb{R}^C$ for the vector of contributions of instance $i$
-to the totals, $T=\sum_{i\in U}t_i(Y_i)$, and $\tau=T/N$. All entries of $u_i,v_i$ lie in $\{0,1\}$,
-so $\|t_i\|_\infty\le 1$. Every comparison estimand is a smooth function of the totals,
-$\theta=f(T)$, and is scale free in the sense that $f(T)=\phi(T/N)$: the group rates are ratios of
-totals and $\theta^{ERR}_{mj}=(E_m-E_j)/N$. The function $\phi$ is infinitely differentiable on the
-set where the denominators $P_g/N$ and $Q_g/N$ are positive. The \emph{influence value} of
-instance $i$ for a scalar estimand $\theta=f(T)$ is
+Write $t_i(Y_i)=Y_iu_i+(1-Y_i)v_i\in\mathbb{R}^C$, with entries of $u_i,v_i$ in $\{0,1\}$, for the contribution of instance $i$
+to the totals $T=\sum_{i\in U}t_i(Y_i)$, and $\tau=T/N$. Every comparison estimand is a smooth function of the totals,
+$\theta=f(T)=\phi(T/N)$, with $\phi$ infinitely differentiable where the denominators $P_g/N,Q_g/N$ are positive. The
+\emph{influence value} of instance $i$ is
 \begin{equation}\label{eq:influence}
 z_i=\nabla f(T)^{\top}t_i(Y_i)=N^{-1}\nabla\phi(\tau)^{\top}t_i(Y_i).
 \end{equation}
-Strata $h=1,\dots,H$ partition $U$ into sets $U_h$ of sizes $N_h$, with $W_h=N_h/N$; $n_h$ labels
-are drawn from $U_h$ by simple random sampling without replacement, independently across strata
-(STSI). For any variable $x$ we write $\bar x_h=N_h^{-1}\sum_{U_h}x_i$,
-$S^2_{x,h}=(N_h-1)^{-1}\sum_{U_h}(x_i-\bar x_h)^2$ and $f_h=n_h/N_h$, and $\bar x_{s_h}$, $s^2_{x,h}$
-for the corresponding sample mean and sample variance, and $c_h=N_h^2(1-f_h)/n_h$. The plain
-estimator and its variance estimator are
+Strata $h=1,\dots,H$ partition $U$ into sets $U_h$ of sizes $N_h$, $W_h=N_h/N$; $n_h$ labels
+are drawn from $U_h$ by simple random sampling without replacement, independently across strata.
+For a variable $x$ let $\bar x_h$ and $S^2_{x,h}$ be the stratum mean and variance, $\bar x_{s_h}$, $s^2_{x,h}$
+their sample versions, $f_h=n_h/N_h$ and $c_h=N_h^2(1-f_h)/n_h$. The plain
+(Horvitz--Thompson, \citealt{horvitz1952}) estimator, its linearisation variance estimator
+\citep[Ch.~5]{sarndal1992} and the linearised variance are
 \begin{equation}\label{eq:ht}
-\hat T=\sum_{h=1}^HN_h\bar t_{s_h},\qquad \hat\theta=f(\hat T),\qquad
+\hat T=\sum_{h=1}^HN_h\bar t_{s_h},\quad \hat\theta=f(\hat T),\quad
 \hat V=\sum_{h=1}^H N_h^2\,\frac{1-f_h}{n_h}\,s^2_{\hat z,h},\quad
-\hat z_i=\nabla f(\hat T)^{\top}t_i(Y_i).
+\hat z_i=\nabla f(\hat T)^{\top}t_i(Y_i),
 \end{equation}
-$\hat T$ is the Horvitz--Thompson estimator \citep{horvitz1952} for the inclusion probabilities
-$n_h/N_h$, and $\hat V$ is the usual linearisation (Taylor) variance estimator
-\citep[Ch.~5]{sarndal1992}. Its population counterpart is the linearised variance
 \begin{equation}\label{eq:linvar}
 V(\theta;n)=\sum_{h=1}^HN_h^2\,\frac{1-f_h}{n_h}\,S^2_{z,h}=\sum_hc_hS^2_{z,h}.
 \end{equation}
 
 \paragraph{Proxy means and the difference estimator.} Let $\pi_i\in[0,1]$ be any proxy for $P(Y_i=1)$
 that is a function of $(\hat y_{mi},\hat p_{mi},G_i)_{i\in U}$ only (the design uses
-$\pi_i=M^{-1}\sum_m\hat p_{mi}$). Its \emph{proxy mean} is the expected contribution under
-$Y_i\sim\mathrm{Bernoulli}(\pi_i)$,
+$\pi_i=M^{-1}\sum_m\hat p_{mi}$). Its \emph{proxy mean} and the residual are
 \begin{equation}\label{eq:psi}
-\psi_i=\pi_iu_i+(1-\pi_i)v_i,\qquad \xi_i=t_i(Y_i)-\psi_i=(Y_i-\pi_i)(u_i-v_i),
+\psi_i=\pi_iu_i+(1-\pi_i)v_i,\qquad \xi_i=t_i(Y_i)-\psi_i=(Y_i-\pi_i)(u_i-v_i).
 \end{equation}
-with $\|\psi_i\|_\infty\le1$ and $\|\xi_i\|_\infty\le1$. Because every unit of the pool carries a
-prediction, $\psi_i$ is known for all $i\in U$ and the proxy total $F=\sum_{i\in U}\psi_i$ is a
-\emph{known constant}, not an estimate: the pool is the finite population of interest, so, unlike in
-prediction-powered inference with an unlabelled sample from a superpopulation
-\citep{angelopoulos2023ppi,angelopoulos2026ppipp}, there is no sampling error in the proxy total and no
-$(1+n/N_u)$ factor. For any label-free vector $\psi_i$ (not necessarily a proxy mean) the
-\emph{difference estimator} of the totals is
+Every unit of the pool carries a prediction, so $\psi_i$ is known for all $i\in U$ and $F=\sum_{i\in U}\psi_i$ is a
+\emph{known constant}: unlike prediction-powered inference with an unlabelled sample from a superpopulation
+\citep{angelopoulos2023ppi,angelopoulos2026ppipp}, there is no sampling error in the proxy total. For any label-free
+vector $\psi_i$ the \emph{difference estimator} is
 \begin{equation}\label{eq:dif}
 \hat T_\psi=\sum_{i\in U}\psi_i+\sum_{h=1}^HN_h\big(\bar t_{s_h}-\bar\psi_{s_h}\big)
 =\sum_{h=1}^H\big\{F_h+N_h\bar\xi_{s_h}\big\},\qquad F_h=\sum_{i\in U_h}\psi_i,\qquad
 \hat\theta_\psi=f(\hat T_\psi).
 \end{equation}
-Componentwise, $\hat T_{\psi,c}=\sum_{i\in U}\psi_{ic}+\sum_hN_h\,\mathrm{mean}_{s_h}\{t_{ic}(Y_i)-\psi_{ic}\}$.
-With $\psi\equiv0$ it is the plain estimator \eqref{eq:ht}; with the proxy mean \eqref{eq:psi} it is the
-stratified difference estimator, the estimator of PATTERN-DIF (it is a model-assisted, generalised
-difference estimator in the sense of \citealt{cassel1976} and \citealt[Ch.~6]{sarndal1992}, and the
-stratified version of the difference estimator of prediction-powered inference). The residual influence value,
-its sample version and the linearised variance are
+With $\psi\equiv0$ it is the plain estimator; with the proxy mean \eqref{eq:psi} it is the estimator of PATTERN-DIF, a
+stratified generalised difference estimator \citep{cassel1976,sarndal1992}. The residual influence value, its
+sample version and the linearised variance are
 \begin{align}
 e_i&=\nabla f(T)^{\top}\xi_i=z_i-\tilde z_i,\qquad \tilde z_i=\nabla f(T)^{\top}\psi_i,\notag\\
 \hat V_\psi&=\sum_hN_h^2\frac{1-f_h}{n_h}s^2_{\hat e,h},\qquad \hat e_i=\nabla f(\hat T_\psi)^{\top}\xi_i,\qquad
 V_\psi(\theta;n)=\sum_hc_hS^2_{e,h}.\label{eq:resid}
 \end{align}
-Thus $z_i=\tilde z_i+e_i$: the plain influence value splits into the part $\tilde z_i$ that the proxy
-predicts and the residual $e_i$ that the labels must supply. The plain estimator is the case $\tilde z\equiv0$,
-and $V_0=V(\theta;n)$ in \eqref{eq:linvar}.
+The plain influence value splits into the part $\tilde z_i$ that the proxy predicts and the residual $e_i$ that
+the labels must supply; $V_0=V(\theta;n)$ is the plain case $\tilde z\equiv0$.
 
 \subsection{Unbiasedness, consistency and asymptotic normality}\label{sec:theory-asym}
 
-Asymptotic statements refer to a sequence of pools $U_\nu$, $\nu=1,2,\dots$, with $N_\nu\to\infty$
-and a fixed number $H$ of strata; the index $\nu$ is suppressed. Let
-$r^2=\sum_hW_h^2/n_h$, which is the order of $\operatorname{Var}(\hat\tau_c)$ for a generic total.
-Throughout, $\psi$ is either $0$ or a proxy mean \eqref{eq:psi}, or any label-free vector with
-$\|\psi_i\|_\infty\le1$.
+Asymptotics refer to a sequence of pools with $N\to\infty$ and a fixed number $H$ of strata. Let
+$r^2=\sum_hW_h^2/n_h$, the order of $\operatorname{Var}(\hat\tau_c)$ for a generic total, and let $\psi$ be $0$,
+a proxy mean, or any label-free vector with $\|\psi_i\|_\infty\le1$.
 
 \begin{assumption}\label{prop:assumptions}
 \begin{enumerate}
-\item[(A1)] \emph{Design.} Strata, sample sizes and the proxy $\pi$ (hence $\psi$) are functions of
-$(\hat y_{mi},\hat p_{mi},G_i)_{i\in U}$ only, in particular not refitted on the labelled sample;
-$2\le n_h\le N_h$; $\min_hn_h\to\infty$; and
-$f_h\le 1-\varepsilon$ for some $\varepsilon>0$ and all strata that are not fully enumerated
-(strata with $n_h=N_h$ are known exactly and contribute no variance).
-\item[(A2)] \emph{Limits.} $\tau_\nu\to\tau_\infty$, and $P_g/N\ge c$, $Q_g/N\ge c$ for some
-$c>0$, $g\in\{0,1\}$.
-\item[(A3)] \emph{Non-degeneracy.} The linearised variance of the estimator in use,
-$V_\psi(\theta;n)$ in \eqref{eq:resid} ($=V(\theta;n)$ for $\psi=0$), satisfies $V_\psi(\theta;n)\ge c\,r^2$ for some $c>0$.
-\item[(A4)] \emph{Lindeberg-type condition.} For every stratum $h$, either
-$n_h(1-f_h)S^2_{e,h}N^2\to\infty$, or the stratum's share of the variance,
-$N_h^2(1-f_h)S^2_{e,h}/\{n_hV_\psi(\theta;n)\}$, tends to zero.
+\item[(A1)] \emph{Design.} Strata, sample sizes and the proxy are functions of
+$(\hat y_{mi},\hat p_{mi},G_i)_{i\in U}$ only (not refitted on the labelled sample); $2\le n_h\le N_h$,
+$\min_hn_h\to\infty$, and $f_h\le 1-\varepsilon$ in every stratum that is not fully enumerated.
+\item[(A2)] \emph{Limits.} $\tau\to\tau_\infty$ and $P_g/N,Q_g/N\ge c>0$ for $g\in\{0,1\}$.
+\item[(A3)] \emph{Non-degeneracy.} $V_\psi(\theta;n)\ge c\,r^2$ for some $c>0$.
+\item[(A4)] \emph{Lindeberg-type condition.} In every stratum, either
+$n_h(1-f_h)S^2_{e,h}N^2\to\infty$, or the stratum's share of $V_\psi(\theta;n)$ tends to zero.
 \end{enumerate}
 \end{assumption}
 
-(A1) excludes the use of labels in the design and in the proxy. (A2) asks that each group contains a non-vanishing
-fraction of positives and negatives, so that the group rates are well defined. (A3) excludes
-estimands whose influence values are (nearly) identically zero, for instance two models that
-make identical predictions, in which case $\hat\theta=\theta=0$ trivially; for the difference estimator it
-also excludes a proxy that is (nearly) exact, which can make $S^2_{e,h}$ vanish
-(Remark~\ref{rem:zero-var}). (A4) is a simple
-sufficient form of the condition of \citet{hajek1960} for the central limit theorem under simple
-random sampling without replacement; because the contributions are bounded, Hájek's condition holds
-in every stratum whose scaled variance diverges, and (A4) only rules out strata that carry a
-non-vanishing share of the variance while containing a bounded effective number of observations.
-Asymptotics for stratified sampling with a fixed or growing number of strata are treated by
-\citet{bickel1984}; for the linearisation variance estimator see \citet{krewski1981}, whose regime
-(many strata, few draws per stratum) is complementary to ours (few strata, many draws per stratum).
+(A1) excludes the use of labels in the design and the proxy; (A3) excludes degenerate estimands (for example two models with
+identical predictions) and, for the difference estimator, an essentially exact proxy; (A4) is a simple sufficient form of
+H\'ajek's \citeyearpar{hajek1960} condition for the central limit theorem under sampling without replacement.
 
 \begin{proposition}[Validity]\label{prop:validity}
 Let $\hat T_\psi$, $\hat\theta_\psi$, $\hat V_\psi$ and $V_\psi(\theta;n)$ be as in \eqref{eq:dif}--\eqref{eq:resid}; $\psi\equiv0$
-gives $\hat T,\hat\theta,\hat V,V(\theta;n)$ of \eqref{eq:ht}--\eqref{eq:linvar}.
+gives the plain estimator.
 \begin{enumerate}
 \item[(a)] If $n_h\ge1$ for all $h$, then $E(\hat T_\psi)=T$ and
-$\operatorname{Cov}(\hat T_\psi)=\sum_hN_h^2(1-f_h)n_h^{-1}\Sigma^\xi_h$, with $\Sigma^\xi_h$ the population
-covariance matrix of $\xi_i=t_i(Y_i)-\psi_i$ in stratum $h$; if $n_h\ge2$, the sample covariance matrix
-of $\xi_i$ gives an exactly unbiased estimator of $\operatorname{Cov}(\hat T_\psi)$. This holds for any strata
-and any allocation that do not depend on the labels, and for any label-free $\psi$, in particular for
-any proxy.
-\item[(b)] Under (A1)--(A2), $\hat\theta_\psi-\theta=O_p(r)$; in particular $\hat\theta_\psi$ is consistent.
-\item[(c)] Under (A1)--(A4), $(\hat\theta_\psi-\theta)/V_\psi(\theta;n)^{1/2}\to N(0,1)$ in distribution.
-\item[(d)] Under (A1)--(A3), $\hat V_\psi/V_\psi(\theta;n)\to1$ in probability. Consequently, under
-(A1)--(A4) the Wald interval $\hat\theta_\psi\pm z_{1-\alpha/2}\hat V_\psi^{1/2}$ has asymptotic coverage
-$1-\alpha$.
+$\operatorname{Cov}(\hat T_\psi)=\sum_hN_h^2(1-f_h)n_h^{-1}\Sigma^\xi_h$, with $\Sigma^\xi_h$ the stratum covariance matrix of
+$\xi_i$; if $n_h\ge2$ the sample covariance matrix gives an exactly unbiased estimator. This holds for any label-free strata, allocation and
+$\psi$, in particular for any proxy.
+\item[(b)] Under (A1)--(A2), $\hat\theta_\psi-\theta=O_p(r)$.
+\item[(c)] Under (A1)--(A4), $(\hat\theta_\psi-\theta)/V_\psi(\theta;n)^{1/2}\to N(0,1)$.
+\item[(d)] Under (A1)--(A3), $\hat V_\psi/V_\psi(\theta;n)\to1$ in probability; under (A1)--(A4) the Wald interval
+$\hat\theta_\psi\pm z_{1-\alpha/2}\hat V_\psi^{1/2}$ has asymptotic coverage $1-\alpha$.
 \end{enumerate}
 \end{proposition}
 
-\emph{Proof sketch.} (a) is the classical unbiasedness of the stratified expansion estimator
-\citep[Ch.~5]{cochran1977} applied to $\xi_i$, because $\hat T_\psi-T=\sum_hN_h(\bar\xi_{s_h}-\bar\xi_h)$ and the
-known term $F$ cancels exactly. For (b), each coordinate of $\hat\tau_\psi-\tau$ has variance at most
-$2r^2$ because the contributions are bounded; a second-order Taylor expansion of $\phi$ around
-$\tau$, valid by (A2), gives $\hat\theta_\psi-\theta=\nabla\phi(\tau)^\top(\hat\tau_\psi-\tau)+O_p(r^2)$.
-For (c), the leading term is a sum of $H$ independent stratum means; each is asymptotically
-normal by Hájek's theorem, and (A3) makes the $O_p(r^2)$ remainder negligible relative to the
-standard deviation. For (d), the stratum sample covariance matrices are consistent for $\Sigma^\xi_h$
-and $\nabla\phi(\hat\tau_\psi)\to\nabla\phi(\tau_\infty)$; (A3) turns the resulting $o_p(r^2)$ error
-into a ratio statement. $\square$
+\emph{Proof sketch.} (a) is the classical unbiasedness of the stratified expansion estimator applied to $\xi_i$, since
+$\hat T_\psi-T=\sum_hN_h(\bar\xi_{s_h}-\bar\xi_h)$ and the known $F$ cancels. For (b)--(d), a second-order Taylor expansion of $\phi$
+around $\tau$ (valid by (A2)) reduces $\hat\theta_\psi-\theta$ to a sum of $H$ independent stratum means plus an $O_p(r^2)$ remainder,
+which (A3) makes negligible; each mean is asymptotically normal by H\'ajek's theorem, and consistency of the stratum sample covariances gives (d).
+Full proofs are in Supplementary Section~\SIref{si:proofs}. $\square$
 
-The estimator $\hat\theta_\psi$ of a ratio-type estimand is not exactly unbiased; its bias is $O(r^2)$, which by (A3) is of smaller
-order than its standard deviation. The joint version for the vector of all comparison estimands
-follows from the Cramér--Wold device, provided (A3) and (A4) hold for every fixed linear
-combination. The proof uses only that the contributions are bounded and that the proxy is label-free;
-it makes no use of the proxy being accurate, calibrated or even a probability.
+The estimator of a ratio-type estimand has bias $O(r^2)$, of smaller order than its standard deviation by (A3). The proof
+uses only that the contributions are bounded and the proxy is label-free; it makes no use of the proxy being accurate or calibrated.
 
 \subsection{Structure of the influence values}\label{sec:theory-structure}
 
-For a pair $(m,j)$ let $D_i=\hat y_{mi}-\hat y_{ji}\in\{-1,0,1\}$, and write
-$\delta_g=TPR_{mg}-TPR_{jg}$ and $\gamma_g=FPR_{mg}-FPR_{jg}$ for the group-wise components, so
-that $\theta^{TPR}_{mj}=\delta_1-\delta_0$ and $\theta^{FPR}_{mj}=\gamma_1-\gamma_0$.
+For a pair $(m,j)$ let $D_i=\hat y_{mi}-\hat y_{ji}\in\{-1,0,1\}$, $\delta_g=TPR_{mg}-TPR_{jg}$ and
+$\gamma_g=FPR_{mg}-FPR_{jg}$, so that $\theta^{TPR}_{mj}=\delta_1-\delta_0$ and $\theta^{FPR}_{mj}=\gamma_1-\gamma_0$.
 
 \begin{proposition}[Influence values]\label{prop:influence}
-For every instance $i$ with $G_i=g$,
+For every instance $i$ with $G_i=g$, with $s_1=1$, $s_0=-1$,
 \begin{equation}\label{eq:infl-forms}
 z^{TPR}_i=s_g\,\frac{Y_i(D_i-\delta_g)}{P_g},\qquad
 z^{FPR}_i=s_g\,\frac{(1-Y_i)(D_i-\gamma_g)}{Q_g},\qquad
-z^{ERR}_i=\frac{D_i(1-2Y_i)}{N},
+z^{ERR}_i=\frac{D_i(1-2Y_i)}{N}.
 \end{equation}
-with $s_1=1$, $s_0=-1$. The influence values of $\theta^{TPR}$ and $\theta^{FPR}$ sum to zero
-within each group. For a stratum $h$ inside group $g$, let $\pi_h=\bar Y_h$,
-$\rho_h=N_h^{-1}\sum_{U_h}|D_i|$ (the pair's disagreement rate in the stratum),
-$r_h=N_h^{-1}\sum_{U_h}Y_i|D_i|$ and $c_h=N_h^{-1}\sum_{U_h}Y_iD_i$ (not to be confused with the factor $c_h$ of
-\eqref{eq:linvar}, which is not used in this proposition). Then, with
-$\kappa_h=N_h/(N_h-1)$,
+For a stratum $h$ inside group $g$ let $\pi_h=\bar Y_h$, $\rho_h=N_h^{-1}\sum_{U_h}|D_i|$ (the disagreement rate of the pair),
+$r_h=N_h^{-1}\sum_{U_h}Y_i|D_i|$, $c_h=N_h^{-1}\sum_{U_h}Y_iD_i$ and $\kappa_h=N_h/(N_h-1)$. Then
 \begin{align}
 S^2_{z^{TPR},h}&=\frac{\kappa_h}{P_g^2}\Big\{(r_h-c_h^2)+\delta_g^2\pi_h(1-\pi_h)
 -2\delta_g\,c_h(1-\pi_h)\Big\},\label{eq:stratvar-tpr}\\
 S^2_{z^{ERR},h}&=\frac{\kappa_h}{N^2}\Big\{\rho_h-e_h^2\Big\},\qquad
 e_h=N_h^{-1}\textstyle\sum_{U_h}D_i(1-2Y_i),\label{eq:stratvar-err}
 \end{align}
-and $S^2_{z^{FPR},h}$ is \eqref{eq:stratvar-tpr} with $Y$ replaced by $1-Y$, $P_g$ by $Q_g$ and
-$\delta_g$ by $\gamma_g$. In particular, in a stratum in which $m$ and $j$ agree on every
-instance (always the case for $K_i\in\{0,M\}$),
+and $S^2_{z^{FPR},h}$ is \eqref{eq:stratvar-tpr} with $Y$ replaced by $1-Y$, $P_g$ by $Q_g$, $\delta_g$ by $\gamma_g$. In a stratum
+where $m$ and $j$ agree on every instance (always the case for $K_i\in\{0,M\}$),
 \begin{equation}\label{eq:agree-var}
 S^2_{z^{TPR},h}=\kappa_h\Big(\frac{\delta_g}{P_g}\Big)^2\pi_h(1-\pi_h),\qquad
 S^2_{z^{FPR},h}=\kappa_h\Big(\frac{\gamma_g}{Q_g}\Big)^2\pi_h(1-\pi_h),\qquad
@@ -197,189 +139,73 @@ S^2_{z^{ERR},h}=0 .
 \end{equation}
 \end{proposition}
 
-The proof is a direct calculation (Appendix~\ref{sec:theory-proofs}). Equation \eqref{eq:agree-var}
-is the structural fact behind the design. Where all models agree, the numerators of the
-comparison estimands receive nothing, and the only remaining influence is the denominator term
-$-s_g\delta_gY_i/P_g$: label variability $\pi_h(1-\pi_h)$ scaled by the square of the group-wise
-target component. Comparisons between competitive models have $|\delta_g|$ of a few hundredths, so
-these strata, which typically contain most of the pool, carry a variance that is smaller by two to three
-orders of magnitude than the per-instance variance in the disagreement strata, where
-\eqref{eq:stratvar-tpr} is dominated by $r_h$, the share of positives on which the pair disagrees.
-For the error difference the agreement strata carry no variance at all.
+The proof is a direct calculation (Supplementary Section~\SIref{si:proofs}). Equation \eqref{eq:agree-var} is the structural fact behind the
+design. Where all models agree, the numerators of the comparison estimands receive nothing; what remains is the denominator term, with label
+variability $\pi_h(1-\pi_h)$ scaled by the square of the group-wise target component. Competitive models have $|\delta_g|$ of a few hundredths,
+so these strata, which typically contain most of the pool, carry a variance two to three orders of magnitude below the disagreement strata,
+where \eqref{eq:stratvar-tpr} is dominated by $r_h$. For the error difference the agreement strata carry no variance at all.
 
-The residual influence values of the difference estimator have an equally explicit form, and a
-feature that the plain values lack: the label enters only through $Y_i-\pi_i$.
-
-\begin{proposition}[Residual influence values]\label{prop:residual}
-Let $d_i=\nabla f(T)^\top(u_i-v_i)$, which does not depend on the labels. Then $e_i=(Y_i-\pi_i)\,d_i$, and for $G_i=g$
-\begin{align}
-e^{TPR}_i&=s_g\frac{(Y_i-\pi_i)(D_i-\delta_g)}{P_g},\qquad
-e^{FPR}_i=s_g\frac{\{(1-Y_i)-(1-\pi_i)\}(D_i-\gamma_g)}{Q_g},\notag\\
-e^{ERR}_i&=-\frac{2(Y_i-\pi_i)D_i}{N},\label{eq:resid-forms}
-\end{align}
-and $\tilde z_i=z_i-e_i$ equals \eqref{eq:infl-forms} with $Y_i$ replaced by $\pi_i$. In a stratum where the pair agrees,
-$e^{ERR}_i=0$ for every $i$: the stratum contributes neither variance nor error to the difference estimator of $\theta^{ERR}$.
-Under the working model that $Y_1,\dots,Y_N$ are independent with $P(Y_i=1)=\pi_i$ (the proxy is calibrated), with expectation $E_\pi$,
-the gradient evaluated at the non-random model-expected totals $T_\pi=\sum_{i\in U}\psi_i$ (as in the design; this changes $d_i$ by a relative $O(r)$ only),
-and with $\bar\sigma^2_h=N_h^{-1}\sum_{U_h}\pi_i(1-\pi_i)d_i^2$ and $C_h=\mathrm{Cov}_h(z,\tilde z)$ the stratum covariance,
-\begin{equation}\label{eq:resid-moments}
-E_\pi(e_i)=0,\quad \mathrm{Var}_\pi(e_i)=\pi_i(1-\pi_i)d_i^2,\qquad
-E_\pi S^2_{e,h}=\bar\sigma^2_h,\quad E_\pi S^2_{z,h}=S^2_{\tilde z,h}+\bar\sigma^2_h,\quad E_\pi C_h=S^2_{\tilde z,h}.
-\end{equation}
-\end{proposition}
+The residual influence values of the difference estimator are $e_i=(Y_i-\pi_i)d_i$ with $d_i=\nabla f(T)^\top(u_i-v_i)$ label-free
+(Proposition~\SIref{prop:residual} in Supplementary Section~\SIref{si:theory-extra}); in particular $e^{ERR}_i=0$ wherever the pair agrees. If the proxy is calibrated in the
+sense that the $Y_i$ are independent Bernoulli$(\pi_i)$, then $E_\pi S^2_{e,h}=\bar\sigma^2_h=N_h^{-1}\sum_{U_h}\pi_i(1-\pi_i)d_i^2$ and
+$E_\pi S^2_{z,h}=S^2_{\tilde z,h}+\bar\sigma^2_h$.
 
 \subsection{The difference estimator against the plain estimator}\label{sec:theory-dif}
 
-This subsection answers four questions: when does $\hat\theta_\psi$ beat $\hat\theta$, by how much, what happens
-if the proxy is wrong, and what do tuning of the coefficient and zero-variance strata do to inference. Write
-$\beta_h=\mathrm{Cov}_h(z,\tilde z)/S^2_{\tilde z,h}$ for the within-stratum regression slope of the plain influence value on its proxy
-mean, and $R_h$ for their within-stratum correlation, so that $\beta_h=R_hS_{z,h}/S_{\tilde z,h}$
-(terms with $S^2_{\tilde z,h}=0$ are dropped). For a vector $\lambda=(\lambda_h)$ of label-free constants consider the family
-$\hat T_{\lambda\psi}$ obtained by replacing $\psi$ by $\lambda_h\psi$ in stratum $h$; $\lambda\equiv0$ is the plain estimator and $\lambda\equiv1$
-the difference estimator. By Proposition~\ref{prop:validity}(a) every member is unbiased for $T$.
+Let $\beta_h=\mathrm{Cov}_h(z,\tilde z)/S^2_{\tilde z,h}$ be the within-stratum regression slope of the plain influence value on its proxy
+mean, and $R_h$ their within-stratum correlation, so $\beta_h=R_hS_{z,h}/S_{\tilde z,h}$.
 
 \begin{proposition}[Variance of the difference estimator, design-based]\label{prop:dif-var}
-Under the notation above, for any label-free proxy and any allocation:
-\begin{enumerate}
-\item[(a)] \emph{Identity.} $S^2_{e,h}=S^2_{z,h}-2\,\mathrm{Cov}_h(z,\tilde z)+S^2_{\tilde z,h}$, hence
+For any label-free proxy and any allocation, $S^2_{e,h}=S^2_{z,h}-2\,\mathrm{Cov}_h(z,\tilde z)+S^2_{\tilde z,h}$, hence
 \begin{equation}\label{eq:dif-identity}
-V_0-V_\psi=\sum_hc_h\,S^2_{\tilde z,h}\,(2\beta_h-1)=\sum_hc_h\,S_{\tilde z,h}\,(2R_hS_{z,h}-S_{\tilde z,h}).
+V_0-V_\psi=\sum_hc_h\,S^2_{\tilde z,h}\,(2\beta_h-1).
 \end{equation}
-The difference estimator has the smaller linearised variance if and only if the right side is positive. A sufficient condition is
-$R_h>S_{\tilde z,h}/(2S_{z,h})$ in every stratum, that is $\beta_h>1/2$: the within-stratum correlation of $z_i$ with its proxy mean must exceed half
-the ratio of their standard deviations.
-\item[(b)] \emph{Coefficient.} $V(\lambda)=\sum_hc_h\{S^2_{z,h}(1-R_h^2)+(\lambda_h-\beta_h)^2S^2_{\tilde z,h}\}$. It is minimised at
-$\lambda_h=\beta_h$, with $V(\beta)=\sum_hc_hS^2_{z,h}(1-R_h^2)$; moreover
-$V_0=V(\beta)+\sum_hc_h\beta_h^2S^2_{\tilde z,h}$ and $V_\psi=V(\beta)+\sum_hc_h(1-\beta_h)^2S^2_{\tilde z,h}$. With the clipped coefficient
-$\lambda_h=\min\{1,\max(0,\beta_h)\}$, $V(\lambda)\le\min(V_0,V_\psi)$.
-\item[(c)] \emph{Calibrated proxy, design-based form.} If $\mathrm{Cov}_h(e,\tilde z)=0$ in every stratum (the residual is uncorrelated with the
-proxy influence within strata), then $\beta_h=1$ and $V_0-V_\psi=\sum_hc_hS^2_{\tilde z,h}\ge0$ exactly.
-\end{enumerate}
+The difference estimator has the smaller linearised variance if and only if the right side is positive; a sufficient condition is
+$\beta_h>1/2$ in every stratum. Further parts (optimal coefficient, calibrated form) are Proposition~\SIref{prop:dif-var-ext} in Supplementary Section~\SIref{si:theory-extra}.
 \end{proposition}
 
-Part (a) shows that, unlike what is often assumed for prediction-powered estimators, the sign of the gain is not automatic:
-$\lambda=1$ is the right coefficient only if the proxy influence is neither over- nor under-dispersed relative to
-its regression on $z$; the harm from an over-dispersed proxy is quantified in Proposition~\ref{prop:dif-proxy}.
-When the proxy is calibrated, however, the gain is guaranteed and can be computed without labels.
+The sign of the gain is thus not automatic: it requires the regression slope of $z$ on $\tilde z$ to exceed one half, so that a weakly aligned or
+over-dispersed proxy hurts. With a calibrated proxy, however, the gain is guaranteed and computable without labels.
 
 \begin{proposition}[Design-effect ratio under a calibrated proxy]\label{prop:dif-deff}
-Under the working model of Proposition~\ref{prop:residual}, let $\nu_h=S^2_{\tilde z,h}/\bar\sigma^2_h$ (signal-to-noise ratio of the proxy
-influence in stratum $h$; strata with $\bar\sigma^2_h=S^2_{\tilde z,h}=0$ are omitted from the sums, and $\bar\sigma^2_h>0$ is assumed otherwise) and $a_h=c_h\bar\sigma^2_h$. Then
+Let the labels be independent Bernoulli$(\pi_i)$ (expectation $E_\pi$), $\nu_h=S^2_{\tilde z,h}/\bar\sigma^2_h$ the signal-to-noise ratio of the proxy
+influence in stratum $h$, and $a_h=c_h\bar\sigma^2_h$. Then
 \begin{enumerate}
-\item[(a)] $E_\pi V_0-E_\pi V_\psi=\sum_hc_hS^2_{\tilde z,h}\ge0$, with equality if and only if $\tilde z$ is constant within every stratum that is not fully enumerated.
-\item[(b)] For the same strata and sample sizes the design effect of the difference estimator relative to the plain estimator is
+\item[(a)] $E_\pi V_0-E_\pi V_\psi=\sum_hc_hS^2_{\tilde z,h}\ge0$, with equality iff $\tilde z$ is constant within every stratum that is not fully enumerated.
+\item[(b)] For the same strata and sample sizes,
 \begin{equation}\label{eq:dif-deff}
-\frac{E_\pi V_\psi}{E_\pi V_0}=\frac{\sum_ha_h}{\sum_ha_h(1+\nu_h)}=\frac1{G},\qquad
+\frac{E_\pi V_\psi}{E_\pi V_0}=\frac1G,\qquad
 G=\frac{\sum_ha_h\,(1+\nu_h)}{\sum_ha_h}=\frac{\sum_ha_h/(1-R_h^2)}{\sum_ha_h},
 \end{equation}
-where $R_h^2=\nu_h/(1+\nu_h)$ is the (expected) squared within-stratum correlation of $z_i$ with $\tilde z_i$. The gain $G$ is the
-average of the stratum gains $1/(1-R_h^2)$ weighted by the strata's shares of the residual variance; $G=1+\nu$ if $\nu_h\equiv\nu$.
-\item[(c)] For $\theta^{TPR},\theta^{FPR}$ and $\theta^{ERR}$ the stratum gains depend on the proxy as follows. Let $\overline{\pi(1-\pi)}$ denote
-the stratum mean of $\pi_i(1-\pi_i)$. In a \emph{disagreement stratum} ($|D_i|=1$ on $U_h$, $D_i$ and $\pi_i$ uncorrelated within the stratum,
-$\bar a$ the stratum mean of $D_i$, and $\delta_g,\gamma_g$ negligible),
-\begin{align}
-1+\nu^{TPR}&=\frac{\bar\pi(1-\bar\pi\bar a^2)}{\overline{\pi(1-\pi)}},\qquad
-1+\nu^{FPR}=\frac{(1-\bar\pi)\{1-(1-\bar\pi)\bar a^2\}}{\overline{\pi(1-\pi)}},\notag\\
-1+\nu^{ERR}&=\frac{1-\bar a^2(1-2\bar\pi)^2}{4\,\overline{\pi(1-\pi)}} .\label{eq:dif-closed}
-\end{align}
-In an \emph{agreement stratum} ($D_i=0$) the error difference has $e_i=\tilde z_i=0$, and for the rate differences
-$1+\nu=\{\overline{\pi(1-\pi)}+S^2_{\pi,h}\}/\overline{\pi(1-\pi)}$, the inverse of the share of the Bernoulli variance that the proxy does \emph{not} explain.
+where $R_h^2=\nu_h/(1+\nu_h)$ is the expected within-stratum squared correlation of $z_i$ with $\tilde z_i$.
 \end{enumerate}
 \end{proposition}
 
-Four consequences. First, calibration alone guarantees $G\ge1$: with a calibrated proxy the difference estimator is never worse than the plain one in
-expectation, for any allocation. Second, the gain is a within-stratum $R^2$, so it is governed by what the proxy influence $\tilde z_i$ explains of $z_i$
-\emph{inside} a stratum, and the strata are already built to remove between-stratum variation. Third, $\tilde z_i$ contains two kinds of
-information: the proxy $\pi_i$ and the known structure of $u_i,v_i$ (the signs and the pattern of $D_i$). The second kind is free and
-is the main source of the gain: in a two-sided disagreement stratum with a constant proxy $\pi_i\equiv\bar\pi$ and $\bar a=0$,
-\eqref{eq:dif-closed} gives gains $1/(1-\bar\pi)$ for $\theta^{TPR}$, $1/\bar\pi$ for $\theta^{FPR}$ and $1/\{4\bar\pi(1-\bar\pi)\}$ for $\theta^{ERR}$, i.e.\ 1.4,
-3.3 and 1.2 for $\bar\pi=0.3$ and exactly 2, 2 and 1 for $\bar\pi=1/2$. Only the error difference needs a sharp proxy: its gain is
-$\{1-\overline{(1-2\pi)^2}\}^{-1}$ and equals one for $\pi\equiv1/2$, which makes $\tilde z\equiv0$ and the two estimators identical. Fourth, the
-gain is bounded for proxies of realistic sharpness, because the disagreement strata are the strata in which the compared models, and hence typically the
-averaged probabilities $\pi_i$, are least certain: a large $G$ requires within-stratum $R_h^2$ close to one, that is a sharp proxy
-($\pi_i$ near 0 or 1) and a stratum in which the models still disagree. Where the proxy is that sharp the predictions would be nearly
-exact and few labels would be needed in any case. For disagreement strata with $\bar\pi$ between 0.2 and 0.5 the closed forms give gains of the order of one to three, on top of the
-stratification gain; Section~\ref{sec:sim-dif} compares the prediction with the Monte Carlo ratios.
+In words, the gain $G\ge1$ is the average of the stratum gains $1/(1-R_h^2)$, weighted by the strata's shares of the residual variance; a calibrated
+proxy never makes the difference estimator worse in expectation. The gain is a \emph{within}-stratum $R^2$, so it comes mostly from the known structure of
+$u_i,v_i$ (the pattern of $D_i$) rather than from sharp proxies. Closed forms for $\theta^{TPR},\theta^{FPR},\theta^{ERR}$
+(Proposition~\SIref{prop:dif-closed}) give gains of the order of one to three in disagreement strata, for example $1.4$, $3.3$ and $1.2$ for a constant proxy $\bar\pi=0.3$, and
+they are multiplicative with the stratification gain. Proofs are in Supplementary Section~\SIref{si:proofs}.
 
-Gain and stratification multiply: for the same sample the efficiency of the difference estimator relative to SRS is, to the order of the
-approximations of Section~\ref{sec:theory-deff}, $\mathrm{Eff}_t\cdot G_t$, with $\mathrm{Eff}_t$ from
-\eqref{eq:deff-general} and $G_t$ from \eqref{eq:dif-deff}. They are not independent: a stratifier that
-removes more of the proxy's within-stratum signal (a finer partition of the proxy range) reduces $G$ and raises $\mathrm{Eff}_t$.
-
-\begin{proposition}[Misspecified proxy for the difference estimator]\label{prop:dif-proxy}
-\begin{enumerate}
-\item[(a)] For every proxy, $\hat T_\psi$ is design-unbiased and $\hat V_\psi$ is a consistent variance estimator
-(Proposition~\ref{prop:validity}). Misspecification can affect efficiency only.
-\item[(b)] Let the labels be independent with $P(Y_i=1)=q_i$, where $q_i$ may differ from $\pi_i$, and let $\tilde z^{q}_i$, $\tilde z^{\pi}_i$ be the proxy
-influence values for $q$ and $\pi$. With $E_q$ the expectation under this model,
-\begin{equation}\label{eq:dif-misspec}
-E_q(V_0-V_\psi)=\sum_hc_h\Big\{S^2_{\tilde z^{q},h}-S^2_{\tilde z^{q}-\tilde z^{\pi},h}\Big\},
-\end{equation}
-so the difference estimator wins if and only if, within strata and on the $c_h$-weighted scale, the proxy error in influence units is smaller than the signal it
-should capture. If $\tilde z^{\pi}_i-\bar{\tilde z}^{\pi}_h=\kappa(\tilde z^{q}_i-\bar{\tilde z}^{q}_h)$ in every stratum (a proxy that is sharper by the factor
-$\kappa$ than the truth), the estimator wins if and only if $0<\kappa<2$; for $\kappa<0$ (anti-correlated proxy) it loses.
-\item[(c)] In all cases $V_\psi\le(1+\max_hS_{\tilde z,h}/S_{z,h})^2\,V_0$, with equality only if $\tilde z_i=-s\,z_i$ within each stratum
-for a constant $s>0$ (perfect anti-correlation). Hence the possible loss is bounded by a function of the dispersion of the proxy influence relative to the plain one.
-\item[(d)] With the clipped coefficient of Proposition~\ref{prop:dif-var}(b) the variance never exceeds that of the plain estimator
-(to first order). In particular, an uninformative proxy, in the sense $\beta_h=0$ ($\tilde z$ uncorrelated with $z$ within strata), has optimal coefficient $\lambda_h=0$ and
-then $V_\psi=V_0+\sum_hc_hS^2_{\tilde z,h}$: the fixed coefficient $\lambda=1$ adds the proxy's own variance.
-\end{enumerate}
-\end{proposition}
-
-Two clarifications. The statement that the difference estimator can be worse than the plain estimator \emph{only} if the proxy is anti-correlated is
-too strong: by \eqref{eq:dif-identity} it is worse whenever $\beta_h<1/2$, so a weakly aligned or over-dispersed
-proxy ($\kappa>2$) also hurts, while a modestly noisy but correctly scaled proxy does not. And ``uninformative'' must be read in terms of $\tilde z_i$,
-not of $\pi_i$: a constant proxy $\pi_i\equiv\bar\pi$ still has $\tilde z_i$ varying with the known pattern of $D_i$, and for the rate differences
-it still gains, as the closed forms \eqref{eq:dif-closed} show; only for $\theta^{ERR}$ with $\bar\pi=1/2$ is $\tilde z\equiv0$, and
-only an inverted proxy ($\kappa<0$) makes $\beta_h<0$ for the error difference. Section~\ref{sec:sim-dif} confirms both points numerically.
-
-\paragraph{Fixed versus tuned coefficient.} In prediction-powered inference \citep{angelopoulos2026ppipp,fisch2024stratppi} and in the
-regression-estimator literature \citep{cassel1976,sarndal1992} the coefficient is estimated from the labelled sample, here
-per stratum and per estimand: $\hat\lambda_h=\widehat{\mathrm{Cov}}(\hat z,\hat{\tilde z})/\widehat{\mathrm{Var}}(\hat{\tilde z})$ clipped to $[0,1]$.
-
-\begin{proposition}[Estimated coefficient]\label{prop:dif-lambda}
-Suppose $\hat\lambda_h$ is a function of the labelled sample of stratum $h$ with $\hat\lambda_h-\lambda^\infty_h\to0$ in probability, for deterministic
-$\lambda^\infty_h$ (for the clipped sample slope, $\lambda^\infty_h=\min\{1,\max(0,\beta_h)\}$ whenever $\beta_h$ converges). Under (A1)--(A4)
-for the fixed coefficient $\lambda^\infty$, $\hat\theta_{\hat\lambda\psi}-\hat\theta_{\lambda^\infty\psi}=o_p(V^{1/2})$; hence the tuned estimator has the same asymptotic
-normal limit and linearised variance $V(\lambda^\infty)$ as the one with the optimal fixed coefficient, and is never asymptotically worse than the plain
-estimator. At second order, estimating $\hat\lambda_h$ adds to the variance of stratum $h$ approximately
-$c_h(1-R_h^2)S^2_{z,h}/n_h$, a relative increase of order $1/n_h$ in a stratum that is already optimally tuned, and the plug-in estimator $\hat V_\psi$ computed
-with the fitted $\hat\lambda_h$ does not account for it (it is biased downwards by a factor of the same order).
-\end{proposition}
-
-The consequence is a trade-off that is independent of the particular data. The best that tuning can add to $\lambda=1$ is the factor
-$V_\psi/V(\lambda^\ast)=1+\sum_hc_h(1-\beta_h)^2S^2_{\tilde z,h}/V(\beta)$ \eqref{eq:dif-identity}, which is small when the proxy is nearly calibrated ($\beta_h\approx1$): then
-tuning gains little in variance but costs an $O(1/n_h)$ inflation in each of the $H$ strata and a downward-biased variance estimator, which matters when $n_h$ is small, as
-at the budgets of this paper ($n_h$ of the order of 10). With a miscalibrated proxy the gain from tuning can be real (see the $\kappa\ne1$ cases in
-Section~\ref{sec:sim-dif}), but it is paid for in coverage. The calibrated difference estimator with $\lambda=1$ has no estimated
-parameters, exact unbiasedness and a plug-in variance that is unbiased for the totals (Proposition~\ref{prop:validity}(a)), which is why we adopt it as the main
-estimator. Section~\ref{sec:sim-dif} reports the predicted and the observed gain of tuning together with the coverage of each version.
+\paragraph{Misspecified or tuned difference estimator.} Unbiasedness and consistency of $\hat V_\psi$ hold for every proxy
+(Proposition~\ref{prop:validity}). The loss from a wrong proxy is bounded: in all cases $V_\psi\le(1+\max_hS_{\tilde z,h}/S_{z,h})^2V_0$,
+and if the proxy influence is $\kappa$ times the true one within strata, the difference estimator wins iff $0<\kappa<2$, so an anti-correlated or over-dispersed proxy loses to the plain estimator
+(Proposition~\SIref{prop:dif-proxy}). There is no guarantee against simple random sampling for an arbitrary proxy. Estimating the coefficient per stratum
+(Proposition~\SIref{prop:dif-lambda}) is asymptotically never worse than the plain estimator but adds $O(1/n_h)$ variance and a downward-biased
+variance estimator at small $n_h$; we therefore use the fixed coefficient $\lambda=1$, which has no estimated parameters.
 
 \begin{remark}[Zero-variance strata and the variance floor]\label{rem:zero-var}
-The Wald interval needs $\hat V_\psi>0$ and $\hat V_\psi\approx V_\psi$, and both fail when a stratum's sample shows no variation in $\hat e_i$ although
-$S^2_{e,h}>0$. For the difference estimator this has three sources. (i) \emph{Structural zeros}: strata with $d_i\equiv0$ (the error
-difference where the pair agrees, Proposition~\ref{prop:residual}), where $e_i\equiv0$ in the whole stratum; the estimate is exact there and
-$\hat V_\psi$ correctly contributes zero. (ii) \emph{Sampling zeros}: a stratum with few positives (or negatives) in which the sample has none. For the plain estimator $\hat z_i=0$ for every sampled unit, so $s^2_{\hat z,h}=0$ exactly;
-for the difference estimator $\hat e_i=-\pi_i\hat d_i$ varies with $\pi_i\hat d_i$, so exact zeros are rarer, but the sample variance is still far below the
-population variance $\bar\sigma^2_h=N_h^{-1}\sum_{U_h}\pi_i(1-\pi_i)d_i^2$ whenever the missed positives matter. With a calibrated proxy of level $\pi$ and constant $d$, the
-probability of a sample without positives is $(1-\pi)^{n_h}$, which is the zero-count failure of the Wald interval for a binomial proportion \citep{brown2001}.
-(iii) \emph{Exact proxies}: if $\pi_i\in\{0,1\}$ equals $Y_i$ then $e_i\equiv0$ and
-(A3) fails; the estimator is then exact, but the proxy is unlikely to be exact on the whole pool. The floor of Section~\ref{sec:ablations} carries over: replace $s^2_{\hat e,h}$ by the anticipated
-residual variance
-\begin{equation}\label{eq:floor}
-\tilde s^2_{h}=N_h^{-1}\sum_{i\in U_h}\pi_i(1-\pi_i)\hat d_i^{\,2},\qquad \hat d_i=\nabla f(\hat T_\psi)^\top(u_i-v_i),
-\end{equation}
-whenever $s^2_{\hat e,h}=0$ (or, more conservatively, use $\max\{s^2_{\hat e,h},\eta\tilde s^2_h\}$ with $\eta\in(0,1]$). Because $\tilde s^2_h=0$ exactly when $d_i\equiv0$ on $U_h$, structural zeros
-are untouched. The floor is label-free, never decreases $\hat V_\psi$, leaves the point estimate unchanged, and (Appendix~\ref{sec:theory-proofs}) does not affect
-Proposition~\ref{prop:validity}(c)--(d): the floor is active with probability tending to zero in every stratum with $S^2_{e,h}$ bounded away from zero, and in strata
-with vanishing variance it is, if anything, conservative. It is a finite-sample safeguard, not an asymptotic correction, and Section~\ref{sec:sim-dif} reports its effect on coverage.
+The Wald interval needs $\hat V_\psi>0$ and fails when a stratum's sample shows no variation in $\hat e_i$ although $S^2_{e,h}>0$ (for example a stratum with
+few positives that the sample misses). Structural zeros ($d_i\equiv0$, e.g.\ the error difference where the pair agrees) are exact and harmless. For the other strata the
+design replaces $s^2_{\hat e,h}$ by the label-free anticipated residual variance $\tilde s^2_h=N_h^{-1}\sum_{U_h}\pi_i(1-\pi_i)\hat d_i^{\,2}$
+whenever $s^2_{\hat e,h}=0$ (equation~\SIref{eq:floor}). The floor never decreases $\hat V_\psi$, leaves the point estimate unchanged and does not
+affect Proposition~\ref{prop:validity}(c)--(d); it is a finite-sample safeguard, not an asymptotic correction (Supplementary Section~\SIref{si:theory-extra}).
 \end{remark}
 
 \subsection{Allocation}\label{sec:theory-alloc}
 
-Let $w_t\ge0$ be weights on a finite set of targets $t$ with linearised variances
-$V_t(n)=\sum_hN_h^2(1/n_h-1/N_h)S^2_{ht}$, where $S^2_{ht}=S^2_{z,ht}$ for the plain estimator and $S^2_{ht}=S^2_{e,ht}$ for the difference estimator, and let
-$A_h=(\sum_tw_tS^2_{ht})^{1/2}$. The weighted objective is
+Let $w_t\ge0$ be weights on a finite set of targets $t$ with linearised variances $V_t(n)=\sum_hN_h^2(1/n_h-1/N_h)S^2_{ht}$, where $S^2_{ht}=S^2_{z,ht}$ for the plain estimator
+and $S^2_{ht}=S^2_{e,ht}$ for the difference estimator, and let $A_h=(\sum_tw_tS^2_{ht})^{1/2}$. The weighted objective is
 \begin{equation}\label{eq:objective}
 \Phi(n)=\sum_tw_tV_t(n)=\sum_h\frac{N_h^2A_h^2}{n_h}-\sum_hN_hA_h^2 .
 \end{equation}
@@ -388,219 +214,48 @@ $A_h=(\sum_tw_tS^2_{ht})^{1/2}$. The weighted objective is
 \begin{enumerate}
 \item[(a)] Over real $n_h>0$ with $\sum_hn_h=L$, $\Phi$ is minimised by
 $n_h^\ast=L\,N_hA_h/\sum_kN_kA_k$, with $\Phi(n^\ast)=(\sum_hN_hA_h)^2/L-\sum_hN_hA_h^2$.
-\item[(b)] With bounds $\ell_h\le n_h\le N_h$ ($\ell_h$ a minimum per stratum,
-$\sum_h\ell_h\le L\le N$), the minimiser is $n_h=\min\{N_h,\max(\ell_h,N_hA_h/\lambda)\}$ with
+\item[(b)] With bounds $\ell_h\le n_h\le N_h$, the minimiser is $n_h=\min\{N_h,\max(\ell_h,N_hA_h/\lambda)\}$ with
 $\lambda>0$ chosen so that $\sum_hn_h=L$.
-\item[(c)] If an integer allocation $\tilde n$ satisfies $\tilde n_h\ge n_h-1$ and
-$n_h\ge n_0>1$ for all $h$, then $\Phi_0(\tilde n)\le\{n_0/(n_0-1)\}\Phi_0(n)$, where
-$\Phi_0(n)=\sum_hN_h^2A_h^2/n_h$ is the part of $\Phi$ that depends on $n$.
-\item[(d)] Ignore finite-population corrections and compute variances with divisors $N_h$ and
-$N$. With $w_t=1/\sigma^2_t$, $\sigma^2_t$ the population variance of target $t$'s influence
-values,
-\[
-\Phi_0(n)\,L/N^2=\sum_t1/\mathrm{Eff}_t(n),\qquad \mathrm{Eff}_t=V^{SRS}_t/V_t .
-\]
-At the optimum the harmonic mean efficiency over the $|\mathcal T|$ targets equals
+\item[(c)] If an integer allocation $\tilde n$ satisfies $\tilde n_h\ge n_h-1$ and $n_h\ge n_0>1$, then $\Phi_0(\tilde n)\le\{n_0/(n_0-1)\}\Phi_0(n)$, with
+$\Phi_0(n)=\sum_hN_h^2A_h^2/n_h$.
+\item[(d)] Ignoring finite-population corrections, with $w_t=1/\sigma^2_t$ ($\sigma^2_t$ the population variance of the influence values of target $t$),
+$\Phi_0(n)\,L/N^2=\sum_t1/\mathrm{Eff}_t(n)$ with $\mathrm{Eff}_t=V^{SRS}_t/V_t$; at the optimum the harmonic mean efficiency over $|\mathcal T|$ targets equals
 $|\mathcal T|/(\sum_hW_hA_h)^2\ge1$.
 \end{enumerate}
 \end{proposition}
 
-Part (a) is Neyman's allocation \citep{neyman1934} for a weighted sum of variances; the proof is
-one application of the Cauchy--Schwarz inequality,
-$(\sum_hN_hA_h)^2=(\sum_h\{N_hA_hn_h^{-1/2}\}n_h^{1/2})^2\le\Phi_0(n)\,L$, with equality if and only
-if $n_h\propto N_hA_h$. Part (b) follows from the Karush--Kuhn--Tucker conditions of a convex
-problem; strata that would receive more than $N_h$ labels are enumerated and the remainder is
-re-allocated, which is what the iterative capping in our implementation does. Part (c) bounds the
-cost of rounding: with the minimum of 10 labels per stratum it is at most a factor $10/9$ on the
-weighted variance, and much less in practice; exact integer optimisation is possible
-\citep{wright2012} but unnecessary. Part (d) explains the default weights: with $w_t=1/S_t^2$ the
-allocation minimises the sum of inverse efficiencies over all comparison estimands, so no target is
-neglected because it happens to be measured on a small scale (the inequality in (d) is for the plain estimator, whose influence values define $\sigma^2_t$). Because the proposition holds for any
-non-negative $S^2_{ht}$, it applies verbatim to the difference estimator with the residual variances.
+\emph{Proof sketch.} (a) is Neyman's allocation \citep{neyman1934} for a weighted sum of variances: by Cauchy--Schwarz,
+$(\sum_hN_hA_h)^2\le\Phi_0(n)\,L$, with equality iff $n_h\propto N_hA_h$. (b) follows from the Karush--Kuhn--Tucker conditions of a convex
+problem (strata that would exceed $N_h$ are enumerated and the rest re-allocated). Full proofs are in Supplementary Section~\SIref{si:proofs}. $\square$
 
-In the design the $S^2_{ht}$ are unknown. They are replaced by their expectations under the
-working model $Y_i\sim\text{Bernoulli}(\pi_i)$ independently, with the gradient evaluated at the
-model-expected totals; up to terms of order $1/N_h$ this is the anticipated variance of
-\citet{isaki1982}. By \eqref{eq:resid-moments} the anticipated stratum variances are
-\begin{align}
-\tilde A^{0\,2}_h&=\sum_tw_t\big(\bar\sigma^2_{ht}+S^2_{\tilde z,ht}\big)\quad\text{(plain)},\notag\\
-\tilde A^{\psi\,2}_h&=\sum_tw_t\bar\sigma^2_{ht}\quad\text{(difference)},\qquad \bar\sigma^2_{ht}=N_h^{-1}\sum_{U_h}\pi_i(1-\pi_i)d_{it}^2.\label{eq:anticipated}
-\end{align}
-The plain rule is what the design uses (Section~\ref{sec:design}). The residual rule is the Neyman allocation for the prediction-powered residual
-\citep{fisch2024stratppi}; it depends on the proxy only through $\pi_i(1-\pi_i)$ and the label-free $d_i$, so a proxy of any
-sharpness gives a well-defined allocation.
-
-\begin{proposition}[Allocation for the difference estimator]\label{prop:alloc-dif}
-Let $n^\psi$ be the optimal allocation for the difference estimator ($A_h=A^\psi_h$, $A^{\psi\,2}_h=\sum_tw_tS^2_{e,ht}$) and $\tilde n^0$ the allocation obtained from the
-plain anticipated variances. Put $\tilde\nu_h=\sum_tw_tS^2_{\tilde z,ht}/\sum_tw_t\bar\sigma^2_{ht}$, $x_h=(1+\tilde\nu_h)^{1/2}$ and assume the anticipated values are exact for the
-residual variances ($\tilde A^\psi_h=A^\psi_h$). Ignoring caps, minima and rounding, the weighted variance of the difference estimator with the \emph{wrong} (plain) allocation satisfies
-\begin{equation}\label{eq:alloc-loss}
-\frac{\Phi_\psi(\tilde n^0)}{\Phi_\psi(n^\psi)}=\Big(\sum_h\omega_hx_h\Big)\Big(\sum_h\omega_h/x_h\Big)\le\frac{(x_{\max}+x_{\min})^2}{4x_{\max}x_{\min}},\qquad
-\omega_h=\frac{N_hA^\psi_h}{\sum_kN_kA^\psi_k},
+Because the $S^2_{ht}$ are unknown, the design replaces them by their expectations under the working model $Y_i\sim\text{Bernoulli}(\pi_i)$ independently
+\citep[the anticipated variance of][]{isaki1982}, which by the moments above gives
+\begin{equation}\label{eq:anticipated}
+\tilde A^{0\,2}_h=\sum_tw_t\big(\bar\sigma^2_{ht}+S^2_{\tilde z,ht}\big)\ \text{(plain rule)},\qquad
+\tilde A^{\psi\,2}_h=\sum_tw_t\bar\sigma^2_{ht}\ \text{(difference rule)}.
 \end{equation}
-with equality to one iff $\tilde\nu_h$ is constant over the strata with $\omega_h>0$. The same expressions hold, with $x_h$ replaced by $1/x_h$ and
-$\omega_h\propto N_hA^0_h$, for the plain estimator allocated with the residual variances. Consequently, if $\tilde\nu_h\in[0,\nu_{\max}]$, the loss from
-using the wrong rule is at most $\{1+(1+\nu_{\max})^{1/2}\}^2/\{4(1+\nu_{\max})^{1/2}\}$ in either direction, for instance $9/8$ for $\nu_{\max}=3$.
-\end{proposition}
-
-So the choice between the two rules is a second-order matter wherever the proxy's signal-to-noise ratio $\tilde\nu_h$ is similar across strata, which is the case for strata with
-comparable disagreement structure, and it matters when $\tilde\nu_h$ is large in some strata and small in others (for example, very sharp proxies in the agreement strata of the
-rate differences). Neither rule is optimal for the other estimator, and the plain rule remains the sensible default for the difference estimator: it is exactly Neyman for the plain estimator, is
-robust to a proxy whose calibration is not trusted (the residual rule depends on $\pi_i(1-\pi_i)$ and gives zero weight to strata in which the proxy is
-extreme), and its efficiency loss for the difference estimator is bounded by \eqref{eq:alloc-loss}. Section~\ref{sec:sim-dif} reports the predicted and the observed loss.
+The design uses the plain rule (Section~\ref{sec:design}), which is exactly Neyman for the plain estimator and robust to an untrusted proxy. For the difference
+estimator the loss from using the plain rule is at most $\{1+(1+\nu_{\max})^{1/2}\}^2/\{4(1+\nu_{\max})^{1/2}\}$ (for example $9/8$ for $\nu_{\max}=3$),
+by Proposition~\SIref{prop:alloc-dif} in Supplementary Section~\SIref{si:theory-extra}.
 
 \subsection{Design effect and the disagreement rate}\label{sec:theory-deff}
 
-Let $\sigma^2_{ht}=(1-1/N_h)S^2_{ht}$ and $\sigma^2_t=(1-1/N)S^2_t$ be the variances with divisor
-$N_h$ and $N$. For a single target allocated by its own Neyman rule, and with $L/N\to0$, the
-efficiency relative to SRS is
+With $\sigma^2_{ht}$ and $\sigma^2_t$ the variances with divisors $N_h$ and $N$, a single target allocated by its own Neyman rule with $L/N\to0$ has efficiency relative to SRS
 \begin{equation}\label{eq:deff-general}
 \mathrm{Eff}_t=\frac{\sigma_t^2}{(\sum_hW_h\sigma_{ht})^2}\;\ge\;1,
 \end{equation}
-because
-$\sigma_t^2=\sum_hW_h\sigma_{ht}^2+\sum_hW_h(\bar z_h-\bar z)^2\ge(\sum_hW_h\sigma_{ht})^2$; equality
-holds only if all within-stratum standard deviations are equal and the stratum means coincide.
-Combined with Proposition~\ref{prop:influence}, \eqref{eq:deff-general} gives explicit formulas for the plain estimator.
-We state them for an idealised design in which, within each group, the strata separate the
-instances on which $m$ and $j$ disagree (set $\mathcal D_g$, share $\rho_g$ of group $g$) from
-those on which they agree (set $\mathcal A_g$). This is exactly the pattern design when $M=2$; for
-$M>2$ it describes a design stratified for the pair $(m,j)$, and is discussed below.
-Finite-population corrections are ignored ($L/N\to0$ and $n_h/N_h\to0$); they are retained in
-the exact linearised efficiency used in Section~\ref{sec:simulation}.
-
-\begin{corollary}[Design effect as a function of the disagreement rate]\label{prop:deff}
-Let $\zeta_g=N_g/N$, $p_g=P_g/N_g$, $r_g=N_g^{-1}\sum_{G_i=g}Y_i|D_i|$ (positives on which the pair
-disagrees, as a share of the group), $\pi_{\mathcal D,g}=r_g/\rho_g$,
-$\pi_{\mathcal A,g}=(p_g-r_g)/(1-\rho_g)$ and $a_g=c_{\mathcal D,g}/\pi_{\mathcal D,g}$, where
-$c_{\mathcal D,g}=\delta_gp_g/\rho_g$ is the mean of $Y_iD_i$ over $\mathcal D_g$; $a_g\in[-1,1]$
-is the net share of disputed positives on which $m$ is right and $j$ wrong.
-\begin{enumerate}
-\item[(a)] For $\theta^{TPR}_{mj}$, with own-target Neyman allocation on the strata
-$\{\mathcal A_g,\mathcal D_g\}_{g=0,1}$ and $L/N\to0$,
-\begin{equation}\label{eq:deff-tpr}
-\mathrm{Eff}^{TPR}=\frac{\sum_g(r_g-\delta_g^2p_g)/(\zeta_gp_g^2)}
-{\Big[\sum_g\big\{\rho_g\sigma_{\mathcal D,g}+(1-\rho_g)|\delta_g|
-\sqrt{\pi_{\mathcal A,g}(1-\pi_{\mathcal A,g})}\big\}/p_g\Big]^2},
-\end{equation}
-$\sigma^2_{\mathcal D,g}=\pi_{\mathcal D,g}-c_{\mathcal D,g}^2+\delta_g^2\pi_{\mathcal D,g}(1-\pi_{\mathcal D,g})
--2\delta_gc_{\mathcal D,g}(1-\pi_{\mathcal D,g})$. The same holds for $\theta^{FPR}_{mj}$ with $Y$
-replaced by $1-Y$. For $\theta^{ERR}_{mj}$, with $\rho=\sum_g\zeta_g\rho_g$ and $\mu_g$ the mean of
-$D_i(1-2Y_i)$ over $\mathcal D_g$,
-\begin{equation}\label{eq:deff-err}
-\mathrm{Eff}^{ERR}=\frac{\rho-(\theta^{ERR}_{mj})^2}{\big(\sum_g\zeta_g\rho_g\sqrt{1-\mu_g^2}\big)^2}.
-\end{equation}
-Any further split of $\mathcal A_g$ or $\mathcal D_g$ (for example $\mathcal A_g$ into $K=0$ and
-$K=M$) can only increase \eqref{eq:deff-tpr} and \eqref{eq:deff-err}.
-\item[(b)] \emph{Small targets.} If $\delta_g=0$ and $\rho_g=\rho$ for both groups, then
-\begin{equation}\label{eq:deff-small}
-\mathrm{Eff}^{TPR}=\frac1\rho\,\Gamma,\qquad
-\Gamma=\frac{\sum_gr_g/(\zeta_gp_g^2)}{(\sum_g\sqrt{r_g}/p_g)^2}\ge1,
-\end{equation}
-where $\Gamma$ is the efficiency of Neyman allocation between the two groups alone; and if
-$\theta^{ERR}_{mj}=0=\mu_g$, then $\mathrm{Eff}^{ERR}=1/\rho$.
-\item[(c)] \emph{Target size.} For one group (drop $g$), with $\pi_{\mathcal D}$,
-$\pi_{\mathcal A}$ and $a$ held fixed, as $\rho\to0$,
-\begin{equation}\label{eq:deff-lambda}
-\mathrm{Eff}^{TPR}=\frac{1+O(\rho)}{\rho\,(\beta+\lambda)^2},\qquad
-\beta=\sqrt{1-a^2\pi_{\mathcal D}},\qquad
-\lambda=\frac{|a|\sqrt{\pi_{\mathcal D}\,\pi_{\mathcal A}(1-\pi_{\mathcal A})}}{p}.
-\end{equation}
-Since $\delta=\rho\pi_{\mathcal D}a/p$, the target is proportional to $\rho$ and to $a$. A more
-one-sided disagreement set (larger $|a|$, hence a larger target) changes the gain by the bounded
-factor $(\beta+\lambda)^{-2}$, which is below one when the agreement region is noisy
-($\lambda>1-\beta$), but it does not change the order $1/\rho$.
-\item[(d)] \emph{When the gain vanishes.} As $\rho_g\to1$ the agreement strata disappear and
-\eqref{eq:deff-tpr} and \eqref{eq:deff-err} tend to the efficiency of stratification by
-group alone (for the rate differences with $\delta_g=0$ this is $\Gamma$; for the error difference
-it equals 1 when $\mu_0=\mu_1$). The gain beyond group stratification is therefore governed by $1-\rho$: it is large when
-the compared models disagree on a small share of the pool, it is reduced by a constant factor
-when the pair's disagreements are one-sided ($|a_g|$ near 1) and the agreement region has
-substantial label noise, and it disappears when the models disagree almost everywhere.
-\end{enumerate}
-\end{corollary}
-
-The heuristic \emph{efficiency $\approx1/\rho$} is thus exact for an error difference with a
-two-sided disagreement set ($\mu_g=0$), and correct up to the group factor $\Gamma$ and the
-target-size factor $(\beta+\lambda)^{-2}$ for the rate differences. For a pair that disagrees on
-5\% of the pool it promises a gain of the order of 20 relative to SRS, and of 2.5 for a pair that
-disagrees on 40\%. These are gains of the stratification; the difference estimator multiplies them by the factor $G$ of
-\eqref{eq:dif-deff}, which by \eqref{eq:dif-closed} is of order one to three and does not grow as $\rho\to0$: the difference estimator removes the part of the
-label noise that a proxy of moderate sharpness can explain, whereas the stratification removes the unlabelled agreement region.
-
-For $M>2$ the pattern strata $(G_i,K_i)$ do not separate the disagreements of a particular pair:
-an instance with $K_i=4$ out of nine may or may not be disputed by $m$ and $j$. The general
-formula \eqref{eq:deff-general} still applies with the stratum variances of
-Proposition~\ref{prop:influence}. For an error difference whose disagreements are two-sided within
-every stratum ($e_h=0$ for all $h$, hence $\theta^{ERR}_{mj}=0$), $\sigma^2_{ht}\propto\rho_h$
-and \eqref{eq:deff-general} becomes
-\begin{equation}\label{eq:deff-mixed}
-\mathrm{Eff}^{ERR}=\frac{\rho}{(\sum_hW_h\sqrt{\rho_h})^2},\qquad 1\le\mathrm{Eff}^{ERR}\le\frac1\rho,
-\end{equation}
-since $\rho_h\le\sqrt{\rho_h}$ and $(\sum_hW_h\sqrt{\rho_h})^2\le\sum_hW_h\rho_h=\rho$. The bound $1/\rho$ is
-attained only when every stratum is either entirely disputed or entirely agreed; the pattern
-strata approach it to the extent that the pair's disagreements concentrate in a few values of
-$K$. A lower bound of the same type holds for the pattern strata. Let $\rho_{\rm any}$ be the share
-of instances on which not all $M$ models agree, i.e.\ with $0<K_i<M$. The pair can disagree only
-there, so $\rho_h=0$ in the strata with $K\in\{0,M\}$, and Cauchy--Schwarz over the remaining strata
-gives $(\sum_hW_h\sqrt{\rho_h})^2\le\rho_{\rm any}\,\rho$, hence
-\begin{equation}\label{eq:deff-sandwich}
-\frac{1}{\rho_{\rm any}}\;\le\;\mathrm{Eff}^{ERR}\;\le\;\frac{1}{\rho},
-\end{equation}
-with equality on the left when the pair's disagreements are spread evenly over the strata with
-$0<K<M$ ($\rho_h=\rho/\rho_{\rm any}$ there). With nine models $\rho_{\rm any}$ is large (between
-0.18 and 0.73 in our pools) while the pairwise $\rho$ is small, and the position of a pair within
-this interval measures how well the counts $K$ locate its disagreements. Two further losses separate \eqref{eq:deff-tpr} and \eqref{eq:deff-err} from the efficiency of the implemented
-design: a single allocation serves all $3\binom M2$ comparison estimands
-(Proposition~\ref{prop:allocation}(d)), and it is computed from the proxy
-(Section~\ref{sec:theory-proxy}). The exact linearised efficiency of the implemented design is
-$N^2(1/L-1/N)S^2_t/V_t(n)$ with $V_t$ from \eqref{eq:linvar} (or \eqref{eq:resid} for the difference estimator); Section~\ref{sec:simulation}
-compares it, and the closed forms above, with Monte Carlo results.
+with equality only if all within-stratum standard deviations are equal and the stratum means coincide. Combined with Proposition~\ref{prop:influence}, this gives explicit
+formulas (Corollary~\SIref{prop:deff} in Supplementary Section~\SIref{si:theory-extra}). Their content is the heuristic \emph{efficiency $\approx1/\rho$}, where $\rho$ is the pair's
+disagreement rate: it is exact for an error difference with a two-sided disagreement set, and holds up to a group factor and a bounded target-size factor for the rate differences. A pair that disagrees on 5\% of the
+pool gains about 20 over SRS, one that disagrees on 40\% about 2.5. For $M>2$ pattern strata give $1/\rho_{\rm any}\le\mathrm{Eff}^{ERR}\le1/\rho$ (equation~\SIref{eq:deff-sandwich}). The difference estimator multiplies these stratification gains by the factor $G$ of
+\eqref{eq:dif-deff}, which is of order one to three and does not grow as $\rho\to0$.
 
 \subsection{Misspecified proxy}\label{sec:theory-proxy}
 
-Let $\tilde n$ be the allocation computed from the anticipated values $\tilde A_h$, and $A_h$ the
-values computed from the true labels, both with the same weights. This subsection concerns the proxy in the allocation; its role in the
-difference estimator is Proposition~\ref{prop:dif-proxy}.
-
-\begin{proposition}[Imperfect proxy]\label{prop:proxy}
-\begin{enumerate}
-\item[(a)] Proposition~\ref{prop:validity} holds for $\tilde n$ whatever the proxy, provided
-$\tilde n_h\ge2$ in every stratum (guaranteed by the minimum of 10 labels).
-\item[(b)] Ignoring caps, minima and rounding, the relative loss in the weighted variance is
-\begin{equation}\label{eq:proxy-loss}
-\frac{\Phi_0(\tilde n)}{\Phi_0(n^\ast)}=
-\frac{(\sum_hN_h\tilde A_h)(\sum_hN_hA_h^2/\tilde A_h)}{(\sum_hN_hA_h)^2}
-=\Big(\sum_h\omega_hx_h\Big)\Big(\sum_h\omega_h/x_h\Big)\ge1,
-\end{equation}
-with $\omega_h=N_hA_h/\sum_kN_kA_k$ and $x_h=\tilde A_h/A_h$. The loss is zero if and only if
-$\tilde A_h\propto A_h$; a proxy that is wrong by a common factor costs nothing.
-\item[(c)] If $x_{\min}\le x_h\le x_{\max}$, the loss is at most
-$(x_{\max}+x_{\min})^2/(4x_{\max}x_{\min})$ (Kantorovich inequality). For instance, if every
-anticipated value $\tilde A_h$ is within a factor 2 of $A_h$ up to a common scale
-($x_{\max}/x_{\min}\le4$), the weighted variance is at most $25/16$ times the optimum on the same
-strata, so the design keeps at least 64\% of the efficiency of the optimal allocation, whatever
-the number of strata.
-\item[(d)] Proportional allocation is the special case $\tilde A_h\equiv1$. Neither allocation
-dominates the other for every population: \eqref{eq:proxy-loss} is smaller for the proxy
-allocation if and only if
-\[
-\Big(\sum_h\omega_hx_h\Big)\Big(\sum_h\omega_h/x_h\Big)\le\Big(\sum_h\omega_h/A_h\Big)\Big(\sum_h\omega_hA_h\Big).
-\]
-A proxy that is badly wrong in a high-variance stratum can make the design worse than
-proportional allocation, and, through the minimum of $\ell$ labels in that stratum, worse than SRS.
-\item[(e)] A defensive mixture $n_h=\eta\,n^{\rm prop}_h+(1-\eta)\tilde n_h$, $0<\eta<1$, satisfies
-$\Phi_0(n)\le\Phi_0(n^{\rm prop})/\eta$ and $\Phi_0(n)\le\Phi_0(\tilde n)/(1-\eta)$; since
-proportional allocation is never worse than SRS up to the factor $(1-1/\min_hN_h)^{-1}$, the
-mixture is never worse than $1/\eta$ times SRS in the weighted variance, up to the same factor.
-\end{enumerate}
-\end{proposition}
-
-What can be guaranteed is therefore validity (part (a)) and a loss that is controlled by how far
-the anticipated stratum standard deviations are from proportional to the true ones (parts (b) and
-(c)). What cannot be guaranteed for the implemented rule is improvement over SRS for every
-population; that requires a defensive component as in part (e). Two features make large losses
-unlikely in our setting. The dominant part of the structure, namely which strata carry the
-numerators of the comparison estimands, is determined by the predictions and does not depend on the
-proxy (Proposition~\ref{prop:influence}); and the proxy enters $\tilde A_h$ only through
-$\pi_h(1-\pi_h)$ and $r_h$, which are smooth in the proxy probabilities. Section~\ref{sec:simulation}
-quantifies the loss for good, uninformative and adversarial proxies.
+The proxy enters the design only through the anticipated stratum variances $\tilde A_h$. Validity (Proposition~\ref{prop:validity}) holds whatever the proxy, provided $\tilde n_h\ge2$.
+The relative loss in the weighted variance from using $\tilde A_h$ instead of the true $A_h$ is
+$(\sum_h\omega_hx_h)(\sum_h\omega_h/x_h)\ge1$ with $\omega_h=N_hA_h/\sum_kN_kA_k$ and $x_h=\tilde A_h/A_h$; it vanishes iff $\tilde A_h\propto A_h$ (a proxy wrong by a common factor
+costs nothing) and is bounded by the Kantorovich ratio $(x_{\max}+x_{\min})^2/(4x_{\max}x_{\min})$, so if every $\tilde A_h$ is within a factor 2 of $A_h$ up to a common scale the design keeps at least 64\% of the
+efficiency of the optimal allocation (Proposition~\SIref{prop:proxy}). What cannot be guaranteed is improvement over SRS for every population: a proxy that is badly wrong in a high-variance stratum
+can do worse than proportional allocation. A defensive mixture $n_h=\eta\,n^{\rm prop}_h+(1-\eta)\tilde n_h$ guarantees a weighted variance at most $1/\eta$ times that of SRS (up to a factor $(1-1/\min_hN_h)^{-1}$). The structure that matters most, which strata carry the numerators, is determined
+by the predictions and not by the proxy (Proposition~\ref{prop:influence}).

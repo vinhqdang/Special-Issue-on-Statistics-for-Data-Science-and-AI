@@ -5,15 +5,15 @@
 % ---------------------------------------------------------------------------------------------
 \section{Checking the theory by simulation}\label{sec:simulation}
 
-Section~\ref{sec:theory} gives three predictions of the efficiency $\mathrm{Eff}_t=\mathrm{MSE}_{\rm SRS}/\mathrm{MSE}_{\rm PATTERN}$
+Section~\Mref{sec:theory} gives three predictions of the efficiency $\mathrm{Eff}_t=\mathrm{MSE}_{\rm SRS}/\mathrm{MSE}_{\rm PATTERN}$
 of a comparison estimand $t$, in decreasing order of generality and increasing order of
 simplicity:
 \begin{itemize}
 \item[LIN] the exact linearised design effect of the allocation actually used,
-$N^2(1/L-1/N)S^2_t/V_t(n)$ with $V_t$ from \eqref{eq:linvar}; it is exact up to the linearisation
-of Proposition~\ref{prop:validity} and includes the compromise between targets, the proxy-based
+$N^2(1/L-1/N)S^2_t/V_t(n)$ with $V_t$ from (\Mref{eq:linvar}); it is exact up to the linearisation
+of Proposition~\Mref{prop:validity} and includes the compromise between targets, the proxy-based
 allocation, the minimum of 10 labels per stratum and the finite-population corrections;
-\item[OWN] the own-target Neyman efficiency \eqref{eq:deff-general} on the pattern strata, which
+\item[OWN] the own-target Neyman efficiency (\Mref{eq:deff-general}) on the pattern strata, which
 removes the compromise and the proxy but keeps the actual strata;
 \item[FORM] the closed form of Corollary~\ref{prop:deff}, \eqref{eq:deff-tpr} and
 \eqref{eq:deff-err}, which assumes strata that separate the pair's agreements from its
@@ -25,7 +25,7 @@ compared with Monte Carlo efficiencies. Everything in this section is produced b
 
 \subsection{Real pools}\label{sec:sim-real}
 
-We re-ran the SRS and PATTERN arms of the main study (Section~\ref{sec:empirical}) on the 11 cached
+We re-ran the SRS and PATTERN arms of the main study (Section~\Mref{sec:empirical}) on the 11 cached
 pools, at the same budgets, with $R=200$ replications and the same random seeds; the GROUP and ORACLE
 samples are drawn as well, so that the random stream is identical. The resulting median efficiencies
 coincide with those in \texttt{results/label\_efficiency.json} for all 35 pool--budget
@@ -43,7 +43,7 @@ efficiency are infinite (the json reports $4\times10^{23}$). That leaves 3519 ta
 which not all nine models agree; $\rho$: median pairwise disagreement rate. Obs: Monte Carlo
 ($R=200$; identical to \texttt{results/label\_efficiency.json}). LIN, OWN, FORM: predictions defined
 in the text. Last two columns: per-target ratio Obs/LIN, median and 10\%--90\% range, and the
-correlation of $\log$ Obs and $\log$ LIN across targets. For Law school the four medians (Obs, LIN, OWN, FORM) include the 51 estimands whose influence values vanish, whereas the last two columns use only the 57 compared targets; over those 57 the observed median is 37.6, as in Table~\ref{tab:efficiency}. Source: \texttt{results/theory\_check.json}.}
+correlation of $\log$ Obs and $\log$ LIN across targets. For Law school the four medians (Obs, LIN, OWN, FORM) include the 51 estimands whose influence values vanish, whereas the last two columns use only the 57 compared targets; over those 57 the observed median is 37.6, as in Table~\Mref{tab:efficiency}. Source: \texttt{results/theory\_check.json}.}
 \label{tab:sim-real}
 \small
 \begin{tabular}{lrrrrrrrrll}
@@ -89,17 +89,17 @@ the disagreement strata are fully enumerated, which only the finite-population c
 capture. The lower correlations for Electricity, Phoneme and MAGIC reflect the narrow range of
 efficiencies across targets in those pools (most lie between 2 and 4), not a larger error. We
 conclude that, for the purpose of predicting efficiency, the linearised variance of
-Section~\ref{sec:theory-asym} is adequate already at $L=250$.
+Section~\Mref{sec:theory-asym} is adequate already at $L=250$.
 
 \paragraph{The closed form overstates the gain on real pools.} FORM is a much poorer predictor: the
 median ratio of observed efficiency to FORM is 0.47 (10\%--90\%: 0.17--1.17), and the rule of thumb
 $1/\rho$ is more optimistic still (Table~\ref{tab:sim-real}). The reason is the one anticipated in
-Section~\ref{sec:theory-deff}: with nine models the strata $(G,K)$ do not isolate the disagreements of
+Section~\Mref{sec:theory-deff}: with nine models the strata $(G,K)$ do not isolate the disagreements of
 a particular pair. The share of the pool on which some model disagrees, $\rho_{\rm any}$, is between
 0.18 and 0.73, while the median pairwise rate is between 0.001 and 0.33, and by
 \eqref{eq:deff-sandwich} the attainable gain lies between $1/\rho_{\rm any}$ and $1/\rho$. OWN, which
 uses the actual strata, is much closer (median ratio of observed to OWN 0.87): the remaining 13\% is
-the price of serving all 108 estimands with one allocation, which Proposition~\ref{prop:allocation}(d)
+the price of serving all 108 estimands with one allocation, which Proposition~\Mref{prop:allocation}(d)
 makes explicit. Law school is a degenerate case for FORM, since the median pair disagrees on 0.1\% of
 the pool and many targets have nearly zero variance; FORM and the observed efficiencies are
 negatively correlated there. FORM is therefore useful as an explanation of where the gain comes from
@@ -232,7 +232,7 @@ None of the four wrong proxies costs a measurable amount of efficiency (Table~\r
 the predicted loss is at most 0.2\%, the observed differences (between $-2.4\%$ and $+1.2\%$) are
 within Monte Carlo error, and every one of the 30 estimands is estimated at least 15 times more
 efficiently than under SRS. Proportional allocation on the same strata, by contrast, has eight times
-the weighted variance. The explanation is Proposition~\ref{prop:influence}: the proxy enters the
+the weighted variance. The explanation is Proposition~\Mref{prop:influence}: the proxy enters the
 anticipated stratum variances only through label rates, while the dominant feature, namely that the
 comparison estimands receive almost no variance from the strata where all models agree, is fixed by
 the predictions. With a constant or adversarial proxy the agreement strata are still anticipated to
@@ -242,24 +242,24 @@ into the disagreement strata and differ only in how it is divided among them. Th
 (1.21--1.24) are valid but loose here. This robustness is specific to the structure of the problem
 and should not be read as a general guarantee: Proposition~\ref{prop:proxy}(d) shows that a proxy
 that misjudges a high-variance stratum can do arbitrarily badly in other stratified problems, and the
-empirical comparison with the oracle allocation in Section~\ref{sec:ablations} is the relevant check
+empirical comparison with the oracle allocation in Section~\Mref{sec:ablations} is the relevant check
 for real data.
 
 \subsection{The difference estimator (PATTERN-DIF)}\label{sec:sim-dif}
 
-Section~\ref{sec:theory-dif} makes four predictions about the difference estimator \eqref{eq:dif} with the proxy mean \eqref{eq:psi}: it is exactly unbiased for the totals
-for any proxy and its plug-in variance is unbiased (Proposition~\ref{prop:validity}); its linearised variance is $V_\psi=\sum_hc_hS^2_{e,h}$ with residual influence values
+Section~\Mref{sec:theory-dif} makes four predictions about the difference estimator (\Mref{eq:dif}) with the proxy mean (\Mref{eq:psi}): it is exactly unbiased for the totals
+for any proxy and its plug-in variance is unbiased (Proposition~\Mref{prop:validity}); its linearised variance is $V_\psi=\sum_hc_hS^2_{e,h}$ with residual influence values
 $e_i=z_i-\tilde z_i$; its gain over the plain estimator on the same sample is $V_0/V_\psi$, which a label-free calculation forecasts under calibration
-(Proposition~\ref{prop:dif-deff}); and a miscalibrated proxy can lose to the plain estimator (Proposition~\ref{prop:dif-proxy}). We check them with
+(Proposition~\Mref{prop:dif-deff}); and a miscalibrated proxy can lose to the plain estimator (Proposition~\ref{prop:dif-proxy}). We check them with
 \texttt{experiments/theory\_check\_dif.py} (results in \texttt{results/theory\_check\_dif.json}). Every comparison is between the plain and the
 difference estimator on the \emph{same} PATTERN sample, so the ratio $\mathrm{MSE}(\text{plain})/\mathrm{MSE}(\text{DIF})$ isolates the estimator. Three predictions are used:
 \textbf{LIN}, $\sum_hc_hS^2_{z,h}/\sum_hc_hS^2_{e,h}$, computed with the true labels; \textbf{ANT}, the label-free forecast
-$\sum_hc_h(\bar\sigma^2_h+S^2_{\tilde z,h})/\sum_hc_h\bar\sigma^2_h$ of \eqref{eq:dif-deff}, which uses the proxy only; and \textbf{TUNE}, $V_\psi/V(\lambda)$ with $\lambda_h=\min\{1,\max(0,\beta_h)\}$, the
+$\sum_hc_h(\bar\sigma^2_h+S^2_{\tilde z,h})/\sum_hc_h\bar\sigma^2_h$ of (\Mref{eq:dif-deff}), which uses the proxy only; and \textbf{TUNE}, $V_\psi/V(\lambda)$ with $\lambda_h=\min\{1,\max(0,\beta_h)\}$, the
 most that tuning the coefficient could add to $\lambda=1$.
 
 \paragraph{Exactness and the variance formulae.} On a pool of 14 units in two strata (6 and 8 units, 2 and 3 labels) we enumerated all 840 samples for three proxies (a random mixture of $u_i,v_i$, an arbitrary bounded vector, and
 the anti-correlated vector $1-t_i$) and three coefficients ($\lambda=0,\frac12,1$). The mean of $\hat T_{\lambda\psi}$, its covariance matrix and the mean of the plug-in variance estimator agree with $T$,
-the formula of Proposition~\ref{prop:validity}(a) and each other to within $3\times10^{-13}$ in absolute terms (relative to the variances, $10^{-14}$), that is machine precision, for every proxy. By Monte Carlo ($R=2000$) the totals are also unbiased on the four real pools and six synthetic pools: the largest standardised bias
+the formula of Proposition~\Mref{prop:validity}(a) and each other to within $3\times10^{-13}$ in absolute terms (relative to the variances, $10^{-14}$), that is machine precision, for every proxy. By Monte Carlo ($R=2000$) the totals are also unbiased on the four real pools and six synthetic pools: the largest standardised bias
 over the 29--49 coordinates is $|z|=2.7$ for the difference estimator and 2.6 for the plain estimator, which share their samples and have strongly correlated coordinates, and the largest bias is 0.06 standard deviations
 (the Monte Carlo resolution is 0.022). The variance formula holds: the median over estimands of the Monte Carlo variance divided by the linearised $V_\psi$ is between 0.99 and 1.02 on the real pools (Table~\ref{tab:sim-dif-real}) and 1.01 to 1.07 on the synthetic
 pools (up to 1.10 for $\theta^{TPR}$, a second-order effect of the random denominators at $L=600$), the mean of $\hat V_\psi$ divided by the Monte Carlo variance is between 0.98 and 1.02, and the Wald coverage of the difference estimator
@@ -346,14 +346,14 @@ Points: Monte Carlo ($R=2000$); solid: LIN; dotted: ANT, which assumes calibrati
 \end{figure}
 
 \paragraph{Calibrated and miscalibrated proxies.} In pools whose labels follow the proxy, ANT and LIN agree with each other and with the Monte Carlo gain within 2\% (median observed/LIN between 0.99 and 1.00; Table~\ref{tab:sim-dif-syn}, top), which verifies
-Proposition~\ref{prop:dif-deff}: the gain is 1.8 to 2.4 for the rate differences and 1.1 for the error difference, because in the disagreement strata the proxy is uncertain ($\overline{\pi(1-\pi)}$ is large) and the closed forms \eqref{eq:dif-closed} are bounded; a sharper latent score hardly changes them. For miscalibrated proxies
+Proposition~\Mref{prop:dif-deff}: the gain is 1.8 to 2.4 for the rate differences and 1.1 for the error difference, because in the disagreement strata the proxy is uncertain ($\overline{\pi(1-\pi)}$ is large) and the closed forms \eqref{eq:dif-closed} are bounded; a sharper latent score hardly changes them. For miscalibrated proxies
 (bottom), unbiasedness and coverage are unaffected (coverage 0.947--0.953), LIN keeps tracking the Monte Carlo gain (median ratio 0.99 to 1.01) and ANT, which assumes calibration, does not. The theory's two warnings appear. First, an inverted proxy ($\kappa=-1$) makes the difference estimator \emph{worse} than the plain estimator for the error difference
 (gain 0.76, that is 1.3 times the mean squared error, as LIN predicts), while the rate differences still gain 1.4 to 1.5. The design-weighted slope $\bar\beta=\sum_hc_h\mathrm{Cov}_h(z,\tilde z)/\sum_hc_hS^2_{\tilde z,h}$ of the error difference is $-1.02$, the clipped coefficient is $0$ and TUNE, which here recovers the plain estimator, is 1.32 $=1/0.76$. Second, a constant proxy $\pi_i\equiv\frac12$ ($\kappa=0$) is uninformative for the error difference (gain exactly 1, since $\tilde z\equiv0$) but not for the
-rate differences (1.9 and 2.0, TUNE 1.03 and 1.04), because $\tilde z_i$ still carries the known pattern of $D_i$. Third, the threshold $\beta<\frac12$ of Proposition~\ref{prop:dif-var}(a) is visible: for the error difference $\bar\beta$ is 1.02 at $\kappa=1$, 0.62 at $\kappa=2$ (gain 1.08) and 0.44 at $\kappa=4$ (gain 0.96), so an over-sharp proxy gains little for the rate differences (1.8--1.9) and crosses to a loss for the error difference.
+rate differences (1.9 and 2.0, TUNE 1.03 and 1.04), because $\tilde z_i$ still carries the known pattern of $D_i$. Third, the threshold $\beta<\frac12$ of Proposition~\Mref{prop:dif-var}(a) is visible: for the error difference $\bar\beta$ is 1.02 at $\kappa=1$, 0.62 at $\kappa=2$ (gain 1.08) and 0.44 at $\kappa=4$ (gain 0.96), so an over-sharp proxy gains little for the rate differences (1.8--1.9) and crosses to a loss for the error difference.
 
 \paragraph{Zero-variance strata and the floor.} The residual floor \eqref{eq:floor} was evaluated on four pools at $L=250$ ($R=1000$). At Churn the difference estimator alone raises the worst-estimand coverage from 0.52 (plain estimator, \texttt{results/label\_baselines.json}) to 0.84 (0.87 in this run), because
 $\hat e_i=-\pi_i\hat d_i$ varies even when no positive is sampled; at Law school it does not (0.64 for both). Where the problem persists the floor repairs it: for Law school mean coverage rises from 0.913 to 0.954 and the worst-estimand coverage from 0.65 to 0.89; for Adult-sex and Credit card default the mean rises from 0.942 to 0.946 and from 0.949 to 0.955 with the worst estimand unchanged (0.85 and 0.92); at Churn the floor is active in 0.2\% of
-(replication, estimand) pairs and changes nothing (0.938). The floor widens the intervals by a median factor of 1.00 (90th percentile 1.08, 1.15, 1.33 for Adult-sex, Credit card and Law school). It does not alter the point estimate. As in Section~\ref{sec:ablations} it is a safeguard chosen after seeing the failure, and these numbers are not an out-of-sample test.
+(replication, estimand) pairs and changes nothing (0.938). The floor widens the intervals by a median factor of 1.00 (90th percentile 1.08, 1.15, 1.33 for Adult-sex, Credit card and Law school). It does not alter the point estimate. As in Section~\Mref{sec:ablations} it is a safeguard chosen after seeing the failure, and these numbers are not an out-of-sample test.
 
 \subsection{Summary}
 

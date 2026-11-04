@@ -1,7 +1,7 @@
 % ---------------------------------------------------------------------------------------------
-% Proofs for Section \ref{sec:theory}. Notation as in docs/notation_v2.md and sections/theory.tex.
+% Proofs for Section \Mref{sec:theory}. Notation as in docs/notation_v2.md and sections/theory.tex.
 % ---------------------------------------------------------------------------------------------
-\section{Proofs}\label{sec:theory-proofs}
+\section{Proofs}\label{si:proofs}\label{sec:theory-proofs}
 
 Throughout, $x_i=a^\top\xi_i$ with $\xi_i=t_i(Y_i)-\psi_i$ for a fixed or sequence-dependent vector $a$ and a
 label-free vector $\psi_i$ with $\|\psi_i\|_\infty\le1$ (the plain estimator is $\psi\equiv0$, so $\xi_i=t_i(Y_i)$), and
@@ -13,9 +13,9 @@ covariances of vector-valued variables. Because all coordinates of $\xi_i$ lie i
 variance of a coordinate or of a product of two coordinates satisfies
 $S^2\le N/(N-1)\le2$ for $N\ge2$ (for $\psi\equiv0$ the sharper bound $N/\{4(N-1)\}\le1/2$ holds).
 
-\subsection{Proof of Proposition~\ref{prop:validity}}
+\subsection{Proof of Proposition~\Mref{prop:validity}}
 
-\emph{(a)} Since $\sum_{i\in U}\psi_i=\sum_hN_h\bar\psi_h$ and $T=\sum_hN_h\bar t_h$, definition \eqref{eq:dif} gives
+\emph{(a)} Since $\sum_{i\in U}\psi_i=\sum_hN_h\bar\psi_h$ and $T=\sum_hN_h\bar t_h$, definition (\Mref{eq:dif}) gives
 $\hat T_\psi-T=\sum_hN_h(\bar\xi_{s_h}-\bar\xi_h)$: the known proxy total cancels exactly, which is where the
 fact that $\psi_i$ is known for every unit of the pool is used. Within stratum $h$,
 $E(\bar\xi_{s_h})=\bar\xi_h$ and $\operatorname{Cov}(\bar\xi_{s_h})=(1-f_h)\Sigma^\xi_h/n_h$. The strata are sampled independently and
@@ -98,13 +98,13 @@ With (A3), $|\hat V_\psi/V_\psi-1|\le r^2o_p(1)/(cr^2)=o_p(1)$. Finally
 $(\hat\theta_\psi-\theta)/\hat V_\psi^{1/2}=\{(\hat\theta_\psi-\theta)/V_\psi^{1/2}\}(V_\psi/\hat V_\psi)^{1/2}\to N(0,1)$ by (c)
 and Slutsky's lemma, which gives the coverage statement. $\square$
 
-\subsection{Proof of Proposition~\ref{prop:influence}}
+\subsection{Proof of Proposition~\Mref{prop:influence}}
 
 Fix $g$ and the pair $(m,j)$. The estimand $\theta^{TPR}_{mj}=\sum_{g'}s_{g'}(TP_{mg'}-TP_{jg'})/P_{g'}$
 depends on $T$ through $TP_{mg'}$, $TP_{jg'}$ and $P_{g'}$, with partial derivatives
 $s_{g'}/P_{g'}$, $-s_{g'}/P_{g'}$ and $-s_{g'}(TP_{mg'}-TP_{jg'})/P_{g'}^2=-s_{g'}\delta_{g'}/P_{g'}$.
 Instance $i$ with $G_i=g$ contributes $Y_i\hat y_{mi}$, $Y_i\hat y_{ji}$ and $Y_i$ to the totals
-of its own group and nothing to the totals of the other group. By \eqref{eq:influence},
+of its own group and nothing to the totals of the other group. By (\Mref{eq:influence}),
 $z^{TPR}_i=s_g\{Y_i\hat y_{mi}-Y_i\hat y_{ji}-\delta_gY_i\}/P_g=s_gY_i(D_i-\delta_g)/P_g$. Summing
 over the group gives $s_g\{(TP_{mg}-TP_{jg})-\delta_gP_g\}/P_g=0$. The FPR case is identical with
 $1-Y_i$, $Q_g$ and $\gamma_g$. For the error, $|\hat y-Y|=\hat y+Y-2\hat yY$ for binary values,
@@ -118,16 +118,16 @@ using $D_i^2=|D_i|$. Therefore
 \overline{u^2}_h-\bar u_h^2=r_h-2\delta_gc_h+\delta_g^2\pi_h-c_h^2+2\delta_gc_h\pi_h-\delta_g^2\pi_h^2
 =(r_h-c_h^2)+\delta_g^2\pi_h(1-\pi_h)-2\delta_gc_h(1-\pi_h),
 \]
-and multiplying by $\kappa_h/P_g^2$ gives \eqref{eq:stratvar-tpr}. For the error,
+and multiplying by $\kappa_h/P_g^2$ gives (\Mref{eq:stratvar-tpr}). For the error,
 $\{D_i(1-2Y_i)\}^2=|D_i|$, so the variance with divisor $N_h$ is $\rho_h-e_h^2$, which gives
-\eqref{eq:stratvar-err}. If $D_i=0$ on $U_h$ then $r_h=c_h=\rho_h=e_h=0$, and \eqref{eq:agree-var}
+(\Mref{eq:stratvar-err}). If $D_i=0$ on $U_h$ then $r_h=c_h=\rho_h=e_h=0$, and (\Mref{eq:agree-var})
 follows; for FPR the label variance of $1-Y$ is again $\pi_h(1-\pi_h)$. When $K_i\in\{0,M\}$ all
 models predict the same label, so every pair agrees. $\square$
 
 \subsection{Proof of Proposition~\ref{prop:residual}}
 
-By \eqref{eq:psi}, $\xi_i=Y_iu_i+(1-Y_i)v_i-\pi_iu_i-(1-\pi_i)v_i=(Y_i-\pi_i)(u_i-v_i)$, so $e_i=\nabla f(T)^\top\xi_i=(Y_i-\pi_i)d_i$. The partial derivatives of
-$\theta^{TPR}_{mj}$ for an instance of group $g$ are those listed in the proof of Proposition~\ref{prop:influence}: $s_g/P_g$ and $-s_g/P_g$ for the coordinates $TP_{mg}$ and
+By (\Mref{eq:psi}), $\xi_i=Y_iu_i+(1-Y_i)v_i-\pi_iu_i-(1-\pi_i)v_i=(Y_i-\pi_i)(u_i-v_i)$, so $e_i=\nabla f(T)^\top\xi_i=(Y_i-\pi_i)d_i$. The partial derivatives of
+$\theta^{TPR}_{mj}$ for an instance of group $g$ are those listed in the proof of Proposition~\Mref{prop:influence}: $s_g/P_g$ and $-s_g/P_g$ for the coordinates $TP_{mg}$ and
 $TP_{jg}$, and $-s_g\delta_g/P_g$ for $P_g$. For these coordinates $u_i-v_i$ equals $\hat y_{mi}$, $\hat y_{ji}$ and $1$ (they have $v_i=0$), so
 $d_i=s_g(\hat y_{mi}-\hat y_{ji}-\delta_g)/P_g=s_g(D_i-\delta_g)/P_g$. For $\theta^{FPR}_{mj}$ the coordinates $FP_{mg},FP_{jg},Q_g$ have $u_i=0$, $v_i=\hat y_{mi},\hat y_{ji},1$,
 so $u_i-v_i$ is the negative of these values and $d_i=-s_g(D_i-\gamma_g)/Q_g$, which gives $e^{FPR}_i=(Y_i-\pi_i)\{-s_g(D_i-\gamma_g)/Q_g\}=s_g\{(1-Y_i)-(1-\pi_i)\}(D_i-\gamma_g)/Q_g$. For the error,
@@ -139,7 +139,7 @@ Then $E_\pi\sum_{U_h}(e_i-\bar e_h)^2=(1-N_h^{-1})\sum_{U_h}\sigma_i^2$, so $E_\
 $S^2_{z,h}=S^2_{\tilde z,h}+2\,\mathrm{Cov}_h(\tilde z,e)+S^2_{e,h}$ and $C_h=S^2_{\tilde z,h}+\mathrm{Cov}_h(\tilde z,e)$; the covariance with the constants $\tilde z_i$ is linear in $e$ and has expectation zero.
 $\square$
 
-\subsection{Proof of Proposition~\ref{prop:allocation}}
+\subsection{Proof of Proposition~\Mref{prop:allocation}}
 
 \emph{(a)} The term $\sum_hN_hA_h^2$ does not depend on $n$. For any $n_h>0$ with $\sum_hn_h=L$, the
 Cauchy--Schwarz inequality gives
@@ -181,37 +181,37 @@ the variance decomposition is non-negative), so by Jensen's inequality
 
 \subsection{Proof of Proposition~\ref{prop:alloc-dif}}
 
-Proposition~\ref{prop:allocation}(a)--(c) use only that the $A_h$ are non-negative numbers, so they apply with $A^\psi_h$. Proposition~\ref{prop:proxy}(b) applied with $A_h=A^\psi_h$ and the anticipated
-value $\tilde A_h=\tilde A^0_h$ gives \eqref{eq:alloc-loss} with $x_h=\tilde A^0_h/A^\psi_h$. By \eqref{eq:anticipated} and the assumption $\tilde A^\psi_h=A^\psi_h$,
+Proposition~\Mref{prop:allocation}(a)--(c) use only that the $A_h$ are non-negative numbers, so they apply with $A^\psi_h$. Proposition~\ref{prop:proxy}(b) applied with $A_h=A^\psi_h$ and the anticipated
+value $\tilde A_h=\tilde A^0_h$ gives \eqref{eq:alloc-loss} with $x_h=\tilde A^0_h/A^\psi_h$. By (\Mref{eq:anticipated}) and the assumption $\tilde A^\psi_h=A^\psi_h$,
 $x_h^2=\sum_tw_t(\bar\sigma^2_{ht}+S^2_{\tilde z,ht})/\sum_tw_t\bar\sigma^2_{ht}=1+\tilde\nu_h$. The bound is Proposition~\ref{prop:proxy}(c) with $x_{\min}\ge1$ and $x_{\max}\le(1+\nu_{\max})^{1/2}$.
 For the plain estimator allocated with the residual rule, $A_h=A^0_h$, $\tilde A_h=\tilde A^\psi_h$, so $x_h$ is replaced by $1/x_h\in[(1+\nu_{\max})^{-1/2},1]$ and
 $\omega_h\propto N_hA^0_h$; the ratio $x_{\max}/x_{\min}$ is the same, hence so is the Kantorovich bound $(s+1)^2/(4s)$ with $s=(1+\nu_{\max})^{1/2}$. $\square$
 
 \subsection{Proof of Corollary~\ref{prop:deff}}
 
-\emph{Equation \eqref{eq:deff-general}.} Without finite-population corrections,
-$V^{SRS}_t=N^2\sigma^2_t/L$ and, by Proposition~\ref{prop:allocation}(a) applied to the single
-target, $V_t(n^\ast)=(\sum_hN_h\sigma_{ht})^2/L$; the ratio is \eqref{eq:deff-general}. The variance
+\emph{Equation (\Mref{eq:deff-general}).} Without finite-population corrections,
+$V^{SRS}_t=N^2\sigma^2_t/L$ and, by Proposition~\Mref{prop:allocation}(a) applied to the single
+target, $V_t(n^\ast)=(\sum_hN_h\sigma_{ht})^2/L$; the ratio is (\Mref{eq:deff-general}). The variance
 decomposition $\sigma_t^2=\sum_hW_h\sigma_{ht}^2+\sum_hW_h(\bar z_h-\bar z)^2$ and Jensen's inequality
 $\sum_hW_h\sigma_{ht}^2\ge(\sum_hW_h\sigma_{ht})^2$ give $\mathrm{Eff}_t\ge1$, with equality if and
 only if both inequalities are equalities.
 
 \emph{Refinement.} If a stratum $h$ is split into $h'$ and $h''$, the same two inequalities
 applied within $h$ give $W_h\sigma_h\ge W_{h'}\sigma_{h'}+W_{h''}\sigma_{h''}$, so the denominator of
-\eqref{eq:deff-general} cannot increase.
+(\Mref{eq:deff-general}) cannot increase.
 
-\emph{(a)} By Proposition~\ref{prop:influence} the influence values of $\theta^{TPR}_{mj}$ have mean
+\emph{(a)} By Proposition~\Mref{prop:influence} the influence values of $\theta^{TPR}_{mj}$ have mean
 zero in each group, hence overall, and $N^{-1}\sum_iz_i^2=N^{-1}\sum_gN_g\overline{u^2}_g/P_g^2$,
 where $\overline{u^2}_g=r_g-2\delta_g\cdot\delta_gp_g+\delta_g^2p_g=r_g-\delta_g^2p_g$ is the group mean
 of $u_i^2$ (we used $N_g^{-1}\sum_{G_i=g}Y_iD_i=\delta_gp_g$). With $P_g=N\zeta_gp_g$,
 $\sigma_t^2=N^{-2}\sum_g(r_g-\delta_g^2p_g)/(\zeta_gp_g^2)$. In the stratum $\mathcal D_g$,
 $|D_i|=1$, so $r_h=\pi_h=\pi_{\mathcal D,g}$ and $c_h=c_{\mathcal D,g}=\delta_gp_gN_g/(N_g\rho_g)$;
-\eqref{eq:stratvar-tpr} with divisor $N_h$ gives $\sigma_{\mathcal D_g}=\sigma_{\mathcal D,g}/P_g$, and
+(\Mref{eq:stratvar-tpr}) with divisor $N_h$ gives $\sigma_{\mathcal D_g}=\sigma_{\mathcal D,g}/P_g$, and
 $W_{\mathcal D_g}\sigma_{\mathcal D_g}=\zeta_g\rho_g\sigma_{\mathcal D,g}/(N\zeta_gp_g)=
 \rho_g\sigma_{\mathcal D,g}/(Np_g)$. In $\mathcal A_g$, the number of positives is
-$N_g(p_g-r_g)$, so its positive rate is $\pi_{\mathcal A,g}$, and \eqref{eq:agree-var} gives
+$N_g(p_g-r_g)$, so its positive rate is $\pi_{\mathcal A,g}$, and (\Mref{eq:agree-var}) gives
 $W_{\mathcal A_g}\sigma_{\mathcal A_g}=(1-\rho_g)|\delta_g|\{\pi_{\mathcal A,g}(1-\pi_{\mathcal A,g})\}^{1/2}/(Np_g)$.
-Inserting into \eqref{eq:deff-general}, the factors $N^{-2}$ cancel and \eqref{eq:deff-tpr} follows.
+Inserting into (\Mref{eq:deff-general}), the factors $N^{-2}$ cancel and \eqref{eq:deff-tpr} follows.
 For the error difference, $z_i=D_i(1-2Y_i)/N$ vanishes on $\mathcal A_g$, takes values $\pm1/N$ on
 $\mathcal D_g$ with mean $\mu_g/N$, so $\sigma_{\mathcal D_g}=(1-\mu_g^2)^{1/2}/N$, and
 $\sigma_t^2=(\rho-\theta^2)/N^2$ because $z_i^2=|D_i|/N^2$; \eqref{eq:deff-err} follows. The last
@@ -221,7 +221,7 @@ statement of (a) is the refinement property.
 so $\rho_g\sigma_{\mathcal D,g}=(\rho_gr_g)^{1/2}$ and the agreement terms vanish. With $\rho_g=\rho$,
 $\mathrm{Eff}^{TPR}=\sum_gr_g/(\zeta_gp_g^2)\big/\{\rho(\sum_g\sqrt{r_g}/p_g)^2\}=\Gamma/\rho$. By
 Cauchy--Schwarz, $(\sum_g\sqrt{\zeta_g}\cdot\sqrt{r_g}/(\sqrt{\zeta_g}p_g))^2\le\sum_g\zeta_g\cdot
-\sum_gr_g/(\zeta_gp_g^2)$, so $\Gamma\ge1$. Applying \eqref{eq:deff-general} to the two strata
+\sum_gr_g/(\zeta_gp_g^2)$, so $\Gamma\ge1$. Applying (\Mref{eq:deff-general}) to the two strata
 $\{G=0\}$, $\{G=1\}$, whose influence values have mean zero and variances $r_g/(N\zeta_gp_g)^2$, gives
 exactly $\Gamma$. For the error difference with $\mu_g=0$ (hence $\theta=\sum_g\zeta_g\rho_g\mu_g=0$),
 \eqref{eq:deff-err} equals $\rho/\rho^2=1/\rho$.
@@ -242,7 +242,7 @@ in $\rho_g$. For $\delta_g=0$ the limit of \eqref{eq:deff-tpr} is $\Gamma$ by (b
 difference with $\rho_g=1$, $\mu_g$ is the group-wise error difference and the limit is
 $(1-\theta^2)/(\sum_g\zeta_g\sqrt{1-\mu_g^2})^2$, which equals one when $\mu_0=\mu_1=\theta$.
 
-\emph{Equation \eqref{eq:deff-mixed}.} If $e_h=0$ for all $h$, \eqref{eq:stratvar-err} gives
+\emph{Equation \eqref{eq:deff-mixed}.} If $e_h=0$ for all $h$, (\Mref{eq:stratvar-err}) gives
 $\sigma^2_{ht}=\rho_h/N^2$, and $\sigma^2_t=\rho/N^2$ with $\theta=0$. Since $0\le\rho_h\le1$,
 $\sqrt{\rho_h}\ge\rho_h$, so $(\sum_hW_h\sqrt{\rho_h})^2\ge\rho^2$ and $\mathrm{Eff}\le1/\rho$; Jensen's
 inequality gives $(\sum_hW_h\sqrt{\rho_h})^2\le\rho$ and $\mathrm{Eff}\ge1$. Equality in the upper bound
@@ -260,13 +260,13 @@ any instance with $0<K<M$.) $\square$
 \subsection{Proof of Proposition~\ref{prop:proxy}}
 
 \emph{(a)} The proxy is a fixed function of the pool, so $\tilde n$ satisfies (A1) whenever the
-minimum per stratum is at least two; Proposition~\ref{prop:validity} applies without change.
+minimum per stratum is at least two; Proposition~\Mref{prop:validity} applies without change.
 
 \emph{(b)} With $\tilde n_h=LN_h\tilde A_h/\sum_kN_k\tilde A_k$,
 \[
 \Phi_0(\tilde n)=\sum_h\frac{N_h^2A_h^2}{\tilde n_h}=\frac1L\Big(\sum_kN_k\tilde A_k\Big)\Big(\sum_h\frac{N_hA_h^2}{\tilde A_h}\Big),
 \]
-and $\Phi_0(n^\ast)=L^{-1}(\sum_hN_hA_h)^2$ by Proposition~\ref{prop:allocation}(a). Writing
+and $\Phi_0(n^\ast)=L^{-1}(\sum_hN_hA_h)^2$ by Proposition~\Mref{prop:allocation}(a). Writing
 $\tilde A_h=x_hA_h$,
 \[
 \sum_hN_h\tilde A_h=\Big(\sum_kN_kA_k\Big)\sum_h\omega_hx_h,\qquad
@@ -306,19 +306,19 @@ $V^{SRS}=(1-f)(N/L)NS^2$, so $V^{\rm prop}(1-1/\min_hN_h)\le V^{SRS}$. Summing o
 $w_t$ gives the same inequality for the weighted variance, and combining with the first part proves
 (e). $\square$
 
-\subsection{Proof of Proposition~\ref{prop:dif-var}}
+\subsection{Proof of Propositions~\Mref{prop:dif-var} and~\ref{prop:dif-var-ext}}
 
 \emph{(a)} Within stratum $h$, $e_i=z_i-\tilde z_i$, so $S^2_{e,h}=S^2_{z,h}-2C_h+S^2_{\tilde z,h}$ with $C_h=\mathrm{Cov}_h(z,\tilde z)=\beta_hS^2_{\tilde z,h}=R_hS_{z,h}S_{\tilde z,h}$.
 Multiplying by $c_h$ and summing, $V_0-V_\psi=\sum_hc_h(2C_h-S^2_{\tilde z,h})=\sum_hc_hS^2_{\tilde z,h}(2\beta_h-1)$. The sufficient condition is $\beta_h>1/2\iff R_hS_{z,h}/S_{\tilde z,h}>1/2$.
 
-\emph{(b)} For the member $\lambda$, the residual influence value in stratum $h$ is $z_i-\lambda_h\tilde z_i$ (the proxy $\lambda_h\psi_i$ is label-free, so Proposition~\ref{prop:validity} applies and the linearised
+\emph{(b)} For the member $\lambda$, the residual influence value in stratum $h$ is $z_i-\lambda_h\tilde z_i$ (the proxy $\lambda_h\psi_i$ is label-free, so Proposition~\Mref{prop:validity} applies and the linearised
 variance has this form). Hence $S^2_{z-\lambda\tilde z,h}=S^2_{z,h}-2\lambda_hC_h+\lambda_h^2S^2_{\tilde z,h}=S^2_{z,h}-\beta_h^2S^2_{\tilde z,h}+(\lambda_h-\beta_h)^2S^2_{\tilde z,h}$, and
 $\beta_h^2S^2_{\tilde z,h}=C_h^2/S^2_{\tilde z,h}=R_h^2S^2_{z,h}$, which is the displayed formula. Setting $\lambda\equiv0$ and $\lambda\equiv1$ gives the two decompositions. The function $\lambda\mapsto(\lambda-\beta_h)^2$
 is a parabola centred at $\beta_h$, and the clipped value is the point of $[0,1]$ closest to $\beta_h$, so it is no larger than at $\lambda=0$ or $\lambda=1$.
 
 \emph{(c)} If $\mathrm{Cov}_h(e,\tilde z)=0$ then $C_h=\mathrm{Cov}_h(\tilde z+e,\tilde z)=S^2_{\tilde z,h}$, so $\beta_h=1$ and (a) gives $V_0-V_\psi=\sum_hc_hS^2_{\tilde z,h}$. $\square$
 
-\subsection{Proof of Proposition~\ref{prop:dif-deff}}
+\subsection{Proof of Propositions~\Mref{prop:dif-deff} and~\ref{prop:dif-closed}}
 
 \emph{(a)} The $c_h$ are constants ($n_h$ is label-free), so by \eqref{eq:resid-moments}
 $E_\pi V_0-E_\pi V_\psi=\sum_hc_h\{(S^2_{\tilde z,h}+\bar\sigma^2_h)-\bar\sigma^2_h\}=\sum_hc_hS^2_{\tilde z,h}$, which vanishes iff $S^2_{\tilde z,h}=0$ in every stratum with $c_h>0$, that is every stratum that is not fully enumerated.
@@ -337,7 +337,7 @@ The numerical examples are the case $\pi_i\equiv\bar\pi$, $\bar a=0$: $\overline
 
 \subsection{Proof of Proposition~\ref{prop:dif-proxy}}
 
-\emph{(a)} is Proposition~\ref{prop:validity} (only label-freeness of the proxy is used).
+\emph{(a)} is Proposition~\Mref{prop:validity} (only label-freeness of the proxy is used).
 
 \emph{(b)} Under independent labels with $P(Y_i=1)=q_i$, write $z_i=\tilde z^q_i+(Y_i-q_i)d_i$ and $e_i=z_i-\tilde z^\pi_i=(Y_i-q_i)d_i+(\tilde z^q_i-\tilde z^\pi_i)$, using $\tilde z^q_i-\tilde z^\pi_i=(q_i-\pi_i)d_i$. The first term has mean zero and independent coordinates, the second is constant. As in the proof of
 Proposition~\ref{prop:residual}, $E_qS^2_{z,h}=S^2_{\tilde z^q,h}+\bar\sigma^2_h(q)$ and $E_qS^2_{e,h}=\bar\sigma^2_h(q)+S^2_{\tilde z^q-\tilde z^\pi,h}$. Subtracting and multiplying by $c_h$ gives \eqref{eq:dif-misspec}.
@@ -345,14 +345,14 @@ If $\tilde z^\pi_i-\bar{\tilde z}^\pi_h=\kappa(\tilde z^q_i-\bar{\tilde z}^q_h)$
 
 \emph{(c)} By Minkowski's inequality for standard deviations, $S_{e,h}\le S_{z,h}+S_{\tilde z,h}\le S_{z,h}(1+\max_kS_{\tilde z,k}/S_{z,k})$, with equality in the first step iff $z_i-\bar z_h=-s_h(\tilde z_i-\bar{\tilde z}_h)$ for a constant $s_h>0$ (perfect anti-correlation, $S_{\tilde z,h}/S_{z,h}=1/s_h$), and in the second iff this ratio is the same in every stratum. Multiply by $c_h$ and sum.
 
-\emph{(d)} The first statement is Proposition~\ref{prop:dif-var}(b). With $\beta_h=0$, (a) of that proposition gives $V_0-V_\psi=-\sum_hc_hS^2_{\tilde z,h}$. $\square$
+\emph{(d)} The first statement is Proposition~\ref{prop:dif-var-ext}(a). With $\beta_h=0$, (a) of that proposition gives $V_0-V_\psi=-\sum_hc_hS^2_{\tilde z,h}$. $\square$
 
 \subsection{Proof of Proposition~\ref{prop:dif-lambda}}
 
-By \eqref{eq:dif} with coefficients $\hat\lambda_h$ and $\lambda_h^\infty$, $\hat T_{\hat\lambda\psi}-\hat T_{\lambda^\infty\psi}=-\sum_hN_h(\hat\lambda_h-\lambda^\infty_h)(\bar\psi_{s_h}-\bar\psi_h)$, because $F_h=N_h\bar\psi_h$.
+By (\Mref{eq:dif}) with coefficients $\hat\lambda_h$ and $\lambda_h^\infty$, $\hat T_{\hat\lambda\psi}-\hat T_{\lambda^\infty\psi}=-\sum_hN_h(\hat\lambda_h-\lambda^\infty_h)(\bar\psi_{s_h}-\bar\psi_h)$, because $F_h=N_h\bar\psi_h$.
 Each $\bar\psi_{s_h}-\bar\psi_h$ is $O_p(\{(1-f_h)/n_h\}^{1/2})$ coordinatewise, so, with $W_hn_h^{-1/2}\le r$ and a fixed number of strata,
 $\|\hat\tau_{\hat\lambda\psi}-\hat\tau_{\lambda^\infty\psi}\|=o_p(r)$. The Taylor expansion \eqref{eq:taylor} applies to both estimators (it needs only (A2) and the bound on the contributions), so
-$\hat\theta_{\hat\lambda\psi}-\hat\theta_{\lambda^\infty\psi}=o_p(r)=o_p(V^{1/2})$ by (A3), and Slutsky's lemma gives the same limit. By Proposition~\ref{prop:dif-var}(b), $\lambda^\infty_h=\min\{1,\max(0,\beta_h)\}$ gives
+$\hat\theta_{\hat\lambda\psi}-\hat\theta_{\lambda^\infty\psi}=o_p(r)=o_p(V^{1/2})$ by (A3), and Slutsky's lemma gives the same limit. By Proposition~\ref{prop:dif-var-ext}(a), $\lambda^\infty_h=\min\{1,\max(0,\beta_h)\}$ gives
 $V(\lambda^\infty)\le\min(V_0,V_\psi)$. (The sample slope $\hat\beta_h$ is a ratio of sample moments of bounded variables and is consistent for $\beta_h$ whenever $S^2_{\tilde z,h}$ is bounded below by a positive constant
 times $N^{-2}$; otherwise the stratum's contribution is negligible by (A4).)
 
@@ -362,11 +362,11 @@ $S^2_{\varepsilon,h}/(n_hS^2_{\tilde z,h})$ and $N_h^2(1-f_h)S^2_{\tilde z,h}/n_
 contribution $c_h(1-R_h^2)S^2_{z,h}$. The plug-in estimator uses the residuals $\hat z_i-\hat\beta_h\hat{\tilde z}_i$ in the sample, whose sample variance (divisor $n_h-1$) is, by the usual least-squares calculation with an
 intercept and a slope, smaller in expectation than the variance of the fixed-$\beta_h$ residuals by the factor $(n_h-2)/(n_h-1)$. Both statements are first-order expansions in $1/n_h$ and are meant as an explanation of the finite-sample behaviour, not as a bound. $\square$
 
-\subsection{Justification of Remark~\ref{rem:zero-var}}
+\subsection{Justification of Remarks~\Mref{rem:zero-var} and~\ref{rem:zero-var-ext}}
 
 Let $Z$ be the set of strata in which $s^2_{\hat e,h}=0$ and $n_h\ge2$, $f_h<1$. The floored estimator replaces $s^2_{\hat e,h}$ by $\tilde s^2_h$ for $h\in Z$ and is unchanged otherwise; since $\tilde s^2_h\ge0$, $\hat V^{\rm floor}_\psi\ge\hat V_\psi$ pointwise, and the point estimate is the same.
 If $d_i=0$ for all $i\in U_h$, then $\hat d_i=0$ and $\tilde s^2_h=0$ (structural zero), so no floor is added. If $N^2S^2_{e,h}\ge c>0$, then $a^\top\Sigma^\xi_ha$ is bounded away from zero, and by Lemma~\ref{prop:lemma-cov} and the consistency of $\hat a$ the
 probability $P(s^2_{\hat e,h}=0)\to0$, so $P(h\in Z)\to0$. Let $\mathcal H_0$ be the strata with $N^2S^2_{e,h}\to0$. Their contribution to $V_\psi$ is vanishing relative to $V_\psi$ whenever (A4) holds in its second form, and their contribution to
-$\hat V^{\rm floor}_\psi$ is at most $\sum_{h\in\mathcal H_0}c_h\tilde s^2_h$. If this is $o(V_\psi)$, then $\hat V^{\rm floor}_\psi/V_\psi\to1$ and Proposition~\ref{prop:validity}(d) holds for the floored interval; if not, the floored interval is
+$\hat V^{\rm floor}_\psi$ is at most $\sum_{h\in\mathcal H_0}c_h\tilde s^2_h$. If this is $o(V_\psi)$, then $\hat V^{\rm floor}_\psi/V_\psi\to1$ and Proposition~\Mref{prop:validity}(d) holds for the floored interval; if not, the floored interval is
 conservative, $\liminf P(\theta\in\hat\theta_\psi\pm z_{1-\alpha/2}\{\hat V^{\rm floor}_\psi\}^{1/2})\ge1-\alpha$, because $\hat V^{\rm floor}_\psi\ge\hat V_\psi$ and $\hat V_\psi/V_\psi\to1$. The same argument applies to $\max\{s^2_{\hat e,h},\eta\tilde s^2_h\}$ if $\eta\tilde s^2_h<S^2_{e,h}$
 in the limit for strata that carry variance, which holds with $\eta\le1$ for a calibrated proxy because then $E_\pi S^2_{e,h}=\bar\sigma^2_h$ \eqref{eq:resid-moments}. $\square$
