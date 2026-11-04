@@ -42,3 +42,23 @@ on the trained models.
 ## Sample-size planning
 For one criterion the certificate behaves like q * se, and se scales as n^(-1/2). A pilot certificate
 U(n0) therefore predicts the test size needed for a target bound delta: n(delta) = n0 (U(n0)/delta)^2.
+
+## Results (files: results/simulation_certify*.json, results/certify_realdata.json)
+
+Simulation (12 models; error, ECE, equalised-odds gap; 4 designs plus 2 with an exact duplicate model;
+n = 500, 2000, 10000; r = 0, 0.1, 0.25; 200 replications per cell, B = 300):
+- one-stage coverage 1.000 in all 54 cells (conservative); selective 0.990-1.000; two-stage 1.000 but wider than one-stage.
+- at n = 10000 and r = 0 the one-stage bound is about 0.006-0.018 against a realised regret of 0.000-0.001.
+
+Real data (12 settings, held-out pool as truth, 100 test samples per cell, 69 cells):
+- one-stage coverage >= 0.99 in every cell, selective >= 0.98.
+- realised regret of the chosen model is small: median over settings 0.0033 at n = 500 and r = 0
+  (90th percentile 0.0093); the certificate median is 0.044 at n = 500 and 0.019 at n = 2000 (r = 0).
+- the plug-in minimax choice and the equal-weight argmin have almost the same realised regret; the
+  method does not make better choices, it makes honest claims about them.
+
+Test size needed to certify regret <= 0.01 on a single criterion (n0 (U(n0)/0.01)^2, median over 12 settings):
+error about 1,100; noise drop about 1,700; ECE about 5,900; smooth equalised-odds gap about 63,000;
+equalised-odds gap about 135,000. A certificate of zero (chosen model certified best) occurred in 5 of 60
+setting-criterion pairs. The square-root extrapolation under-predicts the certificate at the smaller size by a
+median factor of 1.0-1.5 depending on the criterion, so planning from a small pilot overstates the required n.
