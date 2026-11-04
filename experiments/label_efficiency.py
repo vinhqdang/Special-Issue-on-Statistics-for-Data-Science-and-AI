@@ -16,7 +16,7 @@ sys.path.insert(0, ".")
 from tcs.labeling import total_columns, Estimands, make_strata, neyman_allocation, proportional_allocation, estimate, draw
 from experiments.preference_validation import SETTINGS
 
-METHODS = ["srs", "group", "pattern", "oracle"]
+METHODS = ["srs", "group", "pattern", "oracle"]   # oracle: allocation computed from true labels (reference only)
 S = {}
 
 
@@ -50,7 +50,7 @@ def run(args):
     for name, (st, ids, Nh, nh) in S[(key, L)].items():
         idx = draw(st, ids, nh, rng)
         th, se, lo, hi = estimate(st, ids, Nh, nh, d["U"], d["V"], d["y"][idx], idx, d["est"])
-        res[name] = (th, lo, hi)
+        res[name] = (th, lo, hi, se)
     return res
 
 
@@ -71,6 +71,7 @@ if __name__ == "__main__":
             th = {m: np.array([x[m][0] for x in res]) for m in METHODS}          # (R, n_targets), NaN if undefined
             lo = {m: np.array([x[m][1] for x in res]) for m in METHODS}
             hi = {m: np.array([x[m][2] for x in res]) for m in METHODS}
+            se = {m: np.array([x[m][3] for x in res]) for m in METHODS}
             fin = {m: np.isfinite(th[m]).all(1) for m in METHODS}                 # samples with every estimand defined
             kinds = np.array([k for (k, _, _) in d["est"].labels])
             row = dict(dataset=key, N=d["N"], L=L, R=R, Pg=d["Pg"], disagree_top=d["disagree_top"])
@@ -83,6 +84,12 @@ if __name__ == "__main__":
                 row[f"eff_{m}_top"] = float(np.median(eff[d["top_targets"]]))
                 for k in ("dTPR", "dFPR", "dERR"):
                     row[f"eff_{m}_{k}"] = float(np.median(eff[kinds == k]))
+            both = fin["group"] & fin["pattern"]
+            effpg = ((th["group"][both] - truth) ** 2).mean(0) / np.maximum(((th["pattern"][both] - truth) ** 2).mean(0), 1e-30)
+            row["eff_pattern_vs_group_all"] = float(np.median(effpg)); row["eff_pattern_vs_group_top"] = float(np.median(effpg[d["top_targets"]]))
+            nz = np.abs(truth) > 1e-12
+            for m in METHODS:
+                row[f"degenerate_{m}"] = float(np.mean(se[m][fin[m]][:, nz] == 0))   # share of (sample, target) with SE = 0
             big = np.abs(truth) > 0.02
             for m in METHODS:
                 ok = fin[m]
@@ -90,5 +97,5 @@ if __name__ == "__main__":
                 row[f"cover_{m}"] = float(cov.mean()); row[f"cover_{m}_min"] = float(cov.min())
                 row[f"sign_{m}"] = float((np.sign(th[m][ok][:, big]) == np.sign(truth[big])).mean()) if big.any() else None
             rows.append(row)
-            print({k: (round(v, 3) if isinstance(v, float) else v) for k, v in row.items() if k.startswith(("dataset", "L", "fail", "eff_pattern_all", "eff_pattern_top", "eff_group_all", "eff_oracle_all", "cover_srs", "cover_pattern", "sign_srs", "sign_pattern"))}, flush=True)
+            print({k: (round(v, 3) if isinstance(v, float) else v) for k, v in row.items() if k.startswith(("dataset", "L", "fail", "eff_pattern_all", "eff_pattern_top", "eff_pattern_vs_group_all", "degenerate", "eff_group_all", "eff_oracle_all", "cover_srs", "cover_pattern", "sign_srs", "sign_pattern"))}, flush=True)
         json.dump(rows, open("results/label_efficiency.json", "w"), indent=1)

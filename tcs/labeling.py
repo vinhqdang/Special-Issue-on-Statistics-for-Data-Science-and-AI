@@ -76,15 +76,30 @@ class Estimands:
 
 
 # ---------------------------------------------------------------- strata and allocation
-def make_strata(pred, g, kind="pattern"):
+def make_strata(pred, g, kind="pattern", min_size=50):
     """Integer stratum id per instance. kind: 'pattern' (group x #models predicting 1) or 'group'."""
     if kind == "group":
         return g.astype(int)
     k = pred.sum(1).astype(int)
-    return g.astype(int) * (pred.shape[1] + 1) + k
+    st = g.astype(int) * (pred.shape[1] + 1) + k
+    return collapse_small(st, g.astype(int), min_size)
 
 
-def neyman_allocation(strata, U, V, p, est, L, min_n=2):
+def collapse_small(st, g, min_size):
+    """Merge strata smaller than min_size into the adjacent stratum of the same group (ordered by k)."""
+    st = st.copy()
+    for gg in np.unique(g):
+        while True:
+            ids = np.unique(st[g == gg])
+            sizes = np.array([(st == h).sum() for h in ids])
+            if len(ids) <= 1 or sizes.min() >= min_size: break
+            i = int(sizes.argmin())
+            j = i + 1 if i == 0 else (i - 1 if i == len(ids) - 1 else (i - 1 if sizes[i - 1] <= sizes[i + 1] else i + 1))
+            st[st == ids[i]] = ids[j]
+    return st
+
+
+def neyman_allocation(strata, U, V, p, est, L, min_n=10):
     """Proxy-based allocation. U, V: total columns; p: proxy P(y=1); est: Estimands."""
     T_proxy = (p[:, None] * U + (1 - p[:, None]) * V).sum(0)
     G = est.gradient(T_proxy)                                  # (n_t, n_c)
@@ -98,7 +113,7 @@ def neyman_allocation(strata, U, V, p, est, L, min_n=2):
     return ids, Nh, _round_alloc(Nh * score, Nh, L, min_n)
 
 
-def proportional_allocation(strata, L, min_n=2):
+def proportional_allocation(strata, L, min_n=10):
     ids = np.unique(strata); Nh = np.array([(strata == h).sum() for h in ids])
     return ids, Nh, _round_alloc(Nh.astype(float), Nh, L, min_n)
 
