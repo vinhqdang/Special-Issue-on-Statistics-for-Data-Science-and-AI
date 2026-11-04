@@ -54,8 +54,8 @@ head = r"""%Version 3 October 2023 template; build with the official sn-jnl.cls
 \raggedbottom
 \begin{document}
 \title[Trust confidence sets]{Trust confidence sets: statistical inference for selecting models under several trustworthiness criteria}
-\author*[1]{\fnm{Vinh} \sur{Dang}}\email{vinh.dang3@rmit.edu.vn}
-\affil*[1]{\orgname{RMIT University Vietnam}, \country{Vietnam}}
+\author*[1]{\fnm{Quang-Vinh} \sur{Dang}}\email{vinh.dq4@buv.edu.vn}
+\affil*[1]{\orgname{British University Vietnam}, \orgaddress{\city{Hung Yen}, \country{Vietnam}}}
 \abstract{""" + abstract + r"""}
 \keywords{trustworthy machine learning, model selection, Pareto dominance, confidence set, bootstrap, algorithmic fairness}
 \maketitle

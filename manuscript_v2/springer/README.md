@@ -14,5 +14,5 @@ as `manuscript_sn_draft.pdf` and `supplement_sn_draft.pdf`.
 
 Each file is single, in a flat folder (figures next to the `.tex`), two-column `iicol`, numeric citations. The template class and the `.bst` file
 are not included here; submit them with the source as the journal asks. Supplementary items are numbered with the prefix S.
-Still to complete before submission: department, city and ORCID in the affiliation, and any statement the journal's policies require.
+Still to complete before submission: department and ORCID in the affiliation, and any statement the journal's policies require.
 `../main.tex` is the complete long version in a plain article class, with the Supplement as appendices.

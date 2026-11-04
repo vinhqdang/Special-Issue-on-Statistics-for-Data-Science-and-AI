@@ -80,8 +80,8 @@ SI_PRE = r"""\renewcommand{\thesection}{S\arabic{section}}
 \renewcommand{\thedefinition}{S\arabic{definition}}
 """
 TITLE = "Labelling where models disagree: label-efficient comparison of classifiers on group fairness"
-AUTH = (r"\author*[1]{\fnm{Vinh} \sur{Dang}}\email{vinh.dang3@rmit.edu.vn}" "\n"
-        r"\affil*[1]{\orgname{RMIT University Vietnam}, \country{Vietnam}}" "\n")
+AUTH = (r"\author*[1]{\fnm{Quang-Vinh} \sur{Dang}}\email{vinh.dq4@buv.edu.vn}" "\n"
+        r"\affil*[1]{\orgname{British University Vietnam}, \orgaddress{\city{Hung Yen}, \country{Vietnam}}}" "\n")
 
 
 def mapping(prefix, labels):

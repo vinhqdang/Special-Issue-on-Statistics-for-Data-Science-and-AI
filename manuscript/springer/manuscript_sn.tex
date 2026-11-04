@@ -19,8 +19,8 @@
 \raggedbottom
 \begin{document}
 \title[Trust confidence sets]{Trust confidence sets: statistical inference for selecting models under several trustworthiness criteria}
-\author*[1]{\fnm{Vinh} \sur{Dang}}\email{vinh.dang3@rmit.edu.vn}
-\affil*[1]{\orgname{RMIT University Vietnam}, \country{Vietnam}}
+\author*[1]{\fnm{Quang-Vinh} \sur{Dang}}\email{vinh.dq4@buv.edu.vn}
+\affil*[1]{\orgname{British University Vietnam}, \orgaddress{\city{Hung Yen}, \country{Vietnam}}}
 \abstract{Trustworthy machine learning is assessed on several criteria at once: error, group fairness, calibration and robustness. Candidate models are usually compared through point estimates on one finite test sample, and the winner or the Pareto front of those estimates is reported as if it were a population fact. We describe a trust confidence set (TCS), a data-dependent set of models that contains every population-nondominated model with probability at least $1-\alpha$, asymptotically. It uses a paired bootstrap of one shared test sample, studentised pairwise differences, an intersection--union step across criteria and a maximum over rivals, so it accepts criteria such as calibration error and fairness gaps. In simulation, the TCS retained all nondominated models in at least 99.7\% of replications, whereas the Pareto front of point estimates did so in 34--42\%, and the TCS excluded more dominated models than a Bonferroni box procedure. Validated against large held-out references on twelve real data settings, the point-estimate Pareto front recovered the reference set in a median of 39\% of test samples of 500 rows and the composite-score winner matched in a median of 36\%; the TCS always retained the reference set but returned almost every model, because few were truly dominated. Step-down, equivalence margins and a refit bootstrap added little.}
 \keywords{trustworthy machine learning, model selection, Pareto dominance, confidence set, bootstrap, algorithmic fairness}
 \maketitle
