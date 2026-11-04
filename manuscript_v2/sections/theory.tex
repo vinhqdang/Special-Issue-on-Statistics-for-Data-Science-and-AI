@@ -30,9 +30,11 @@ their sample versions, $f_h=n_h/N_h$ and $c_h=N_h^2(1-f_h)/n_h$. The plain
 (Horvitz--Thompson, \citealt{horvitz1952}) estimator, its linearisation variance estimator
 \citep[Ch.~5]{sarndal1992} and the linearised variance are
 \begin{equation}\label{eq:ht}
-\hat T=\sum_{h=1}^HN_h\bar t_{s_h},\quad \hat\theta=f(\hat T),\quad
-\hat V=\sum_{h=1}^H N_h^2\,\frac{1-f_h}{n_h}\,s^2_{\hat z,h},\quad
+\begin{gathered}
+\hat T=\sum_{h=1}^HN_h\bar t_{s_h},\qquad \hat\theta=f(\hat T),\\
+\hat V=\sum_{h=1}^H N_h^2\,\frac{1-f_h}{n_h}\,s^2_{\hat z,h},\\
 \hat z_i=\nabla f(\hat T)^{\top}t_i(Y_i),
+\end{gathered}
 \end{equation}
 \begin{equation}\label{eq:linvar}
 V(\theta;n)=\sum_{h=1}^HN_h^2\,\frac{1-f_h}{n_h}\,S^2_{z,h}=\sum_hc_hS^2_{z,h}.
@@ -42,24 +44,32 @@ V(\theta;n)=\sum_{h=1}^HN_h^2\,\frac{1-f_h}{n_h}\,S^2_{z,h}=\sum_hc_hS^2_{z,h}.
 that is a function of $(\hat y_{mi},\hat p_{mi},G_i)_{i\in U}$ only (the design uses
 $\pi_i=M^{-1}\sum_m\hat p_{mi}$). Its \emph{proxy mean} and the residual are
 \begin{equation}\label{eq:psi}
-\psi_i=\pi_iu_i+(1-\pi_i)v_i,\qquad \xi_i=t_i(Y_i)-\psi_i=(Y_i-\pi_i)(u_i-v_i).
+\begin{gathered}
+\psi_i=\pi_iu_i+(1-\pi_i)v_i,\\
+\xi_i=t_i(Y_i)-\psi_i=(Y_i-\pi_i)(u_i-v_i).
+\end{gathered}
 \end{equation}
 Every unit of the pool carries a prediction, so $\psi_i$ is known for all $i\in U$ and $F=\sum_{i\in U}\psi_i$ is a
 \emph{known constant}: unlike prediction-powered inference with an unlabelled sample from a superpopulation
 \citep{angelopoulos2023ppi,angelopoulos2026ppipp}, there is no sampling error in the proxy total. For any label-free
 vector $\psi_i$ the \emph{difference estimator} is
 \begin{equation}\label{eq:dif}
-\hat T_\psi=\sum_{i\in U}\psi_i+\sum_{h=1}^HN_h\big(\bar t_{s_h}-\bar\psi_{s_h}\big)
-=\sum_{h=1}^H\big\{F_h+N_h\bar\xi_{s_h}\big\},\qquad F_h=\sum_{i\in U_h}\psi_i,\qquad
+\begin{gathered}
+\hat T_\psi=\sum_{i\in U}\psi_i+\sum_{h=1}^HN_h\big(\bar t_{s_h}-\bar\psi_{s_h}\big)\\
+=\sum_{h=1}^H\big\{F_h+N_h\bar\xi_{s_h}\big\},\\
+F_h=\sum_{i\in U_h}\psi_i,\qquad
 \hat\theta_\psi=f(\hat T_\psi).
+\end{gathered}
 \end{equation}
 With $\psi\equiv0$ it is the plain estimator; with the proxy mean \eqref{eq:psi} it is the estimator of PATTERN-DIF, a
 stratified generalised difference estimator \citep{cassel1976,sarndal1992}. The residual influence value, its
 sample version and the linearised variance are
 \begin{align}
-e_i&=\nabla f(T)^{\top}\xi_i=z_i-\tilde z_i,\qquad \tilde z_i=\nabla f(T)^{\top}\psi_i,\notag\\
-\hat V_\psi&=\sum_hN_h^2\frac{1-f_h}{n_h}s^2_{\hat e,h},\qquad \hat e_i=\nabla f(\hat T_\psi)^{\top}\xi_i,\qquad
-V_\psi(\theta;n)=\sum_hc_hS^2_{e,h}.\label{eq:resid}
+e_i&=\nabla f(T)^{\top}\xi_i=z_i-\tilde z_i,\notag\\
+\tilde z_i&=\nabla f(T)^{\top}\psi_i,\notag\\
+\hat V_\psi&=\sum_hN_h^2\frac{1-f_h}{n_h}s^2_{\hat e,h},\notag\\
+\hat e_i&=\nabla f(\hat T_\psi)^{\top}\xi_i,\notag\\
+V_\psi(\theta;n)&=\sum_hc_hS^2_{e,h}.\label{eq:resid}
 \end{align}
 The plain influence value splits into the part $\tilde z_i$ that the proxy predicts and the residual $e_i$ that
 the labels must supply; $V_0=V(\theta;n)$ is the plain case $\tilde z\equiv0$.
@@ -118,24 +128,28 @@ $\gamma_g=FPR_{mg}-FPR_{jg}$, so that $\theta^{TPR}_{mj}=\delta_1-\delta_0$ and 
 \begin{proposition}[Influence values]\label{prop:influence}
 For every instance $i$ with $G_i=g$, with $s_1=1$, $s_0=-1$,
 \begin{equation}\label{eq:infl-forms}
-z^{TPR}_i=s_g\,\frac{Y_i(D_i-\delta_g)}{P_g},\qquad
-z^{FPR}_i=s_g\,\frac{(1-Y_i)(D_i-\gamma_g)}{Q_g},\qquad
+\begin{gathered}
+z^{TPR}_i=s_g\,\frac{Y_i(D_i-\delta_g)}{P_g},\\
+z^{FPR}_i=s_g\,\frac{(1-Y_i)(D_i-\gamma_g)}{Q_g},\\
 z^{ERR}_i=\frac{D_i(1-2Y_i)}{N}.
+\end{gathered}
 \end{equation}
 For a stratum $h$ inside group $g$ let $\pi_h=\bar Y_h$ (the stratum prevalence, not the proxy $\pi_i$), $\rho_h=N_h^{-1}\sum_{U_h}|D_i|$ (the disagreement rate of the pair),
 $r_h=N_h^{-1}\sum_{U_h}Y_i|D_i|$, $c_h=N_h^{-1}\sum_{U_h}Y_iD_i$ (a stratum moment, not the weight $c_h$ of \eqref{eq:linvar}) and $\kappa_h=N_h/(N_h-1)$. Then
 \begin{align}
-S^2_{z^{TPR},h}&=\frac{\kappa_h}{P_g^2}\Big\{(r_h-c_h^2)+\delta_g^2\pi_h(1-\pi_h)
--2\delta_g\,c_h(1-\pi_h)\Big\},\label{eq:stratvar-tpr}\\
-S^2_{z^{ERR},h}&=\frac{\kappa_h}{N^2}\Big\{\rho_h-e_h^2\Big\},\qquad
-e_h=N_h^{-1}\textstyle\sum_{U_h}D_i(1-2Y_i),\label{eq:stratvar-err}
+S^2_{z^{TPR},h}&=\frac{\kappa_h}{P_g^2}\Big\{(r_h-c_h^2)+\delta_g^2\pi_h(1-\pi_h)\notag\\
+&\qquad{}-2\delta_g\,c_h(1-\pi_h)\Big\},\label{eq:stratvar-tpr}\\
+S^2_{z^{ERR},h}&=\frac{\kappa_h}{N^2}\Big\{\rho_h-e_h^2\Big\},\notag\\
+e_h&=N_h^{-1}\textstyle\sum_{U_h}D_i(1-2Y_i),\label{eq:stratvar-err}
 \end{align}
 and $S^2_{z^{FPR},h}$ is \eqref{eq:stratvar-tpr} with $Y$ replaced by $1-Y$, $P_g$ by $Q_g$, $\delta_g$ by $\gamma_g$. In a stratum
 where $m$ and $j$ agree on every instance (always the case for $K_i\in\{0,M\}$),
 \begin{equation}\label{eq:agree-var}
-S^2_{z^{TPR},h}=\kappa_h\Big(\frac{\delta_g}{P_g}\Big)^2\pi_h(1-\pi_h),\qquad
-S^2_{z^{FPR},h}=\kappa_h\Big(\frac{\gamma_g}{Q_g}\Big)^2\pi_h(1-\pi_h),\qquad
+\begin{gathered}
+S^2_{z^{TPR},h}=\kappa_h\Big(\frac{\delta_g}{P_g}\Big)^2\pi_h(1-\pi_h),\\
+S^2_{z^{FPR},h}=\kappa_h\Big(\frac{\gamma_g}{Q_g}\Big)^2\pi_h(1-\pi_h),\\
 S^2_{z^{ERR},h}=0 .
+\end{gathered}
 \end{equation}
 \end{proposition}
 
@@ -174,8 +188,10 @@ influence in stratum $h$, and $a_h=c_h\bar\sigma^2_h$. Then
 \item[(a)] $E_\pi V_0-E_\pi V_\psi=\sum_hc_hS^2_{\tilde z,h}\ge0$, with equality iff $\tilde z$ is constant within every stratum that is not fully enumerated.
 \item[(b)] For the same strata and sample sizes,
 \begin{equation}\label{eq:dif-deff}
-\frac{E_\pi V_\psi}{E_\pi V_0}=\frac1G,\qquad
+\begin{gathered}
+\frac{E_\pi V_\psi}{E_\pi V_0}=\frac1G,\\
 G=\frac{\sum_ha_h\,(1+\nu_h)}{\sum_ha_h}=\frac{\sum_ha_h/(1-R_h^2)}{\sum_ha_h},
+\end{gathered}
 \end{equation}
 where $R_h^2=\nu_h/(1+\nu_h)$ is the expected within-stratum squared correlation of $z_i$ with $\tilde z_i$.
 \end{enumerate}
@@ -231,8 +247,10 @@ problem (strata that would exceed $N_h$ are enumerated and the rest re-allocated
 Because the $S^2_{ht}$ are unknown, the design replaces them by their expectations under the working model $Y_i\sim\text{Bernoulli}(\pi_i)$ independently
 \citep[the anticipated variance of][]{isaki1982}, which by the moments above gives
 \begin{equation}\label{eq:anticipated}
-\tilde A^{0\,2}_h=\sum_tw_t\big(\bar\sigma^2_{ht}+S^2_{\tilde z,ht}\big)\ \text{(plain rule)},\qquad
+\begin{gathered}
+\tilde A^{0\,2}_h=\sum_tw_t\big(\bar\sigma^2_{ht}+S^2_{\tilde z,ht}\big)\ \text{(plain rule)},\\
 \tilde A^{\psi\,2}_h=\sum_tw_t\bar\sigma^2_{ht}\ \text{(difference rule)}.
+\end{gathered}
 \end{equation}
 The design uses the plain rule (Section~\ref{sec:design}), which is exactly Neyman for the plain estimator and does not depend on trusting the proxy. For the difference
 estimator the loss from using the plain rule is at most $\{1+(1+\nu_{\max})^{1/2}\}^2/\{4(1+\nu_{\max})^{1/2}\}$ (for example $9/8$ for $\nu_{\max}=3$),

@@ -6,13 +6,19 @@ The intervals of Section~\ref{sec:design} cover the contrast computed on the poo
 \]
 Given the pool, the first term has mean zero to first order and variance $V_{\rm design}=\sum_h N_h^2(1-n_h/N_h)S_h^2(e)/n_h$, the quantity estimated in Section~\ref{sec:design}. The second term is, to first order, a sum of $N$ independent influence values, so the two terms are uncorrelated and
 \begin{equation}\label{eq:pop-variance}
-V_{\rm total}=\mathrm E\,V_{\rm design}+V_{\rm pool},\qquad V_{\rm pool}=N\,\mathrm{Var}(z_i),\quad z_i=\mathbf b^{\top}\bigl(t_i(Y_i)-\tau\bigr),
+\begin{gathered}
+V_{\rm total}=\mathrm E\,V_{\rm design}+V_{\rm pool},\\
+V_{\rm pool}=N\,\mathrm{Var}(z_i),\qquad z_i=\mathbf b^{\top}\bigl(t_i(Y_i)-\tau\bigr),
+\end{gathered}
 \end{equation}
 with $\mathbf b=\nabla f(N\tau)$ the gradient on the scale of totals. This is the two-phase decomposition of \citet{sarndal1987}. The influence value $z_i$ is that of the full-label plug-in contrast, not the residual $e_i$ of the difference estimator: the proxy removes variance from the labelled part of the error but cannot remove the variation of $Y$ across units of the population, so, to first order, $V_{\rm pool}$ is the same for every labelling design and every proxy.
 
 Since the labelled sample is a stratified sample of the pool, $V_{\rm pool}$ is estimated with the weights $w_i=N_h/n_h$:
 \[
-\hat V_{\rm pool}=\sum_{i\in s}w_i\,(\hat z_i-\bar z)^2,\qquad \bar z=\frac1N\sum_{i\in s}w_i\hat z_i,\qquad \hat z_i=\hat{\mathbf b}^{\top}t_i(Y_i),
+\begin{gathered}
+\hat V_{\rm pool}=\sum_{i\in s}w_i\,(\hat z_i-\bar z)^2,\\
+\bar z=\frac1N\sum_{i\in s}w_i\hat z_i,\qquad \hat z_i=\hat{\mathbf b}^{\top}t_i(Y_i),
+\end{gathered}
 \]
 with $\hat{\mathbf b}=\nabla f(T_{\rm dif})$, and the two-phase interval is $\hat\theta\pm1.96\sqrt{\hat V_{\rm design}+\hat V_{\rm pool}}$. The derivation is in \texttt{docs/two\_phase\_note.md} and the code in \texttt{tcs/labeling\_two\_phase.py}. Let $\varpi=V_{\rm pool}/V_{\rm design}$. It is of order $L\,\mathrm{Eff}/N$, where $\mathrm{Eff}$ is the efficiency of the design against SRS, so it grows with the budget and the efficiency and shrinks with the pool size. With correct $V_{\rm design}$ and normal errors the pool-conditional interval has coverage about $2\Phi(1.96/\sqrt{1+\varpi})-1$ of the population contrast, which is $0.93$ at $\varpi=0.2$, $0.83$ at $\varpi=1$ and $0.67$ at $\varpi=3$. Efficiency changes in the same way: the pool term is shared by SRS and PATTERN-DIF, so against the population contrast the MSE ratio is $(\mathrm{Eff}+\varpi)/(1+\varpi)$, with $\varpi$ evaluated for PATTERN-DIF, rather than $\mathrm{Eff}$. For $\mathrm{Eff}=6$ and $\varpi=1.5$ this is $3$. This follows arithmetically from \eqref{eq:pop-variance}; it is not an estimate from the earlier experiments.
 

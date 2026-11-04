@@ -12,7 +12,10 @@ Within each stratum a simple random sample of $n_h$ instances is drawn without r
 \end{equation}
 which is unbiased for $T_c$ \citep{cochran1977}. It uses the predicted probabilities only to set up the design. The proposed estimator uses them in the estimation as well. Let $\pi_i=M^{-1}\sum_m\hat p_{mi}$ be the average predicted probability and $\psi_{ic}=\pi_iu_{ic}+(1-\pi_i)v_{ic}$ the value that $t_{ic}(Y_i)$ would have in expectation if $Y_i$ were Bernoulli$(\pi_i)$. This quantity is known for every instance of the pool, including the unlabelled ones. The difference estimator corrects the pool-wide proxy total by the labelled residuals,
 \begin{equation}\label{eq:DIF}
-\hat T_c=\sum_{i\in U}\psi_{ic}+\sum_{h=1}^H N_h\,\overline{(t_c-\psi_c)}_{h},\qquad \overline{(t_c-\psi_c)}_{h}=\frac1{n_h}\sum_{i\in s_h}\{t_{ic}(Y_i)-\psi_{ic}\},
+\begin{gathered}
+\hat T_c=\sum_{i\in U}\psi_{ic}+\sum_{h=1}^H N_h\,\overline{(t_c-\psi_c)}_{h},\\
+\overline{(t_c-\psi_c)}_{h}=\frac1{n_h}\sum_{i\in s_h}\{t_{ic}(Y_i)-\psi_{ic}\},
+\end{gathered}
 \end{equation}
 which is exactly unbiased for $T_c$ for any label-free proxy, good or bad, because the proxy total over the whole pool is known \citep{cassel1976,sarndal1992}. Setting $\psi\equiv0$ recovers \eqref{eq:HT}. The comparisons are estimated by the plug-in $\hat\theta=f(\hat T)$, a ratio-type estimator, and its variance by Taylor linearisation \citep[Section~5.5]{sarndal1992}: with the residual influence values $e_i=\nabla f(\hat T)^{\top}\{t_i(Y_i)-\psi_i\}$,
 \begin{equation}\label{eq:var}

@@ -9,21 +9,28 @@ The classical evaluation protocol starts from a labelled test set of fixed size 
 All quantities of interest are smooth functions of a small number of population totals, each of which is linear in the labels. For a group $g\in\{0,1\}$ and model $m$ define
 \begin{align}
 P_g &= \sum_{i:G_i=g} Y_i, & Q_g &= \sum_{i:G_i=g} (1-Y_i),\label{eq:PQ}\\
-TP_{mg} &= \sum_{i:G_i=g} Y_i\,\hat y_{mi}, & FP_{mg} &= \sum_{i:G_i=g} (1-Y_i)\,\hat y_{mi}, \qquad E_m=\sum_{i\in U}|\hat y_{mi}-Y_i|.\label{eq:TPFP}
+TP_{mg} &= \sum_{i:G_i=g} Y_i\,\hat y_{mi},\notag\\
+FP_{mg} &= \sum_{i:G_i=g} (1-Y_i)\,\hat y_{mi},\notag\\
+E_m &= \sum_{i\in U}|\hat y_{mi}-Y_i|.\label{eq:TPFP}
 \end{align}
 Each total has the form $T_c=\sum_{i\in U} t_{ic}(Y_i)$ with $t_{ic}(Y_i)=Y_i u_{ic}+(1-Y_i)v_{ic}$, where $u_{ic}$ and $v_{ic}$ are known for every instance. For example, $TP_{mg}$ has $u_{ic}=\mathbf 1\{G_i=g\}\hat y_{mi}$ and $v_{ic}=0$, and $E_m$ has $u_{ic}=1-\hat y_{mi}$ and $v_{ic}=\hat y_{mi}$. We collect the totals in a vector $T$ of length $C=4M+4+M$.
 
 The group-wise true and false positive rates are $\mathrm{TPR}_{mg}=TP_{mg}/P_g$ and $\mathrm{FPR}_{mg}=FP_{mg}/Q_g$. The between-group gaps of model $m$ are
 \begin{equation}
-\Delta^{\mathrm{TPR}}_m=\mathrm{TPR}_{m1}-\mathrm{TPR}_{m0},\qquad \Delta^{\mathrm{FPR}}_m=\mathrm{FPR}_{m1}-\mathrm{FPR}_{m0},
+\begin{gathered}
+\Delta^{\mathrm{TPR}}_m=\mathrm{TPR}_{m1}-\mathrm{TPR}_{m0},\\
+\Delta^{\mathrm{FPR}}_m=\mathrm{FPR}_{m1}-\mathrm{FPR}_{m0},
+\end{gathered}
 \end{equation}
 and the equalised-odds gap is $\mathrm{EO}_m=\max(|\Delta^{\mathrm{TPR}}_m|,|\Delta^{\mathrm{FPR}}_m|)$ \citep{hardt2016}. A model with small gaps has more similar error rates in the two groups.
 
 Our primary estimands are comparisons between models. For a pair $(m,j)$ let
 \begin{equation}\label{eq:theta}
-\theta^{\mathrm{TPR}}_{mj}=\Delta^{\mathrm{TPR}}_m-\Delta^{\mathrm{TPR}}_j,\qquad
-\theta^{\mathrm{FPR}}_{mj}=\Delta^{\mathrm{FPR}}_m-\Delta^{\mathrm{FPR}}_j,\qquad
+\begin{gathered}
+\theta^{\mathrm{TPR}}_{mj}=\Delta^{\mathrm{TPR}}_m-\Delta^{\mathrm{TPR}}_j,\\
+\theta^{\mathrm{FPR}}_{mj}=\Delta^{\mathrm{FPR}}_m-\Delta^{\mathrm{FPR}}_j,\\
 \theta^{\mathrm{ERR}}_{mj}=(E_m-E_j)/N .
+\end{gathered}
 \end{equation}
 A negative $\theta^{\mathrm{TPR}}_{mj}$ means, for instance, that model $m$ has a smaller signed TPR gap than model $j$. We write $\theta=f(T)$ for the vector of all $3\binom{M}{2}$ comparisons, where $f$ is a known smooth map on the region where $P_g,Q_g>0$. The primary estimands are the signed gaps, because they are smooth functions of the totals; the non-smooth equalised-odds gap and the ranking of models by it are studied in Section~\ref{sec:ablations}.
 
