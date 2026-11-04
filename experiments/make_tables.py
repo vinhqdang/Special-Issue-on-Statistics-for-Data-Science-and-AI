@@ -45,3 +45,16 @@ for r in ns:
     L.append(f"{r['design']} & {r['P0']} & {r['n']} & {r['tcs_retain']:.3f} & {r['box_retain']:.3f} & {r['naive_retain']:.3f} & {r['tcs_excl']:.2f} & {r['box_excl']:.2f} \\\\")
 L.append("\\bottomrule\\end{tabular}")
 open("manuscript/tables/nonsmooth.tex", "w").write("\n".join(L))
+
+# real-data validation
+rv = json.load(open("results/realdata_validation.json"))
+lab = {"adult-sex": "Adult (sex)", "adult-race": "Adult (race)", "bank": "Bank (age)"}
+L = ["\\begin{tabular}{llrrrrrrrr}\\toprule",
+     "Data & $n$ & \\multicolumn{2}{c}{Retention} & \\multicolumn{3}{c}{Set size} & Winner & Excl. \\\\",
+     " & & Naive & TCS & Naive & TCS & Ref. & correct & (TCS) \\\\\\midrule"]
+last = None
+for r in rv:
+    name = lab[r["dataset"]] if r["dataset"] != last else ""; last = r["dataset"]
+    L.append(f"{name} & {r['n']} & {r['naive_retain']:.2f} & {r['tcs_retain']:.2f} & {r['naive_size']:.1f} & {r['tcs_size']:.1f} & {r['P_ref']} & {r['winner_correct']:.2f} & {r['tcs_excl']:.2f} \\\\")
+L.append("\\bottomrule\\end{tabular}")
+open("manuscript/tables/realval.tex", "w").write("\n".join(L))
