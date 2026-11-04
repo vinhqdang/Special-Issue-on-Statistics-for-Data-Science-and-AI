@@ -96,8 +96,21 @@ def stratum_means(strata, ids, t, h_of):
     return np.array([t[h_of == h].mean(0) if (h_of == h).any() else np.zeros(t.shape[1]) for h in ids])
 
 
-def estimate_full(strata, ids, Nh, nh, U, V, y_lab, idx_lab, est):
-    """theta, linearisation SE, Satterthwaite df, estimated totals T (NaNs if a denominator is 0)."""
+def proxy_cov(strata, ids, U, V, p):
+    """Per-stratum covariance matrix of t_i(Y_i) with Y_i ~ Bernoulli(p_i) independently (label-free)."""
+    out = []
+    for h in ids:
+        sel = strata == h; u, v, q = U[sel], V[sel], p[sel][:, None]
+        mu = (q * u + (1 - q) * v).mean(0)
+        out.append((u * q).T @ u / sel.sum() + (v * (1 - q)).T @ v / sel.sum() - np.outer(mu, mu))
+    return out
+
+
+def estimate_full(strata, ids, Nh, nh, U, V, y_lab, idx_lab, est, sigma=None):
+    """theta, linearisation SE, Satterthwaite df, estimated totals T (NaNs if a denominator is 0).
+    If sigma (list of per-stratum proxy covariances, see proxy_cov) is given, also return se_floor: the SE
+    in which a stratum whose sample variance of the influence values is exactly 0 contributes its
+    proxy variance diag(G Sigma_h G^T) instead (a label-free guard against degenerate strata)."""
     t = y_lab[:, None] * U[idx_lab] + (1 - y_lab[:, None]) * V[idx_lab]
     h_of = strata[idx_lab]
     T = (Nh[:, None] * stratum_means(strata, ids, t, h_of)).sum(0)
@@ -105,17 +118,23 @@ def estimate_full(strata, ids, Nh, nh, U, V, y_lab, idx_lab, est):
         theta = est.value(T); G = est.gradient(T)
     nt = len(theta)
     if not np.all(np.isfinite(theta)):
-        nan = np.full(nt, np.nan); return nan, nan, nan, T
+        nan = np.full(nt, np.nan); return (nan, nan, nan, T) if sigma is None else (nan, nan, nan, T, nan)
     z = t @ G.T
-    vh = np.zeros((len(ids), nt)); dfh = np.zeros(len(ids))
+    vh = np.zeros((len(ids), nt)); dfh = np.zeros(len(ids)); vf = np.zeros(nt)
     for k, (h, N_h, n_h) in enumerate(zip(ids, Nh, nh)):
         sel = h_of == h
         if n_h >= 2 and n_h < N_h:
-            vh[k] = N_h ** 2 * (1 - n_h / N_h) * z[sel].var(0, ddof=1) / n_h; dfh[k] = n_h - 1
+            s2 = z[sel].var(0, ddof=1)
+            vh[k] = N_h ** 2 * (1 - n_h / N_h) * s2 / n_h; dfh[k] = n_h - 1
+            if sigma is not None:
+                s2p = np.maximum(np.einsum("tc,cd,td->t", G, sigma[k], G), 0)
+                vf += N_h ** 2 * (1 - n_h / N_h) * np.where(s2 > 1e-24, s2, s2p) / n_h
     var = vh.sum(0)
     with np.errstate(divide="ignore", invalid="ignore"):
         den = np.where(dfh[:, None] > 0, vh ** 2 / np.maximum(dfh[:, None], 1), 0).sum(0)
         df = np.where(den > 0, var ** 2 / den, np.nan)
+    if sigma is not None:
+        return theta, np.sqrt(var), df, T, np.sqrt(vf)
     return theta, np.sqrt(var), df, T
 
 

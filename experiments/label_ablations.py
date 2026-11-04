@@ -13,6 +13,8 @@ For each of the 11 settings (cached pools) and budget L in {250, 500, 1000} with
                     targeting the per-model gaps) and ORACLE-ALLOC; RMSE, P(argmin correct), Kendall tau.
 Usage: python experiments/label_ablations.py R [keys] [B]
 """
+import os
+os.environ.setdefault("OMP_NUM_THREADS", "1"); os.environ.setdefault("OPENBLAS_NUM_THREADS", "1"); os.environ.setdefault("MKL_NUM_THREADS", "1")
 import sys, json, zlib, time
 import numpy as np
 from multiprocessing import Pool
@@ -21,7 +23,7 @@ sys.path.insert(0, ".")
 from tcs.labeling import total_columns, Estimands, draw
 from tcs.labeling_variants import (strata_kcount, strata_binary, strata_joint, strata_kproxy, top_agreement_models,
                                    proxies, allocate, estimate_full, bootstrap_percentile, eo_gap, GapEstimands,
-                                   kendall_tau)
+                                   kendall_tau, proxy_cov)
 
 SETTINGS = ["adult-sex", "adult-race", "bank", "credit-card", "law-school", "magic", "eeg", "phoneme",
             "spambase", "churn", "electricity"]
@@ -30,6 +32,8 @@ SUBSET_SIZES = (2, 3, 5)
 N_SUBSETS = 3
 EO_DESIGNS = ["srs", "group", "pattern", "pattern_gap", "oracle"]
 BOOT_DESIGNS = ["srs", "pattern"]
+FLOOR_DESIGNS = ["srs", "pattern", "grid_n5_c25", "grid_n20_c100", "kproxy2", "binary"]   # proxy variance floor
+CLIP = 1e4   # per-target MSE ratios are clipped to [1/CLIP, CLIP] (a design can make a target exact)
 Z = 1.959964
 
 
@@ -98,6 +102,8 @@ def build_designs(key, L):
         SUB[cname] = config(pred[:, list(s)], p[:, list(s)], g, y); SUB[cname]["models"] = list(s)
         add(f"{cname}|srs", one, kind="prop", e=SUB[cname]["est"], cfg=cname)
         add(f"{cname}|pattern", strata_kcount(pred[:, list(s)], g), proxy=SUB[cname]["pi"], e=SUB[cname]["est"], cfg=cname)
+    for n in FLOOR_DESIGNS:
+        D[n]["sigma"] = proxy_cov(D[n]["strata"], D[n]["ids"], U, V, pi)
     return dict(base=base, sub=SUB, D=D, y=y, g=g, top3=top3, M=M, N=N)
 
 
@@ -105,7 +111,7 @@ def mse_ratio(a, b, truth):
     """Per-target MSE(a)/MSE(b) on samples where both are finite; NaN where both MSEs are 0."""
     both = np.isfinite(a).all(1) & np.isfinite(b).all(1)
     ma = ((a[both] - truth) ** 2).mean(0); mb = ((b[both] - truth) ** 2).mean(0)
-    r = ma / np.maximum(mb, 1e-30)
+    r = np.clip(ma / np.maximum(mb, 1e-300), 1 / CLIP, CLIP)
     return np.where((ma == 0) & (mb == 0), np.nan, r)
 
 
@@ -120,7 +126,7 @@ def run_cell(args):
     S = build_designs(key, L)
     base, SUB, D, y = S["base"], S["sub"], S["D"], S["y"]
     names = list(D)
-    th = {n: [] for n in names}; se = {n: [] for n in names}; df = {n: [] for n in names}
+    th = {n: [] for n in names}; se = {n: [] for n in names}; df = {n: [] for n in names}; sef = {n: [] for n in FLOOR_DESIGNS}
     eo = {n: [] for n in EO_DESIGNS}; blo = {n: [] for n in BOOT_DESIGNS}; bhi = {n: [] for n in BOOT_DESIGNS}
     crc = zlib.crc32(key.encode()) % 9973
     for r in range(R):
@@ -128,7 +134,10 @@ def run_cell(args):
             d = D[n]; cfg = base if d["cfg"] == "main" else SUB[d["cfg"]]
             rng = np.random.default_rng([crc, L, r, di])
             idx = draw(d["strata"], d["ids"], d["nh"], rng)
-            a, s, f, T = estimate_full(d["strata"], d["ids"], d["Nh"], d["nh"], cfg["U"], cfg["V"], y[idx], idx, cfg["est"])
+            res = estimate_full(d["strata"], d["ids"], d["Nh"], d["nh"], cfg["U"], cfg["V"], y[idx], idx, cfg["est"],
+                                d.get("sigma"))
+            a, s, f, T = res[:4]
+            if n in FLOOR_DESIGNS: sef[n].append(res[4])
             th[n].append(a); se[n].append(s); df[n].append(f)
             if n in EO_DESIGNS:
                 eo[n].append(eo_gap(T, base["est"].ix, base["M"]))
@@ -162,6 +171,10 @@ def run_cell(args):
                     rr = 1 / mse_ratio(A, np.array(th["pattern"]), truth)  # MSE_pattern / MSE_design
                     rec["eff_vs_pattern"] = float(np.nanmedian(rr))
                     rec["eff_vs_pattern_gmean"] = float(np.exp(np.nanmean(np.log(np.clip(rr, 1e-6, 1e6)))))
+        if n in FLOOR_DESIGNS:
+            SF = np.array(sef[n]); cf = coverage(A - Z * SF, A + Z * SF, truth, ok)
+            rec["cover_floor"] = cf[0]; rec["cover_floor_min"] = cf[1]
+            rec["width_floor_over_z"] = float(np.nanmean(SF[ok]) / np.nanmean(Sd[ok]))
         if n in BOOT_DESIGNS:
             cb = coverage(np.array(blo[n]), np.array(bhi[n]), truth, ok)
             rec["cover_boot"] = cb[0]; rec["cover_boot_min"] = cb[1]
@@ -172,19 +185,21 @@ def run_cell(args):
                                                      pairdis=cfg["pairdis"]))[n.split("|")[1]] = rec
     # A5: EO gaps
     eo_true = eo_gap(base["Ttrue"], base["est"].ix, base["M"])
-    best = int(np.argmin(eo_true)); srt = np.sort(eo_true)
-    out["eo_truth"] = eo_true.tolist(); out["eo_margin"] = float(srt[1] - srt[0])
+    srt = np.sort(eo_true); bestset = np.flatnonzero(eo_true <= srt[0] + 1e-12)
+    top2 = np.flatnonzero(eo_true <= srt[min(1, len(srt) - 1)] + 1e-12)
+    out["eo_truth"] = eo_true.tolist(); out["eo_n_best"] = int(len(bestset))
+    out["eo_margin"] = float(srt[len(bestset)] - srt[0]) if len(bestset) < len(srt) else 0.0
     for n in EO_DESIGNS:
         E = np.array(eo[n]); ok = np.isfinite(E).all(1); E = E[ok]
         out["eo"][n] = dict(fail=float(1 - ok.mean()),
                             rmse=float(np.sqrt(((E - eo_true) ** 2).mean(0)).mean()),
                             bias=float((E - eo_true).mean()),
-                            p_best=float(np.mean(E.argmin(1) == best)),
-                            p_best_top2=float(np.mean(np.isin(E.argmin(1), np.argsort(eo_true)[:2]))),
+                            p_best=float(np.mean(np.isin(E.argmin(1), bestset))),
+                            p_best_top2=float(np.mean(np.isin(E.argmin(1), top2))),
                             tau=float(np.mean([kendall_tau(e, eo_true) for e in E])))
     for n in EO_DESIGNS[1:]:
         Es = np.array(eo["srs"]); Ed = np.array(eo[n]); both = np.isfinite(Es).all(1) & np.isfinite(Ed).all(1)
-        out["eo"][n]["eff_vs_srs"] = float(np.median(((Es[both] - eo_true) ** 2).mean(0) / np.maximum(((Ed[both] - eo_true) ** 2).mean(0), 1e-30)))
+        out["eo"][n]["eff_vs_srs"] = float(np.nanmedian(1 / mse_ratio(Ed, Es, eo_true)))
     # Monte Carlo reference for the minimum over targets of R-replicate coverage when every target covers 95%
     nt = len(base["truth"]); mc = np.random.default_rng(1).binomial(R, 0.95, size=(2000, nt)).min(1) / R
     out["mc_min_ref"] = dict(mean=float(mc.mean()), q05=float(np.quantile(mc, 0.05)))
@@ -193,7 +208,138 @@ def run_cell(args):
     return out
 
 
+# ---------------------------------------------------------------- report: tables (printed LaTeX rows) and figures
+SMALL = ["churn", "spambase", "phoneme", "law-school"]
+SHORT = {"adult-sex": "Adult-sex", "adult-race": "Adult-race", "bank": "Bank", "credit-card": "Credit", "law-school": "Law",
+         "magic": "MAGIC", "eeg": "EEG", "phoneme": "Phoneme", "spambase": "Spambase", "churn": "Churn", "electricity": "Elec."}
+
+
+def report(path="results/label_ablations.json", figdir="manuscript_v2/figures"):
+    import matplotlib; matplotlib.use("Agg"); import matplotlib.pyplot as plt
+    rows = json.load(open(path)); f2 = lambda x: "--" if x is None or not np.isfinite(x) else f"{x:.2f}"
+    f3 = lambda x: "--" if x is None or not np.isfinite(x) else f"{x:.3f}"
+    byL = lambda L: [r for r in rows if r["L"] == L]
+    med = lambda v: float(np.median(v)) if len(v) else np.nan
+    print("cells", len(rows), "R", rows[0]["R"], "B", rows[0]["B"], "mc_min_ref", rows[0]["mc_min_ref"])
+    # ---- A1/A2 summary table
+    print("\n% TABLE A1/A2 summary: median eff vs SRS by L | median rel. default (all cells) | share cells rel>1 | mean cov | mean worst | min worst")
+    for n in ["pattern", "binary", "joint3", "kproxy2", "kproxy3", "single0", "single7", "const", "shuffle", "noise", "flip",
+              "prop", "oracle", "group", "pattern_gap"]:
+        e = [f2(med([r["designs"][n]["eff_vs_srs"] for r in byL(L)])) for L in BUDGETS]
+        rel = [r["designs"][n].get("eff_vs_pattern", 1.0) for r in rows]
+        cz = [r["designs"][n]["cover_z"] for r in rows]; cm = [r["designs"][n]["cover_z_min"] for r in rows]
+        print(f"{n} & " + " & ".join(e) + f" & {f2(med(rel))} & {np.mean(np.array(rel) > 1):.2f} & {f3(np.mean(cz))} & {f3(np.mean(cm))} & {f3(np.min(cm))} \\\\")
+    # ---- A4 inference summary
+    print("\n% TABLE A4: method | L=250 all: mean cov, mean worst, min worst | L=250 small pools: mean worst, min worst | L>=500: mean worst, min worst | width ratio")
+    def a4(name, d, ck, wk=None):
+        out = []
+        for sel in (lambda r: r["L"] == 250, lambda r: r["L"] == 250 and r["dataset"] in SMALL, lambda r: r["L"] >= 500):
+            rr = [r for r in rows if sel(r)]
+            out.append((np.mean([r["designs"][d][ck] for r in rr]), np.mean([r["designs"][d][ck + "_min"] for r in rr]),
+                        np.min([r["designs"][d][ck + "_min"] for r in rr])))
+        w = np.mean([r["designs"][d][wk] for r in rows]) if wk else 1.0
+        print(f"{name} & {f3(out[0][0])} & {f3(out[0][1])} & {f3(out[0][2])} & {f3(out[1][1])} & {f3(out[1][2])} & {f3(out[2][1])} & {f3(out[2][2])} & {f2(w)} \\\\")
+    for d in ("pattern", "srs"):
+        a4(d + " Wald", d, "cover_z"); a4(d + " t", d, "cover_t", "width_t_over_z"); a4(d + " boot", d, "cover_boot")
+        a4(d + " floor", d, "cover_floor", "width_floor_over_z")
+    for d in ("binary", "kproxy2", "grid_n5_c25", "grid_n20_c100"):
+        a4(d + " floor", d, "cover_floor", "width_floor_over_z")
+    for mn in (5, 10, 20):
+        for c in (25, 50, 100):
+            d = "pattern" if (mn, c) == (10, 50) else f"grid_n{mn}_c{c}"
+            rel = [r["designs"][d].get("eff_vs_pattern", 1.0) for r in rows]
+            print(f"grid n{mn} c{c} rel {f2(med(rel))}", end=" "); a4("", d, "cover_z")
+    # ---- A5 EO table
+    print("\n% TABLE A5 EO: design | by L: median eff (RMSE^2 ratio) | mean P(best) | mean tau")
+    for n in EO_DESIGNS:
+        cells = []
+        for L in BUDGETS:
+            rr = byL(L)
+            cells += [f2(med([r["eo"][n].get("eff_vs_srs", 1.0) for r in rr])), f2(np.mean([r["eo"][n]["p_best"] for r in rr])),
+                      f2(np.nanmean([r["eo"][n]["tau"] for r in rr]))]
+        print(n + " & " + " & ".join(cells) + " \\\\")
+    print("EO bias mean srs/pattern:", np.mean([r["eo"]["srs"]["bias"] for r in rows]), np.mean([r["eo"]["pattern"]["bias"] for r in rows]))
+    # ---- A3
+    pts = []
+    for r in rows:
+        for c, v in r["subsets"].items():
+            if "eff_vs_srs" in v["pattern"] and v["nonunan"] > 0:
+                pts.append((r["dataset"], r["L"], v["M"], v["nonunan"], v["pattern"]["eff_vs_srs"], v["pattern"]["cover_z"], v["pattern"]["cover_z_min"]))
+        pts.append((r["dataset"], r["L"], 9, r["nonunan"], r["designs"]["pattern"]["eff_vs_srs"], r["designs"]["pattern"]["cover_z"], r["designs"]["pattern"]["cover_z_min"]))
+    pts = np.array(pts, dtype=object)
+    print("\n% TABLE A3: M | n configs | median non-unanimous share | median eff by L | mean cov | mean worst")
+    for M in (2, 3, 5, 9):
+        p = pts[pts[:, 2] == M]
+        e = [f2(med(p[p[:, 1] == L][:, 4].astype(float))) for L in BUDGETS]
+        print(f"{M} & {len(p)} & {f3(med(p[:, 3].astype(float)))} & " + " & ".join(e) + f" & {f3(np.mean(p[:, 5].astype(float)))} & {f3(np.mean(p[:, 6].astype(float)))} \\\\")
+    from scipy.stats import spearmanr
+    for L in BUDGETS:
+        p = pts[pts[:, 1] == L]
+        print("spearman(log eff, nonunan) L", L, spearmanr(p[:, 3].astype(float), np.log(p[:, 4].astype(float))))
+    # within-setting: does eff fall as nonunan rises?
+    rs = []
+    for key in SETTINGS:
+        p = pts[(pts[:, 0] == key) & (pts[:, 1] == 250)]
+        if len(p) > 3: rs.append(spearmanr(p[:, 3].astype(float), np.log(p[:, 4].astype(float))).statistic)
+    print("within-setting spearman L=250 median", np.median(rs), rs)
+    # ---- Figures
+    plt.rcParams.update({"font.size": 9, "axes.spines.top": False, "axes.spines.right": False})
+    cols = {2: "#2a78d6", 3: "#eb6834", 5: "#1baf7a", 9: "#6250d6"}; mk = {2: "o", 3: "s", 5: "^", 9: "D"}
+    fig, axes = plt.subplots(1, 3, figsize=(7.2, 2.6), sharey=True)
+    for ax, L in zip(axes, BUDGETS):
+        for M in (2, 3, 5, 9):
+            p = pts[(pts[:, 1] == L) & (pts[:, 2] == M)]
+            ax.scatter(p[:, 3].astype(float), np.minimum(p[:, 4].astype(float), CLIP), s=16, c=cols[M], marker=mk[M],
+                       edgecolors="white", linewidths=0.5, label=f"M = {M}")
+        ax.set_xscale("log"); ax.set_yscale("log"); ax.axhline(1, color="#9a9890", lw=0.8, ls=":")
+        ax.set_title(f"L = {L}"); ax.set_xlabel("share of pool with disagreement")
+        ax.grid(alpha=0.25, lw=0.5)
+    axes[0].set_ylabel("efficiency vs SRS (median over targets)"); axes[-1].legend(frameon=False, fontsize=7, loc="lower right")
+    fig.tight_layout(); fig.savefig(f"{figdir}/abl_models_disagreement.pdf"); fig.savefig(f"{figdir}/abl_models_disagreement.png", dpi=200)
+    # coverage of worst target at L = 250
+    rr = byL(250); x = np.arange(len(rr))
+    meths = [("Wald", "cover_z_min", "#2a78d6", "o"), ("t (Satterthwaite)", "cover_t_min", "#eb6834", "s"),
+             ("bootstrap", "cover_boot_min", "#1baf7a", "^"), ("Wald + proxy floor", "cover_floor_min", "#6250d6", "D")]
+    fig, ax = plt.subplots(figsize=(7.2, 2.7))
+    for k, (lab, key, c, m) in enumerate(meths):
+        ax.scatter(x + (k - 1.5) * 0.15, [r["designs"]["pattern"][key] for r in rr], s=22, c=c, marker=m, label=lab, edgecolors="white", linewidths=0.5)
+    ax.axhline(0.95, color="#52514e", lw=0.8, ls="--"); ax.axhline(rows[0]["mc_min_ref"]["mean"], color="#9a9890", lw=0.8, ls=":")
+    ax.set_xticks(x); ax.set_xticklabels([SHORT[r["dataset"]] for r in rr], rotation=30, ha="right")
+    ax.set_ylabel("worst-target coverage"); ax.set_ylim(0.3, 1.0); ax.grid(axis="y", alpha=0.25, lw=0.5)
+    ax.legend(frameon=False, fontsize=7, ncol=4, loc="lower center", bbox_to_anchor=(0.5, 1.0))
+    fig.tight_layout(); fig.savefig(f"{figdir}/abl_coverage_L250.pdf"); fig.savefig(f"{figdir}/abl_coverage_L250.png", dpi=200)
+    # ---- appendix per-cell rows
+    print("\n% APPENDIX eff vs SRS per cell (A1, A2)")
+    A12 = ["pattern", "binary", "joint3", "kproxy2", "kproxy3", "single0", "single7", "const", "shuffle", "noise", "flip", "prop", "oracle"]
+    for r in rows:
+        print(f"{SHORT[r['dataset']]} & {r['L']} & " + " & ".join(f2(r['designs'][n]['eff_vs_srs']) if r['designs'][n]['eff_vs_srs'] < 1000 else '$>$1000' for n in A12) + " \\\\")
+    print("\n% APPENDIX coverage per cell (default design): mean Wald | worst Wald | worst t | worst boot | worst floor | floor width | worst SRS Wald | worst SRS floor | H | worst target")
+    for r in rows:
+        d = r["designs"]["pattern"]; s_ = r["designs"]["srs"]
+        print(f"{SHORT[r['dataset']]} & {r['L']} & {d['H']} & {f3(d['cover_z'])} & {f3(d['cover_z_min'])} & {f3(d['cover_t_min'])} & {f3(d['cover_boot_min'])} & {f3(d['cover_floor_min'])} & {f2(d['width_floor_over_z'])} & {f3(s_['cover_z_min'])} & {f3(s_['cover_floor_min'])} \\\\  % {d['worst_target']} {d['worst_target_truth']:.4f}")
+    print("\n% APPENDIX grid per cell: worst Wald coverage for (5,25) (5,50) (5,100) (10,25) (10,50) (10,100) (20,25) (20,50) (20,100); rel eff")
+    for r in rows:
+        cells = []
+        for mn in (5, 10, 20):
+            for c in (25, 50, 100):
+                d = "pattern" if (mn, c) == (10, 50) else f"grid_n{mn}_c{c}"; cells.append(r["designs"][d]["cover_z_min"])
+        print(f"{SHORT[r['dataset']]} & {r['L']} & " + " & ".join(f"{x:.2f}" for x in cells) + " \\\\")
+    print("\n% APPENDIX EO per cell: margin, n_best | P(best) srs group pattern pattern_gap oracle | tau srs pattern | eff pattern")
+    for r in rows:
+        e = r["eo"]
+        print(f"{SHORT[r['dataset']]} & {r['L']} & {r['eo_margin']:.3f} & " + " & ".join(f"{e[n]['p_best']:.2f}" for n in EO_DESIGNS)
+              + f" & {e['srs']['tau']:.2f} & {e['pattern']['tau']:.2f} & {f2(e['pattern']['eff_vs_srs'])} & {f2(e['pattern_gap']['eff_vs_srs'])} \\\\  % nbest {r['eo_n_best']}")
+    print("\n% APPENDIX A3 per setting (L=250): nonunan and eff for each subset")
+    for r in byL(250):
+        print(SHORT[r["dataset"]], [(v["M"], round(v["nonunan"], 3), round(v["pattern"].get("eff_vs_srs", np.nan), 1)) for v in r["subsets"].values()])
+    print("\n% misc: strata counts, top3")
+    for r in rows:
+        print(r["dataset"], r["L"], {n: (r["designs"][n]["H"], r["designs"][n]["min_n"]) for n in ("pattern", "binary", "joint3", "kproxy2", "kproxy3", "grid_n5_c25", "grid_n20_c100")}, r["top3"])
+
+
 if __name__ == "__main__":
+    if sys.argv[1] == "report":
+        report(*sys.argv[2:]); sys.exit()
     R = int(sys.argv[1]); keys = sys.argv[2].split(",") if len(sys.argv) > 2 and sys.argv[2] else SETTINGS
     B = int(sys.argv[3]) if len(sys.argv) > 3 else 999
     tasks = []
