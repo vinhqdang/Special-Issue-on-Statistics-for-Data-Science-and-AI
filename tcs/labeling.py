@@ -132,7 +132,10 @@ def estimate(strata, ids, Nh, nh, U, V, y_lab, idx_lab, est, alpha_z=1.959964):
         sel = h_of == h
         if sel.sum() == 0: continue
         mu = t[sel].mean(0); means[h] = mu; T += N_h * mu
-    theta = est.value(T); G = est.gradient(T)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        theta = est.value(T); G = est.gradient(T)
+    if not np.all(np.isfinite(theta)):                                         # a denominator total is zero
+        nan = np.full(len(theta), np.nan); return nan, nan, nan, nan
     z = t @ G.T                                                               # influence values (n, n_t)
     var = np.zeros(len(theta))
     for h, N_h, n_h in zip(ids, Nh, nh):

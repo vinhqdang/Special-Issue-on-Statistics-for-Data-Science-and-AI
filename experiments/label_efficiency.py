@@ -68,20 +68,27 @@ if __name__ == "__main__":
             with Pool(4) as pool:
                 res = pool.map(run, [(key, L, zlib.crc32(key.encode()) % 9973 + 17 * L + r) for r in range(R)])
             truth = d["truth"]
-            mse = {m: np.mean([(x[m][0] - truth) ** 2 for x in res], axis=0) for m in METHODS}
-            cov = {m: np.mean([(x[m][1] <= truth) & (truth <= x[m][2]) for x in res], axis=0) for m in METHODS}
+            th = {m: np.array([x[m][0] for x in res]) for m in METHODS}          # (R, n_targets), NaN if undefined
+            lo = {m: np.array([x[m][1] for x in res]) for m in METHODS}
+            hi = {m: np.array([x[m][2] for x in res]) for m in METHODS}
+            fin = {m: np.isfinite(th[m]).all(1) for m in METHODS}                 # samples with every estimand defined
             kinds = np.array([k for (k, _, _) in d["est"].labels])
             row = dict(dataset=key, N=d["N"], L=L, R=R, Pg=d["Pg"], disagree_top=d["disagree_top"])
+            for m in METHODS:
+                row[f"fail_{m}"] = float(1 - fin[m].mean())
             for m in METHODS[1:]:
-                eff = mse["srs"] / np.maximum(mse[m], 1e-30)
+                both = fin["srs"] & fin[m]                                        # compare on the same samples
+                eff = ((th["srs"][both] - truth) ** 2).mean(0) / np.maximum(((th[m][both] - truth) ** 2).mean(0), 1e-30)
                 row[f"eff_{m}_all"] = float(np.median(eff))
                 row[f"eff_{m}_top"] = float(np.median(eff[d["top_targets"]]))
                 for k in ("dTPR", "dFPR", "dERR"):
                     row[f"eff_{m}_{k}"] = float(np.median(eff[kinds == k]))
+            big = np.abs(truth) > 0.02
             for m in METHODS:
-                row[f"cover_{m}"] = float(cov[m].mean()); row[f"cover_{m}_min"] = float(cov[m].min())
-                big = np.abs(truth) > 0.02
-                row[f"sign_{m}"] = float(np.mean([np.mean(np.sign(x[m][0][big]) == np.sign(truth[big])) for x in res])) if big.any() else None
+                ok = fin[m]
+                cov = ((lo[m][ok] <= truth) & (truth <= hi[m][ok])).mean(0)
+                row[f"cover_{m}"] = float(cov.mean()); row[f"cover_{m}_min"] = float(cov.min())
+                row[f"sign_{m}"] = float((np.sign(th[m][ok][:, big]) == np.sign(truth[big])).mean()) if big.any() else None
             rows.append(row)
-            print({k: (round(v, 3) if isinstance(v, float) else v) for k, v in row.items() if k.startswith(("dataset", "L", "eff_pattern", "eff_group_all", "eff_oracle_all", "cover_srs", "cover_pattern", "sign_srs", "sign_pattern"))}, flush=True)
+            print({k: (round(v, 3) if isinstance(v, float) else v) for k, v in row.items() if k.startswith(("dataset", "L", "fail", "eff_pattern_all", "eff_pattern_top", "eff_group_all", "eff_oracle_all", "cover_srs", "cover_pattern", "sign_srs", "sign_pattern"))}, flush=True)
         json.dump(rows, open("results/label_efficiency.json", "w"), indent=1)
