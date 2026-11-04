@@ -149,8 +149,10 @@ labels, so $\tilde n_h\ge\lfloor n_h\rfloor\ge n_h-1$.
 
 \emph{(d)} Without finite-population corrections, $V^{SRS}_t=N^2\sigma^2_t/L$, so
 $w_tV_t=(N^2/L)V_t/V^{SRS}_t=(N^2/L)/\mathrm{Eff}_t$. Summing over $t$ gives
-$\Phi_0(n)L/N^2=\sum_t1/\mathrm{Eff}_t$, and at $n^\ast$,
-$\sum_t1/\mathrm{Eff}_t=(\sum_hN_hA_h)^2/N^2=(\sum_hW_hA_h)^2$. For the lower bound, the
+$\Phi_0(n)L/N^2=\sum_t1/\mathrm{Eff}_t$, and at $n^\ast$
+\[
+\sum_t\frac{1}{\mathrm{Eff}_t}=\frac{(\sum_hN_hA_h)^2}{N^2}=\Big(\sum_hW_hA_h\Big)^2 .
+\] For the lower bound, the
 within-stratum variances satisfy $\sum_hW_h\sigma^2_{ht}\le\sigma^2_t$ (the between-strata part of
 the variance decomposition is non-negative), so by Jensen's inequality
 \[
@@ -219,7 +221,9 @@ inequality gives $(\sum_hW_h\sqrt{\rho_h})^2\le\rho$ and $\mathrm{Eff}\ge1$. Equ
 requires $\rho_h\in\{0,1\}$ for every $h$. For \eqref{eq:deff-sandwich}, let $\mathcal H_D$ be the
 strata with $0<K<M$, so that $\sum_{h\in\mathcal H_D}W_h=\rho_{\rm any}$ and $\rho_h=0$ outside
 $\mathcal H_D$. Cauchy--Schwarz gives
-$(\sum_{h\in\mathcal H_D}W_h^{1/2}\cdot W_h^{1/2}\rho_h^{1/2})^2\le\rho_{\rm any}\sum_hW_h\rho_h=\rho_{\rm any}\rho$,
+\[
+\Big(\sum_{h\in\mathcal H_D}W_h^{1/2}\cdot W_h^{1/2}\rho_h^{1/2}\Big)^2\le\rho_{\rm any}\sum_hW_h\rho_h=\rho_{\rm any}\rho,
+\]
 so $\mathrm{Eff}\ge\rho/(\rho_{\rm any}\rho)=1/\rho_{\rm any}$, with equality if and only if $\rho_h$ is
 constant on $\mathcal H_D$. (When strata are merged across $K=0$ or $K=M$ and $0<K<M$ because of the
 minimum stratum size, $\rho_{\rm any}$ is replaced by the total share of the strata that contain
@@ -234,12 +238,17 @@ minimum per stratum is at least two; Proposition~\ref{prop:validity} applies wit
 \[
 \Phi_0(\tilde n)=\sum_h\frac{N_h^2A_h^2}{\tilde n_h}=\frac1L\Big(\sum_kN_k\tilde A_k\Big)\Big(\sum_h\frac{N_hA_h^2}{\tilde A_h}\Big),
 \]
-and
-$\Phi_0(n^\ast)=L^{-1}(\sum_hN_hA_h)^2$ by Proposition~\ref{prop:allocation}(a). Writing
-$\tilde A_h=x_hA_h$, $\sum_hN_h\tilde A_h=(\sum_kN_kA_k)\sum_h\omega_hx_h$ and
-$\sum_hN_hA_h^2/\tilde A_h=(\sum_kN_kA_k)\sum_h\omega_h/x_h$, which gives \eqref{eq:proxy-loss}. By
-Cauchy--Schwarz,
-$1=(\sum_h\omega_h\sqrt{x_h}/\sqrt{x_h})^2\le(\sum_h\omega_hx_h)(\sum_h\omega_h/x_h)$, with equality if and only if $x_h$ is constant on the strata with $\omega_h>0$.
+and $\Phi_0(n^\ast)=L^{-1}(\sum_hN_hA_h)^2$ by Proposition~\ref{prop:allocation}(a). Writing
+$\tilde A_h=x_hA_h$,
+\[
+\sum_hN_h\tilde A_h=\Big(\sum_kN_kA_k\Big)\sum_h\omega_hx_h,\qquad
+\sum_h\frac{N_hA_h^2}{\tilde A_h}=\Big(\sum_kN_kA_k\Big)\sum_h\frac{\omega_h}{x_h},
+\]
+which gives \eqref{eq:proxy-loss}. By Cauchy--Schwarz,
+\[
+1=\Big(\sum_h\omega_h\sqrt{x_h}\big/\sqrt{x_h}\Big)^2\le\Big(\sum_h\omega_hx_h\Big)\Big(\sum_h\omega_h/x_h\Big),
+\]
+with equality if and only if $x_h$ is constant on the strata with $\omega_h>0$.
 
 \emph{(c)} For $x\in[x_{\min},x_{\max}]$, $(x-x_{\min})(x_{\max}-x)\ge0$, that is
 $x+x_{\min}x_{\max}/x\le x_{\min}+x_{\max}$. Averaging with weights $\omega_h$,
