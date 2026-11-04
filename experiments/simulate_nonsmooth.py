@@ -20,10 +20,17 @@ BETA = np.array([1.0, -0.8, 0.6, 0.0, 0.0])
 def sig(z): return 1 / (1 + np.exp(-z))
 
 
+import os
+DUP = os.environ.get("DUP") == "1"   # last model is an exact copy of model 0 (ties on every criterion)
+
+
 def make_design(seed):
     r = np.random.default_rng(seed)
-    return dict(beta=BETA + 0.45 * r.standard_normal((M, D)), s=np.exp(r.uniform(-0.7, 0.7, M)),
-                o=r.uniform(-0.7, 0.7, M))
+    des = dict(beta=BETA + 0.45 * r.standard_normal((M, D)), s=np.exp(r.uniform(-0.7, 0.7, M)),
+               o=r.uniform(-0.7, 0.7, M))
+    if DUP:
+        for k in des: des[k][-1] = des[k][0]
+    return des
 
 
 def draw(n, rng):
@@ -107,4 +114,4 @@ if __name__ == "__main__":
                     row[k + "_excl"] = float((~keep[:, dom]).mean()) if dom.any() else None
                     row[k + "_size"] = float(keep.sum(1).mean())
                 out.append(row); print(row, flush=True)
-    json.dump(out, open("results/simulation_nonsmooth.json", "w"), indent=1)
+    json.dump(out, open("results/simulation_nonsmooth_dup.json" if DUP else "results/simulation_nonsmooth.json", "w"), indent=1)
