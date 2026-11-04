@@ -5,16 +5,22 @@ Let $K_i=\sum_{m=1}^M\hat y_{mi}\in\{0,\dots,M\}$ be the number of models that p
 
 The count $K_i$ is a coarse summary of the prediction pattern $(\hat y_{1i},\dots,\hat y_{Mi})$, which has up to $2^M$ values. It is chosen because it is invariant to the ordering of models, it keeps the number of strata linear in $M$, and its extreme values isolate the agreement region exactly. Finer stratifiers are compared in Section~\ref{sec:ablations}.
 
-\subsection{Estimation}
-Within each stratum a simple random sample of $n_h$ instances is drawn without replacement and labelled ($\sum_h n_h=L$). The total $T_c$ is estimated by the stratified expansion estimator
+\subsection{Estimation}\label{sec:estimation}
+Within each stratum a simple random sample of $n_h$ instances is drawn without replacement and labelled ($\sum_h n_h=L$). The plain stratified expansion estimator of a total $T_c$ is
 \begin{equation}\label{eq:HT}
-\hat T_c=\sum_{h=1}^H N_h\,\bar t_{hc},\qquad \bar t_{hc}=\frac{1}{n_h}\sum_{i\in s_h} t_{ic}(Y_i),
+\hat T^{\mathrm{HT}}_c=\sum_{h=1}^H N_h\,\bar t_{hc},\qquad \bar t_{hc}=\frac{1}{n_h}\sum_{i\in s_h} t_{ic}(Y_i),
 \end{equation}
-which is unbiased for $T_c$ \citep{cochran1977}. The comparisons are estimated by the plug-in $\hat\theta=f(\hat T)$, a ratio-type estimator. Its variance is estimated by Taylor linearisation \citep[Section~5.5]{sarndal1992}: with the influence values $z_{i}=\nabla f(\hat T)^{\top} t_i(Y_i)$,
+which is unbiased for $T_c$ \citep{cochran1977}. It uses the predicted probabilities only to set up the design. The proposed estimator also uses them in the estimator. Let $\pi_i=M^{-1}\sum_m\hat p_{mi}$ be the average predicted probability and $\psi_{ic}=\pi_iu_{ic}+(1-\pi_i)v_{ic}$ the value that $t_{ic}(Y_i)$ would have in expectation if $Y_i$ were Bernoulli$(\pi_i)$. This quantity is known for every instance of the pool, including the unlabelled ones. The difference estimator corrects the pool-wide proxy total by the labelled residuals,
+\begin{equation}\label{eq:DIF}
+\hat T_c=\sum_{i\in U}\psi_{ic}+\sum_{h=1}^H N_h\,\overline{(t_c-\psi_c)}_{h},\qquad \overline{(t_c-\psi_c)}_{h}=\frac1{n_h}\sum_{i\in s_h}\{t_{ic}(Y_i)-\psi_{ic}\},
+\end{equation}
+which is exactly unbiased for $T_c$ for any label-free proxy, good or bad, because the proxy total over the whole pool is known \citep{cassel1976,sarndal1992}. Setting $\psi\equiv0$ recovers \eqref{eq:HT}. The comparisons are estimated by the plug-in $\hat\theta=f(\hat T)$, a ratio-type estimator, and its variance by Taylor linearisation \citep[Section~5.5]{sarndal1992}: with the residual influence values $e_i=\nabla f(\hat T)^{\top}\{t_i(Y_i)-\psi_i\}$,
 \begin{equation}\label{eq:var}
-\hat V(\hat\theta_k)=\sum_{h=1}^H N_h^2\Big(1-\frac{n_h}{N_h}\Big)\frac{s^2_{z_k,h}}{n_h},
+\hat V(\hat\theta_k)=\sum_{h=1}^H N_h^2\Big(1-\frac{n_h}{N_h}\Big)\frac{s^2_{e_k,h}}{n_h},
 \end{equation}
-where $s^2_{z_k,h}$ is the sample variance of the $k$th influence values in stratum $h$. Wald intervals $\hat\theta_k\pm 1.96\,\hat V(\hat\theta_k)^{1/2}$ are reported. If a sampled denominator total is zero (no sampled positive in a group), the estimate is undefined; this happens with small probability under SRS at small budgets and never occurred under PATTERN in our experiments (Section~\ref{sec:empirical}).
+where $s^2_{e_k,h}$ is the sample variance of the $k$th residual influence values in stratum $h$. Wald intervals $\hat\theta_k\pm 1.96\,\hat V(\hat\theta_k)^{1/2}$ are reported. If a sampled denominator total is zero (no sampled positive in a group), the estimate is undefined; this happens with small probability under SRS at small budgets and never occurred under the stratified designs in our main study (Section~\ref{sec:empirical}).
+
+We call the design with the plain estimator PATTERN and the design with the difference estimator PATTERN-DIF; PATTERN-DIF is the proposed method. The difference estimator removes the part of the label variance that the predicted probabilities explain. Because the predictions here are calibrated and informative, this reduces the variance by a further factor of 1.3 to 1.7 in our experiments (Section~\ref{sec:empirical}); the theory in Section~\ref{sec:theory} shows when the correction helps (the within-stratum regression slope of the true influence on its proxy must exceed one half) and when it does not. The simple weight one is used throughout. Estimating a weight per stratum and estimand, as in prediction-powered inference with tuned weights, added about 2\% in efficiency and lowered coverage (Section~\ref{sec:baselines}).
 
 \subsection{Allocation}
 The allocation $(n_1,\dots,n_H)$ determines the efficiency of the design. For a single estimand the variance of the linearised estimator is minimised by Neyman allocation, $n_h\propto N_h S_h$, where $S_h$ is the within-stratum standard deviation of the influence values. With many estimands we minimise the weighted sum $\sum_k w_k V_k$ of their linearised variances, which leads (Section~\ref{sec:theory}) to
@@ -23,10 +29,10 @@ n_h\ \propto\ N_h\Big(\sum_k w_k S^2_{hk}\Big)^{1/2}.
 \end{equation}
 We use $w_k=1/S_k^2$, where $S_k^2$ is the population variance of the influence values of estimand $k$; this weights each estimand by the inverse of its variance under SRS, so that every comparison counts equally in relative terms.
 
-The stratum variances depend on the unknown labels. We replace them by their expectations under a proxy model in which $Y_i$ is Bernoulli with probability $\pi_i=M^{-1}\sum_m\hat p_{mi}$, the average predicted probability of the models. Because the influence values are linear in $Y_i$, $z_{ik}=Y_iA_{ik}+(1-Y_i)B_{ik}$ with known $A_{ik},B_{ik}$ evaluated at the proxy totals, and the proxy moments $\mathrm E_\pi z_{ik}=\pi_iA_{ik}+(1-\pi_i)B_{ik}$ and $\mathrm E_\pi z^2_{ik}=\pi_iA^2_{ik}+(1-\pi_i)B^2_{ik}$ give closed-form proxy variances. No label is used. A poor proxy can only reduce efficiency; the estimator remains unbiased for the totals because the inclusion probabilities $n_h/N_h$ are known. Each stratum receives at least ten labels (or all of its instances if it is smaller), and rounding to integers is done greedily so that the budget is met exactly.
+The stratum variances depend on the unknown labels. We replace them by their expectations under a proxy model in which $Y_i$ is Bernoulli with probability $\pi_i=M^{-1}\sum_m\hat p_{mi}$, the average predicted probability of the models. Because the influence values are linear in $Y_i$, $z_{ik}=Y_iA_{ik}+(1-Y_i)B_{ik}$ with known $A_{ik},B_{ik}$ evaluated at the proxy totals, and the proxy moments $\mathrm E_\pi z_{ik}=\pi_iA_{ik}+(1-\pi_i)B_{ik}$ and $\mathrm E_\pi z^2_{ik}=\pi_iA^2_{ik}+(1-\pi_i)B^2_{ik}$ give closed-form proxy variances. No label is used. A poor proxy can only reduce efficiency; both estimators remain unbiased for the totals because the allocation does not depend on the labels. We use this allocation, computed from the variance of the plain influence values, for both estimators. An allocation computed from the variance of the residual influence values is the theoretically optimal one for the difference estimator, but it gave no gain in our experiments (Section~\ref{sec:empirical}), so we keep the simpler rule. Each stratum receives at least ten labels (or all of its instances if it is smaller), and rounding to integers is done greedily so that the budget is met exactly.
 
 \begin{algorithm}[t]
-\caption{PATTERN design for comparing $M$ classifiers on group-fairness contrasts}\label{alg:pattern}
+\caption{PATTERN-DIF for comparing $M$ classifiers on group-fairness contrasts}\label{alg:pattern}
 \begin{algorithmic}[1]
 \Require pool $U$ with predictions $\hat y_{mi}$, probabilities $\hat p_{mi}$, groups $G_i$; budget $L$
 \State $K_i\gets\sum_m\hat y_{mi}$; strata $h\gets(G_i,K_i)$; merge strata with $N_h<50$ within group
@@ -35,13 +41,13 @@ The stratum variances depend on the unknown labels. We replace them by their exp
 \State $S^2_{hk}$, $S^2_k\gets$ proxy within-stratum and overall variances
 \State $n_h\gets$ allocation \eqref{eq:alloc} with $w_k=1/S^2_k$, minimum 10, capped at $N_h$, $\sum_h n_h=L$
 \State draw $n_h$ instances without replacement in each stratum and query their labels
-\State $\hat T\gets$ \eqref{eq:HT}; $\hat\theta\gets f(\hat T)$; $\hat V\gets$ \eqref{eq:var}; Wald intervals
+\State $\hat T\gets$ difference estimator \eqref{eq:DIF}; $\hat\theta\gets f(\hat T)$; $\hat V\gets$ \eqref{eq:var}; Wald intervals
 \State \Return $\hat\theta$, standard errors, intervals
 \end{algorithmic}
 \end{algorithm}
 
 \subsection{Reference designs}
-We compare PATTERN with three designs that use the same estimators. SRS samples $L$ instances without replacement from the whole pool. GROUP stratifies by the group attribute only and allocates with \eqref{eq:alloc}; it oversamples the minority group when that reduces variance, which is the natural first idea for fairness auditing. ORACLE-ALLOC uses the PATTERN strata with the allocation computed from the true labels instead of the proxy. It is not usable in practice and is not an upper bound on efficiency, since \eqref{eq:alloc} minimises a weighted sum of first-order variances rather than the mean squared error of each estimand; it shows how much is lost by using a proxy. Further baselines from the active-testing and survey-sampling literatures are compared in Section~\ref{sec:baselines}.
+We compare PATTERN-DIF with a ladder of simpler designs, each of which removes one ingredient, so that the contribution of every ingredient is visible. SRS samples $L$ instances without replacement from the whole pool and uses the plain estimator \eqref{eq:HT}. SRS-DIF uses the same simple random samples with the difference estimator \eqref{eq:DIF}, which is prediction-powered inference with the proxy as predictor \citep{angelopoulos2023ppi}. GROUP stratifies by the group attribute only and allocates with \eqref{eq:alloc}; it oversamples the minority group when that reduces variance, which is the natural first idea for fairness auditing. GROUP-DIF adds the difference estimator. PATTERN is the design of Section~\ref{sec:design} with the plain estimator. In Section~\ref{sec:ablations} we also use an allocation computed from the true labels instead of the proxy; it is not usable in practice and is not an upper bound on efficiency, since \eqref{eq:alloc} minimises a weighted sum of first-order variances rather than the mean squared error of each estimand. Further baselines from the active-testing and survey-sampling literatures, including a stratified prediction-powered estimator, are compared in Section~\ref{sec:baselines}.
 
 \subsection{Computational cost}
 The design needs one pass over the pool to compute $K_i$, $\pi_i$ and the proxy moments, which costs $O(NMC)$ operations with $C=O(M)$ totals, and the estimation costs $O(LMC)$. For the pools used here ($N\le 19{,}537$, $M=9$) both steps take well under a second on a laptop.
