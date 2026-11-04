@@ -20,7 +20,7 @@ kw = re.search(r"\\textbf\{Keywords:\}\s*(.*?)\s*\\end\{abstract\}", abs_src, re
 keywords = (re.search(r"Keywords:\}\s*([^\n]*)", abs_src).group(1).strip() if re.search(r"Keywords:\}", abs_src) else "")
 abstract = re.sub(r"\\medskip\\noindent\\textbf\{Keywords:\}.*", "", abstract, flags=re.S).strip()
 keywords = keywords.replace(";", ",")
-body_names = ["introduction", "related", "setting", "design", "theory", "simulation", "empirical", "baselines", "ablations", "guidance", "discussion"]
+body_names = ["introduction", "related", "setting", "design", "theory", "simulation", "empirical", "extra_splits", "baselines", "ablations", "extra_population", "guidance", "discussion"]
 app_names = ["appendix_proofs", "appendix_ablations", "appendix_data"]
 body = "\n".join(sec(n) for n in body_names)
 appendix = "\n".join(sec(n) for n in app_names)
