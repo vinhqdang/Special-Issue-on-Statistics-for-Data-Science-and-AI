@@ -35,3 +35,13 @@ for a, c in zip(b5, b0):
     L.append(f"{a['n']} & {a['delta']:.2f} & {a['rho']:.1f} & {min(a['tcs_cover'], c['tcs_cover']):.3f} & {min(a['box_cover'], c['box_cover']):.3f} & {a['tcs_excl']:.2f} & {a['box_excl']:.2f} & {c['tcs_excl']:.2f} & {c['box_excl']:.2f} \\\\")
 L.append("\\bottomrule\\end{tabular}")
 open("manuscript/tables/box.tex", "w").write("\n".join(L))
+
+# non-smooth criteria simulation
+ns = json.load(open("results/simulation_nonsmooth.json"))
+L = ["\\begin{tabular}{rrrrrrrr}\\toprule",
+     "Design & $|\\mathcal{P}_0|$ & $n$ & \\multicolumn{3}{c}{Retention} & \\multicolumn{2}{c}{Exclusion} \\\\",
+     " & & & TCS & Box & Naive & TCS & Box \\\\\\midrule"]
+for r in ns:
+    L.append(f"{r['design']} & {r['P0']} & {r['n']} & {r['tcs_retain']:.3f} & {r['box_retain']:.3f} & {r['naive_retain']:.3f} & {r['tcs_excl']:.2f} & {r['box_excl']:.2f} \\\\")
+L.append("\\bottomrule\\end{tabular}")
+open("manuscript/tables/nonsmooth.tex", "w").write("\n".join(L))
