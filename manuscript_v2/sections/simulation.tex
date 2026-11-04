@@ -1,6 +1,7 @@
 % ---------------------------------------------------------------------------------------------
 % Simulation check of the theory. Code: experiments/theory_check.py. Results: results/theory_check.json.
-% Figures: figures/fig_sim_real.{pdf,png}, figures/fig_sim_rho.{pdf,png}.
+% Figures: figures/fig_sim_real.{pdf,png}, figures/fig_sim_rho.{pdf,png}; difference estimator (Section sec:sim-dif):
+% experiments/theory_check_dif.py, results/theory_check_dif.json, figures/fig_sim_dif_{real,synth}.{pdf,png}.
 % ---------------------------------------------------------------------------------------------
 \section{Checking the theory by simulation}\label{sec:simulation}
 
@@ -244,6 +245,116 @@ that misjudges a high-variance stratum can do arbitrarily badly in other stratif
 empirical comparison with the oracle allocation in Section~\ref{sec:empirical} is the relevant check
 for real data.
 
+\subsection{The difference estimator (PATTERN-DIF)}\label{sec:sim-dif}
+
+Section~\ref{sec:theory-dif} makes four predictions about the difference estimator \eqref{eq:dif} with the proxy mean \eqref{eq:psi}: it is exactly unbiased for the totals
+for any proxy and its plug-in variance is unbiased (Proposition~\ref{prop:validity}); its linearised variance is $V_\psi=\sum_hc_hS^2_{e,h}$ with residual influence values
+$e_i=z_i-\tilde z_i$; its gain over the plain estimator on the same sample is $V_0/V_\psi$, which a label-free calculation forecasts under calibration
+(Proposition~\ref{prop:dif-deff}); and a miscalibrated proxy can lose to the plain estimator (Proposition~\ref{prop:dif-proxy}). We check them with
+\texttt{experiments/theory\_check\_dif.py} (results in \texttt{results/theory\_check\_dif.json}). Every comparison is between the plain and the
+difference estimator on the \emph{same} PATTERN sample, so the ratio $\mathrm{MSE}(\text{plain})/\mathrm{MSE}(\text{DIF})$ isolates the estimator. Three predictions are used:
+\textbf{LIN}, $\sum_hc_hS^2_{z,h}/\sum_hc_hS^2_{e,h}$, computed with the true labels; \textbf{ANT}, the label-free forecast
+$\sum_hc_h(\bar\sigma^2_h+S^2_{\tilde z,h})/\sum_hc_h\bar\sigma^2_h$ of \eqref{eq:dif-deff}, which uses the proxy only; and \textbf{TUNE}, $V_\psi/V(\lambda)$ with $\lambda_h=\min\{1,\max(0,\beta_h)\}$, the
+most that tuning the coefficient could add to $\lambda=1$.
+
+\paragraph{Exactness and the variance formulae.} On a pool of 14 units in two strata (6 and 8 units, 2 and 3 labels) we enumerated all 840 samples for three proxies (a random mixture of $u_i,v_i$, an arbitrary bounded vector, and
+the anti-correlated vector $1-t_i$) and three coefficients ($\lambda=0,\frac12,1$). The mean of $\hat T_{\lambda\psi}$, its covariance matrix and the mean of the plug-in variance estimator agree with $T$,
+the formula of Proposition~\ref{prop:validity}(a) and each other to within $3\times10^{-13}$ in absolute terms (relative to the variances, $10^{-14}$), that is machine precision, for every proxy. By Monte Carlo ($R=2000$) the totals are also unbiased on the four real pools and six synthetic pools: the largest standardised bias
+over the 29--49 coordinates is $|z|=2.7$ for the difference estimator and 2.6 for the plain estimator, which share their samples and have strongly correlated coordinates, and the largest bias is 0.06 standard deviations
+(the Monte Carlo resolution is 0.022). The variance formula holds: the median over estimands of the Monte Carlo variance divided by the linearised $V_\psi$ is between 0.99 and 1.02 on the real pools (Table~\ref{tab:sim-dif-real}) and 1.01 to 1.07 on the synthetic
+pools (up to 1.10 for $\theta^{TPR}$, a second-order effect of the random denominators at $L=600$), the mean of $\hat V_\psi$ divided by the Monte Carlo variance is between 0.98 and 1.02, and the Wald coverage of the difference estimator
+(0.943 to 0.951 on the real pools, 0.947 to 0.953 on the synthetic pools) is that of the plain estimator.
+
+\begin{table}[t]
+\centering
+\caption{Four real pools, $R=2000$: efficiency of the difference estimator relative to the plain estimator on the same PATTERN sample (median over the 108 estimands). Obs: Monte Carlo; LIN, ANT, TUNE:
+predictions defined in the text; Obs/LIN: per-target ratio, median and 10\%--90\% range, and correlation of the logarithms; Var: Monte Carlo variance of $\hat\theta_{\rm DIF}$ over $V_\psi$; $\hat V$: mean estimated over Monte Carlo variance; Cov: Wald coverage of plain
+and difference estimator; max $|z|$: largest standardised bias of the 46--49 totals. Source: \texttt{results/theory\_check\_dif.json}.}
+\label{tab:sim-dif-real}
+\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrrrlrrrrrr}
+\toprule
+Pool & $L$ & Obs & LIN & ANT & TUNE & Obs/LIN & corr & Var & $\hat V$ & Cov plain & Cov DIF & max $|z|$\\
+\midrule
+Adult-sex & 500 & 1.50 & 1.46 & 1.47 & 1.01 & 1.01 (0.99, 1.04) & 0.998 & 0.99 & 1.02 & 0.949 & 0.951 & 1.6\\
+Bank & 500 & 1.45 & 1.48 & 1.46 & 1.01 & 0.99 (0.96, 1.03) & 0.994 & 1.02 & 0.99 & 0.942 & 0.943 & 2.0\\
+EEG & 500 & 1.90 & 1.91 & 1.43 & 1.04 & 1.00 (0.97, 1.03) & 0.997 & 1.00 & 1.00 & 0.947 & 0.948 & 2.2\\
+Spambase & 250 & 2.30 & 2.34 & 1.97 & 1.02 & 1.00 (0.96, 1.03) & 0.998 & 1.00 & 0.99 & 0.944 & 0.945 & 1.4\\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/fig_sim_dif_real.pdf}
+\caption{Left: observed against linearised (LIN) gain of the difference estimator over the plain estimator, per estimand, on four real pools ($R=2000$; 432 estimands). Right: median over estimands in each of 34 pool--budget
+cells, observed in \texttt{results/label\_baselines.json} (PATTERN-DIF against PATTERN, $R=200$) against LIN (filled) and ANT (open). Dashed: equality. Source: \texttt{results/theory\_check\_dif.json}.}
+\label{fig:sim-dif-real}
+\end{figure}
+
+\paragraph{Predicted against observed gain.} On the four real pools the observed per-estimand gain divided by LIN has median 1.00 and 10\%--90\% range 0.97--1.04 (432 estimands, correlation of the logarithms 0.997; Figure~\ref{fig:sim-dif-real}, left), which
+is Monte Carlo error. We then compared LIN with the gains stored in \texttt{results/label\_baselines.json}, which were produced independently by \texttt{experiments/label\_baselines.py} with $R=200$. In the 34 cells with a defined gain (all 35 except Law school at
+$L=2000$, where both estimators are exact) the observed median gain is 1.47 (10\%--90\% range 1.28--2.10, extremes 1.22 and 11.1), LIN has median 1.49, and the ratio of observed to LIN has median 0.98 (10\%--90\% range 0.93--1.01, 97\% of cells within 20\%, correlation of the logarithms 0.996, 0.978 without
+the three Law school cells); Figure~\ref{fig:sim-dif-real} (right). LIN uses the labels, so it is not a forecast, but it confirms that the residual-variance formula $V_\psi$ describes the estimator. The label-free forecast
+ANT has median ratio 1.01 (0.90--1.37) over cells, and on the four real pools ratio 1.12 (0.86--1.53) with correlation 0.78 across estimands; the observed gain is 1.30 and 1.37 times ANT in EEG and Spambase. It fails in Law school (forecast 1.3--1.4, observed 5.1--11.1), where the
+disagreement sets of most pairs contain a handful of units per stratum: the realised residual variance is then a single draw from the label distribution, and it is an order of magnitude below its expectation under the proxy (we checked the stratum variances for one estimand). Without Law school the correlation of ANT with the observed gain is 0.62.
+The gain is therefore not a doubling in general: it is 1.2 to 1.7 in most cells, about 1.8 to 2.1 in EEG and Spambase, and 5 to 11 only in Law school. By estimand type the order is that of \eqref{eq:dif-closed}: the gain is largest for $\theta^{FPR}$,
+next for $\theta^{TPR}$ and smallest for $\theta^{ERR}$ (Adult-sex: 2.25, 1.67 and 1.13; Table~\ref{tab:sim-dif-syn} for the synthetic pools).
+
+\paragraph{Tuning the coefficient.} TUNE is small: the median over the 34 cells is 1.02 (10\%--90\% 1.01--1.04), and 1.01 to 1.04 on the four real pools, so a perfectly tuned coefficient would add at most a few per cent to $\lambda=1$ except in Law school (2.3--3.5).
+The observed estimated-coefficient version (PATTERN-PPI) has median gain 1.03 over $\lambda=1$ (10\%--90\% 0.99--1.10), and it costs coverage: mean coverage over the 35 cells is 0.946 for PATTERN-DIF and 0.929 for PATTERN-PPI, and 8 of 35 cells fall below 0.93 for PATTERN-PPI against 1 of 35 for PATTERN-DIF
+and for the plain estimator. This is the trade-off of Proposition~\ref{prop:dif-lambda}.
+
+\paragraph{Allocation.} The residual-variance allocation of Proposition~\ref{prop:alloc-dif} does not improve on the design's plain-variance allocation for the difference estimator. The linearised prediction of the ratio of $V_\psi$ under the plain allocation to $V_\psi$ under the residual allocation has median 0.99
+(10\%--90\% 0.95--1.00) over the 34 cells, and on four real pools the observed ratio of mean squared errors is 0.98, 0.98, 0.98 and 1.01, against linearised predictions 1.00, 1.00, 0.98 and 1.00, with the same coverage. Using the ``wrong'' variances therefore costs at most about 2\% here, as the bound \eqref{eq:alloc-loss} allows when the signal-to-noise ratio $\tilde\nu_h$ is similar across strata.
+
+\begin{table}[t]
+\centering
+\caption{Synthetic pools ($N=60\,000$, five models, $Y_i\sim$ Bernoulli$(\pi_i)$, $L=600$, $R=2000$): gain of the difference estimator over the plain estimator, observed (Obs), linearised (LIN) and label-free (ANT), median over the ten pairs. Top: calibrated proxy,
+sharpness $a$ of the latent score. Bottom: $a=2$, proxy $\pi^{\rm proxy}_i=\mathrm{logit}^{-1}(\kappa s_i)$ ($\kappa=1$ calibrated, $\kappa=0$ constant 0.5, $\kappa<0$ inverted). Source: \texttt{results/theory\_check\_dif.json}.}
+\label{tab:sim-dif-syn}
+\setlength{\tabcolsep}{4pt}
+\small
+\begin{tabular}{l rrr rrr rrr}
+\toprule
+ & \multicolumn{3}{c}{$\theta^{TPR}$} & \multicolumn{3}{c}{$\theta^{FPR}$} & \multicolumn{3}{c}{$\theta^{ERR}$}\\
+ \cmidrule(lr){2-4}\cmidrule(lr){5-7}\cmidrule(lr){8-10}
+ & Obs & LIN & ANT & Obs & LIN & ANT & Obs & LIN & ANT\\
+\midrule
+$a=0.5$ & 1.76 & 1.76 & 1.76 & 2.40 & 2.44 & 2.47 & 1.10 & 1.09 & 1.10 \\
+$a=1$ & 2.03 & 1.97 & 1.98 & 2.33 & 2.33 & 2.36 & 1.09 & 1.09 & 1.10 \\
+$a=2$ & 2.11 & 2.12 & 2.14 & 2.21 & 2.32 & 2.31 & 1.11 & 1.12 & 1.11 \\
+$a=4$ & 2.23 & 2.23 & 2.24 & 2.26 & 2.27 & 2.26 & 1.11 & 1.12 & 1.12 \\
+\midrule
+$\kappa=-1$ & 1.43 & 1.48 & 2.29 & 1.52 & 1.56 & 2.15 & 0.76 & 0.76 & 1.12 \\
+$\kappa=0$ & 1.88 & 1.94 & 2.00 & 2.04 & 2.05 & 2.00 & 1.00 & 1.00 & 1.00 \\
+$\kappa=0.5$ & 2.11 & 2.11 & 2.02 & 2.23 & 2.22 & 2.09 & 1.10 & 1.09 & 1.03 \\
+$\kappa=1$ & 2.21 & 2.16 & 2.15 & 2.28 & 2.27 & 2.29 & 1.12 & 1.12 & 1.12 \\
+$\kappa=2$ & 2.09 & 2.06 & 2.59 & 2.22 & 2.17 & 2.89 & 1.08 & 1.07 & 1.39 \\
+$\kappa=4$ & 1.81 & 1.80 & 3.81 & 1.89 & 1.90 & 4.45 & 0.96 & 0.94 & 2.11 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/fig_sim_dif_synth.pdf}
+\caption{Synthetic pools, gain of the difference estimator over the plain estimator (median over pairs, by estimand). Left: calibrated proxy, sharpness $a$ of the latent score. Right: $a=2$, proxy dispersion $\kappa$ ($\kappa=1$ calibrated).
+Points: Monte Carlo ($R=2000$); solid: LIN; dotted: ANT, which assumes calibration. Dashed: no gain. Source: \texttt{results/theory\_check\_dif.json}.}
+\label{fig:sim-dif-synth}
+\end{figure}
+
+\paragraph{Calibrated and miscalibrated proxies.} In pools whose labels follow the proxy, ANT and LIN agree with each other and with the Monte Carlo gain within 2\% (median observed/LIN between 0.99 and 1.00; Table~\ref{tab:sim-dif-syn}, top), which verifies
+Proposition~\ref{prop:dif-deff}: the gain is 1.8 to 2.4 for the rate differences and 1.1 for the error difference, because in the disagreement strata the proxy is uncertain ($\overline{\pi(1-\pi)}$ is large) and the closed forms \eqref{eq:dif-closed} are bounded; a sharper latent score hardly changes them. For miscalibrated proxies
+(bottom), unbiasedness and coverage are unaffected (coverage 0.947--0.953), LIN keeps tracking the Monte Carlo gain (median ratio 0.99 to 1.01) and ANT, which assumes calibration, does not. The theory's two warnings appear. First, an inverted proxy ($\kappa=-1$) makes the difference estimator \emph{worse} than the plain estimator for the error difference
+(gain 0.76, that is 1.3 times the mean squared error, as LIN predicts), while the rate differences still gain 1.4 to 1.5. The design-weighted slope $\bar\beta=\sum_hc_h\mathrm{Cov}_h(z,\tilde z)/\sum_hc_hS^2_{\tilde z,h}$ of the error difference is $-1.02$, the clipped coefficient is $0$ and TUNE, which here recovers the plain estimator, is 1.32 $=1/0.76$. Second, a constant proxy $\pi_i\equiv\frac12$ ($\kappa=0$) is uninformative for the error difference (gain exactly 1, since $\tilde z\equiv0$) but not for the
+rate differences (1.9 and 2.0, TUNE 1.03 and 1.04), because $\tilde z_i$ still carries the known pattern of $D_i$. Third, the threshold $\beta<\frac12$ of Proposition~\ref{prop:dif-var}(a) is visible: for the error difference $\bar\beta$ is 1.02 at $\kappa=1$, 0.62 at $\kappa=2$ (gain 1.08) and 0.44 at $\kappa=4$ (gain 0.96), so an over-sharp proxy gains little for the rate differences (1.8--1.9) and crosses to a loss for the error difference.
+
+\paragraph{Zero-variance strata and the floor.} The residual floor \eqref{eq:floor} was evaluated on four pools at $L=250$ ($R=1000$). At Churn the difference estimator alone raises the worst-estimand coverage from 0.52 (plain estimator, \texttt{results/label\_baselines.json}) to 0.84 (0.87 in this run), because
+$\hat e_i=-\pi_i\hat d_i$ varies even when no positive is sampled; at Law school it does not (0.64 for both). Where the problem persists the floor repairs it: for Law school mean coverage rises from 0.913 to 0.954 and the worst-estimand coverage from 0.65 to 0.89; for Adult-sex and Credit card default the mean rises from 0.942 to 0.946 and from 0.949 to 0.955 with the worst estimand unchanged (0.85 and 0.92); at Churn the floor is active in 0.2\% of
+(replication, estimand) pairs and changes nothing (0.938). The floor widens the intervals by a median factor of 1.00 (90th percentile 1.08, 1.15, 1.33 for Adult-sex, Credit card and Law school). It does not alter the point estimate. As in Section~\ref{sec:ablations} it is a safeguard chosen after seeing the failure, and these numbers are not an out-of-sample test.
+
 \subsection{Summary}
 
 The linearised design effect predicts the efficiency of the implemented design to within Monte
@@ -254,4 +365,5 @@ own-target efficiency is 0.90 to 1.47 times the formula for $\rho\ge5\%$), and i
 target size. With nine models it overstates the gain on real pools by a median factor of about two,
 because the counts $K$ locate any disagreement but not that of a specific pair; the bounds
 $1/\rho_{\rm any}\le\mathrm{Eff}\le1/\rho$ of \eqref{eq:deff-sandwich} describe this gap. The gain vanishes
-only as the disagreement rate approaches one, as in EEG ($\rho_{\rm any}=0.73$, efficiency 1.6--1.9).
+only as the disagreement rate approaches one, as in EEG ($\rho_{\rm any}=0.73$, efficiency 1.6--1.9). For the difference estimator the linearised residual variance predicts the observed gain over the plain estimator within Monte Carlo error
+(median ratio 0.98 over 34 pool--budget cells; Section~\ref{sec:sim-dif}), the label-free forecast does so except in Law school, and the gain is moderate (median 1.47) rather than a doubling.
