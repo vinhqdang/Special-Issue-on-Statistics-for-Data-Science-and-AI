@@ -1,1 +1,44 @@
-% setting (to be written)
+\section{Problem setting}\label{sec:setting}
+
+\subsection{Pool, models and labels}
+We consider a pool $U=\{1,\dots,N\}$ of instances drawn from the deployment population and $M\ge 2$ binary classifiers that have already been trained elsewhere. For every instance $i\in U$ the following quantities are available before any label is collected: the predictions $\hat y_{mi}\in\{0,1\}$ and predicted probabilities $\hat p_{mi}\in[0,1]$ of every model $m=1,\dots,M$, and the value $G_i\in\{0,1\}$ of a binary group attribute. The label $Y_i\in\{0,1\}$ is unknown. It can be obtained for any instance, at a cost of one unit, and the analyst can afford $L\ll N$ labels. The group attribute is assumed to be recorded for all instances, which is the usual situation when a protected attribute is part of the data used for auditing even when it is not used for prediction. The labels are treated as fixed; all randomness comes from the choice of which instances to label. Inference therefore refers to the finite pool, which is the natural target when the pool is the population on which the models will be used, and it extends to the superpopulation in the usual way when the pool is a random sample from it \citep[Chapter~13]{sarndal1992}.
+
+This setting differs from the classical evaluation protocol, in which a labelled test set of fixed size is given and the only question is how to analyse it. Here the question is also how to spend a labelling budget. It also differs from active learning: the models are fixed, and labels are collected only to compare them.
+
+\subsection{Totals and estimands}
+All quantities of interest are smooth functions of a small number of population totals, each of which is linear in the labels. For a group $g\in\{0,1\}$ and model $m$ define
+\begin{align}
+P_g &= \sum_{i:G_i=g} Y_i, & Q_g &= \sum_{i:G_i=g} (1-Y_i),\label{eq:PQ}\\
+TP_{mg} &= \sum_{i:G_i=g} Y_i\,\hat y_{mi}, & FP_{mg} &= \sum_{i:G_i=g} (1-Y_i)\,\hat y_{mi}, \qquad E_m=\sum_{i\in U}|\hat y_{mi}-Y_i|.\label{eq:TPFP}
+\end{align}
+Each total has the form $T_c=\sum_{i\in U} t_{ic}(Y_i)$ with $t_{ic}(Y_i)=Y_i u_{ic}+(1-Y_i)v_{ic}$, where $u_{ic}$ and $v_{ic}$ are known for every instance. For example, $TP_{mg}$ has $u_{ic}=\mathbf 1\{G_i=g\}\hat y_{mi}$ and $v_{ic}=0$, and $E_m$ has $u_{ic}=1-\hat y_{mi}$ and $v_{ic}=\hat y_{mi}$. We collect the totals in a vector $T$ of length $C=4M+4+M$.
+
+The group-wise true and false positive rates are $\mathrm{TPR}_{mg}=TP_{mg}/P_g$ and $\mathrm{FPR}_{mg}=FP_{mg}/Q_g$. The between-group gaps of model $m$ are
+\begin{equation}
+\Delta^{\mathrm{TPR}}_m=\mathrm{TPR}_{m1}-\mathrm{TPR}_{m0},\qquad \Delta^{\mathrm{FPR}}_m=\mathrm{FPR}_{m1}-\mathrm{FPR}_{m0},
+\end{equation}
+and the equalised-odds gap is $\mathrm{EO}_m=\max(|\Delta^{\mathrm{TPR}}_m|,|\Delta^{\mathrm{FPR}}_m|)$ \citep{hardt2016}. A model with small gaps treats the two groups more similarly in terms of error rates.
+
+Our primary estimands are comparisons between models. For a pair $(m,j)$ let
+\begin{equation}\label{eq:theta}
+\theta^{\mathrm{TPR}}_{mj}=\Delta^{\mathrm{TPR}}_m-\Delta^{\mathrm{TPR}}_j,\qquad
+\theta^{\mathrm{FPR}}_{mj}=\Delta^{\mathrm{FPR}}_m-\Delta^{\mathrm{FPR}}_j,\qquad
+\theta^{\mathrm{ERR}}_{mj}=(E_m-E_j)/N .
+\end{equation}
+A negative $\theta^{\mathrm{TPR}}_{mj}$ means, for instance, that model $m$ has a smaller signed TPR gap than model $j$. We write $\theta=f(T)$ for the vector of all $3\binom{M}{2}$ comparisons, where $f$ is a known smooth map on the region where $P_g,Q_g>0$. The signed gaps rather than their absolute values are used as primary estimands because they are smooth functions of the totals; the non-smooth equalised-odds gap and the ranking of models by it are studied in Section~\ref{sec:ablations}.
+
+\subsection{Why comparisons on fairness are label-hungry}
+Under simple random sampling (SRS) of $L$ labels, the TPR of a group is estimated from the positives of that group that happen to be sampled, about $L\,P_g/N$ of them. In the Adult data with sex as the group, female positives make up 3.6\% of the pool, so a budget of 1,000 labels yields on average 36 relevant instances for $\mathrm{TPR}_{m1}$. An earlier analysis of the same data settings (Section~\ref{sec:intro}) found that certifying a regret of 0.01 in the equalised-odds gap required on the order of $10^5$ randomly sampled labels, against about $10^3$ for the error rate. Simply oversampling the minority group helps less than one might expect, because each group-wise rate is also a ratio whose denominator must be estimated, and because the comparison of two models depends on the difference of their predictions rather than on each prediction separately.
+
+\subsection{Two structural facts}
+Two features of the problem can be exploited by the sampling design.
+
+\emph{Comparisons depend only on disagreements.} Write $s_1=+1$ and $s_0=-1$. Then
+\begin{equation}\label{eq:identity}
+\theta^{\mathrm{TPR}}_{mj}=\sum_{g\in\{0,1\}} \frac{s_g}{P_g}\sum_{i:G_i=g} Y_i\,(\hat y_{mi}-\hat y_{ji}),
+\end{equation}
+and similarly for $\theta^{\mathrm{FPR}}_{mj}$ with $(1-Y_i)$ and $Q_g$, while $N\theta^{\mathrm{ERR}}_{mj}=\sum_i(\hat y_{mi}-\hat y_{ji})(1-2Y_i)$. The numerators vanish on every instance where $m$ and $j$ predict the same label. Competing models that are all reasonably accurate agree on most instances; in our eleven data settings the three most accurate of nine models disagree, averaged over their three pairs, on between 0.0\% and 9.5\% of the pool (Table~\ref{tab:data}). Labels spent on instances where all models agree inform only the denominators $P_g$ and $Q_g$.
+
+\emph{Everything except the label is known in advance.} The group of every instance and the full vector of predictions are known before labelling. A design can therefore condition on them freely, and on the predicted probabilities, without introducing any bias, because the inclusion probabilities are known.
+
+The design proposed in Section~\ref{sec:design} uses both facts: it stratifies the pool by group and by how many models predict the positive class, and it allocates labels across strata to minimise the variance of all comparisons at once.

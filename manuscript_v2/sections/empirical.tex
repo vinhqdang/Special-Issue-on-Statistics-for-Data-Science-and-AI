@@ -1,1 +1,43 @@
-% empirical (to be written)
+\section{Empirical study on eleven data settings}\label{sec:empirical}
+
+\subsection{Data, models and protocol}
+We use eleven settings built from ten public binary classification data sets available on OpenML (Table~\ref{tab:data}; details in Appendix~\ref{app:data}). In five settings the group is a protected attribute: sex or race in Adult, age below 30 in Bank Marketing, sex in the credit-card default data and race in the law-school admission data. In the other six the group is an arbitrary split of the first numeric feature at its median, removed from the features; these settings have no fairness meaning but test the design on a wider range of prediction structures. A twelfth candidate (Nomao) was excluded because its arbitrary group contains no positive instances.
+
+Each data set is split once into a training part (60\%) and a pool (40\%); data sets above 30,000 rows were first subsampled to 30,000. Nine classifiers are trained on the training part with scikit-learn: logistic regression with default and with strong regularisation, decision trees of depth 3 and 12, a random forest, histogram gradient boosting, 25-nearest neighbours, Gaussian naive Bayes and a multilayer perceptron. Their predictions and predicted probabilities on the pool, together with the group attribute, are all the design uses. The pool labels play two roles: they answer label queries, and they define the true values of the estimands, so that the error of every estimate is known exactly.
+
+For each setting and budget $L\in\{250,500,1000,2000\}$ with $L\le N/4$, we draw 200 independent labelled samples under each design and compute the $3\binom{9}{2}=108$ comparison estimands of \eqref{eq:theta}. The efficiency of a design is the ratio of the mean squared error under SRS to that under the design, computed for each estimand and summarised by the median over estimands; an efficiency of 4 means that SRS needs about four times as many labels to reach the same accuracy. Efficiencies are computed over the samples in which both designs give finite estimates; SRS produced an undefined estimate (no sampled positive in a group) in at most 0.5\% of its samples, and PATTERN and GROUP never did. The code and all results are in the repository (\texttt{experiments/label\_efficiency.py}, \texttt{results/label\_efficiency.json}).
+
+\begin{table}[t]\centering\small
+\caption{Data settings. Pool: size of the held-out pool from which labels are drawn. $P_0,P_1$: positives in each group. Disagreement: share of pool instances on which two of the three most accurate models disagree, averaged over the three pairs. Groups marked ``arbitrary'' are median splits of a numeric feature.}\label{tab:data}
+\input{tables/data.tex}
+\end{table}
+
+\subsection{Efficiency}
+Table~\ref{tab:inference} and Figure~\ref{fig:efficiency} summarise the results; Table~\ref{tab:efficiency} gives every setting. Across settings, the median efficiency of PATTERN relative to SRS was 3.7 at $L=250$, 3.9 at $L=500$, 4.4 at $L=1000$ and 7.3 at $L=2000$. Excluding the degenerate law-school setting discussed below, it ranged from 1.7 to 7.2 at $L=250$ and from 4.1 to 15.7 at $L=2000$. The efficiency grows with the budget because larger budgets allow the design to label a larger share of the small disagreement strata, where the variance of the comparisons is concentrated.
+
+The GROUP design had a median efficiency of 1.0 at every budget. Oversampling the minority group, on its own, therefore did not improve the comparison of models in these settings: the variance of a contrast between two models is driven by the instances on which they disagree, and these are spread over both groups. Relative to GROUP, PATTERN was 3.8 to 5.8 times as efficient (medians by budget). The allocation computed from the true labels (ORACLE-ALLOC) was only marginally better than the proxy allocation (medians 3.8, 4.1, 4.1 and 7.8), and at $L=1000$ the proxy allocation was slightly ahead; the average predicted probability of nine models is an adequate proxy for computing the allocation.
+
+Efficiency differed by estimand. At $L=1000$ it was 6.8 for $\theta^{\mathrm{TPR}}$, 4.1 for $\theta^{\mathrm{FPR}}$ and 4.0 for $\theta^{\mathrm{ERR}}$ in Adult with sex as the group, and 13.3, 8.7 and 3.5 in Adult with race; contrasts of true positive rates, which depend on the rarest cells (positives in the minority group), gained most in these two settings. For the pairs formed by the three most accurate models, which are the comparisons a practitioner is most likely to care about, the median efficiency was 2.7, 3.8, 3.6 and 5.6 at the four budgets.
+
+\begin{figure}[t]\centering
+\includegraphics[width=\textwidth]{figures/efficiency.pdf}
+\caption{Left: efficiency of PATTERN relative to SRS (median over the 108 comparison estimands) by label budget, one line per setting (law school omitted). Right: efficiency at $L=500$ against the disagreement rate among the three most accurate models.}\label{fig:efficiency}
+\end{figure}
+
+\subsection{Efficiency and disagreement}
+The gain is larger when the models disagree less (Figure~\ref{fig:efficiency}, right). The Spearman correlation between the disagreement rate and the efficiency at $L=500$ was $-0.65$ over nine settings ($p=0.06$), and $-0.62$ at $L=250$ over ten settings ($p=0.05$). The three settings with the highest disagreement (EEG, electricity and phoneme, 8.6\% to 9.5\%) had the smallest gains, 1.7 to 3.6. The relation is not exact, because efficiency also depends on the size of the minority-positive cells and on the magnitude of the contrasts; Section~\ref{sec:theory} makes this precise and Section~\ref{sec:simulation} checks it.
+
+Two settings are atypical. In the law-school data all nine models predict almost identically (the three best models disagree on fewer than 0.01\% of instances); PATTERN then labels almost every disagreement instance and the contrasts are estimated nearly exactly, so the efficiency ratios (10 to 21 at budgets up to 1,000, and numerically unbounded at $L=2000$) say little beyond the fact that SRS wastes labels on agreements. In the churn data (a pool of 2,000) the efficiency at $L=500$ was 32 overall, driven by contrasts of false positive rates and of errors (31 and 62) that are concentrated in very few instances.
+
+\begin{table}[p]\centering\footnotesize
+\caption{Efficiency (ratio of mean squared errors, median over estimands) by setting and budget. ``vs GROUP'': efficiency of PATTERN relative to the GROUP design. The last three columns are medians over the estimands of each type. Values above 1000 arise when PATTERN labels essentially all disagreement instances.}\label{tab:efficiency}
+\input{tables/efficiency.tex}
+\end{table}
+
+\subsection{Inference and decisions}
+Table~\ref{tab:inference} reports the coverage of nominal 95\% intervals and the probability of estimating the correct sign of a contrast whose true value exceeds 0.02 in absolute value. The mean coverage of the PATTERN intervals was 0.944 at $L=250$ and between 0.947 and 0.951 at larger budgets. Under SRS it was 0.931 to 0.949, and the worst-covered estimand had coverage as low as 0.11 at $L=250$, because SRS samples often contain no disagreement instance in a small cell and then produce a zero standard error. The worst-covered estimand under PATTERN had coverage 0.53 at $L=250$ (in the churn setting), 0.83 at $L=500$ and 0.89 at $L\ge1000$; small budgets in small pools are where the Wald intervals are least reliable, and Section~\ref{sec:ablations} examines alternatives. The probability of getting the direction of a contrast right rose from 0.85 to 0.92 at $L=250$ and from 0.92 to 0.97 at $L=1000$ (medians over settings), so that with 1,000 labels the design almost always ranks two models correctly on a fairness criterion whenever they differ by more than two percentage points.
+
+\begin{table}[t]\centering\small
+\caption{Quality of inference by budget (medians over settings unless stated). Coverage: share of nominal 95\% intervals containing the true value, averaged over estimands (mean) or for the worst estimand over all settings (worst). Correct sign: share of estimates with the sign of the true contrast, among contrasts with absolute value above 0.02. SRS failures: largest share of SRS samples with an undefined estimate.}\label{tab:inference}
+\input{tables/inference.tex}
+\end{table}
