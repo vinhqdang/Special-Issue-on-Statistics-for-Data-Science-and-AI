@@ -1,0 +1,18 @@
+\begin{tabular}{lcccccccccc}
+\toprule
+ & \multicolumn{3}{c}{Proxy in allocation only (HT)} & \multicolumn{4}{c}{Proxy in both (DIF)} & \multicolumn{2}{c}{DIF, ensemble in estimator} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-8}\cmidrule(lr){9-10}
+Proxy & Eff. & Rel. & worst & Eff. & Rel. & mean & worst & Eff. & Rel. \\
+\midrule
+Ensemble mean $\pi$ (default) & 3.97 & 0.65 & 0.858 & 6.27 & 1.00 & 0.945 & 0.877 & 6.27 & 1.00 \\
+Single model (logistic) & 3.96 & 0.64 & 0.861 & 5.56 & 0.87 & 0.943 & 0.886 & 6.01 & 0.99 \\
+Single model (naive Bayes) & 4.05 & 0.63 & 0.858 & 3.88 & 0.58 & 0.942 & 0.873 & 5.99 & 1.01 \\
+Constant 0.5 & 3.97 & 0.62 & 0.850 & 5.71 & 0.84 & 0.940 & 0.858 & 6.01 & 0.99 \\
+$\pi$ shuffled within group & 3.95 & 0.62 & 0.854 & 3.70 & 0.53 & 0.949 & 0.889 & 6.12 & 0.99 \\
+$\pi$ with logit noise (sd 2) & 4.05 & 0.64 & 0.854 & 3.46 & 0.61 & 0.949 & 0.877 & 5.91 & 0.99 \\
+Reversed, $1-\pi$ & 3.99 & 0.63 & 0.859 & 4.38 & 0.66 & 0.941 & 0.872 & 6.23 & 0.99 \\
+True labels (allocation only) & 3.71 & 0.64 & 0.865 & -- & -- & -- & -- & 6.01 & 1.00 \\
+\addlinespace
+Proportional allocation (no proxy in allocation) & 2.05 & 0.38 & 0.819 & 3.75 & 0.57 & 0.943 & 0.877 & -- & -- \\
+\bottomrule
+\end{tabular}

@@ -1,0 +1,23 @@
+\begin{tabular}{lccccccc}
+\toprule
+ & \multicolumn{3}{c}{Efficiency vs SRS} & & & \multicolumn{2}{c}{Coverage} \\
+\cmidrule(lr){2-4}\cmidrule(lr){7-8}
+Variant (estimator DIF unless stated) & $L=250$ & 500 & 1000 & Rel. & Win & mean & worst \\
+\midrule
+PATTERN-DIF (default) & 6.27 & 6.18 & 6.37 & 1.00 & -- & 0.945 & 0.877 \\
+\addlinespace
+\multicolumn{8}{l}{\emph{A1: stratifier}}\\
+Group $\times$ agree/disagree & 4.33 & 4.65 & 4.81 & 0.74 & 0.07 & 0.946 & 0.881 \\
+Group $\times$ pattern of 3 models & 2.82 & 2.98 & 3.43 & 0.38 & 0.00 & 0.941 & 0.867 \\
+Group $\times K\times$ 2 proxy bins & 6.75 & 6.42 & 7.18 & 1.01 & 0.52 & 0.943 & 0.877 \\
+Group $\times K\times$ 3 proxy bins & 6.79 & 5.90 & 6.61 & 0.99 & 0.38 & 0.945 & 0.890 \\
+PATTERN, residual allocation & 5.64 & 6.02 & 6.68 & 0.96 & 0.45 & 0.945 & 0.886 \\
+\addlinespace
+\multicolumn{8}{l}{\emph{References}}\\
+GROUP-DIF (strata = group) & 2.10 & 2.04 & 2.07 & 0.28 & 0.00 & 0.941 & 0.850 \\
+SRS-DIF (PPI, $\lambda=1$) & 1.83 & 1.91 & 1.92 & 0.28 & 0.00 & 0.938 & 0.844 \\
+Proportional allocation (no proxy) & 3.85 & 3.75 & 3.50 & 0.57 & 0.03 & 0.943 & 0.877 \\
+Gap-targeted allocation (A5) & 5.36 & 5.26 & 5.22 & 0.74 & 0.00 & 0.941 & 0.866 \\
+PATTERN, plug-in (HT) & 3.63 & 3.93 & 4.34 & 0.65 & 0.00 & 0.944 & 0.858 \\
+\bottomrule
+\end{tabular}

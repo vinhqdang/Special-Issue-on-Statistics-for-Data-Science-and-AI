@@ -1,0 +1,20 @@
+\begin{tabular}{lcccccccc}
+\toprule
+ & \multicolumn{3}{c}{$L=250$, all} & \multicolumn{2}{c}{$L=250$, small} & \multicolumn{2}{c}{$L\ge 500$} & \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-6}\cmidrule(lr){7-8}
+Method & mean & worst & min & worst & min & worst & min & Width \\
+\midrule
+Wald (default) & 0.941 & 0.852 & 0.633 & 0.827 & 0.633 & 0.892 & 0.833 & 1.00 \\
+Wald + floor 'zero' & 0.947 & 0.876 & 0.780 & 0.893 & 0.873 & 0.893 & 0.833 & 1.00 \\
+Wald + floor 'max' & 0.985 & 0.948 & 0.920 & 0.953 & 0.933 & 0.939 & 0.920 & 1.67 \\
+$t$, Satterthwaite df & 0.945 & 0.865 & 0.700 & 0.850 & 0.700 & 0.893 & 0.833 & 1.01 \\
+$t$ + floor 'zero' & 0.950 & 0.885 & 0.787 & 0.905 & 0.887 & 0.894 & 0.833 & 1.01 \\
+Stratified bootstrap & 0.950 & 0.878 & 0.767 & 0.893 & 0.767 & 0.918 & 0.860 & 1.11 \\
+\addlinespace
+\multicolumn{9}{l}{\emph{References}} \\
+SRS-DIF (PPI), Wald & 0.934 & 0.818 & 0.267 & 0.725 & 0.267 & 0.860 & 0.400 & 1.00 \\
+SRS-DIF, Wald + floor 'max' & 0.976 & 0.929 & 0.900 & 0.942 & 0.900 & 0.929 & 0.880 & 1.23 \\
+SRS-DIF, bootstrap & 0.924 & 0.741 & 0.100 & 0.678 & 0.100 & 0.818 & 0.153 & 1.12 \\
+PATTERN plug-in (HT), Wald & 0.940 & 0.807 & 0.473 & 0.728 & 0.473 & 0.890 & 0.800 & -- \\
+\bottomrule
+\end{tabular}
