@@ -37,3 +37,8 @@ Useful next steps, in order: repeat the main study over several splits for all s
 
 ## Technical check (editorial support)
 - Amendment required: a Funding Declaration was missing. Added to the main paper (Statements and Declarations): funding - no specific funding; competing interests - none relevant (both confirmed by the author). Only these two lines of `manuscript_sn.tex` changed (verified by a diff of the generated file); the Supplementary Information is unchanged. Reply requested within 2 days of the email; resubmit from the Review page.
+
+## Resubmission after the technical check
+- The author resubmitted the amended manuscript through the submission system (reported 5 November 2026), within the 2-day window, from the Review page.
+- Version resubmitted: main paper `manuscript_v2/springer/manuscript_sn.tex` with the Funding and Competing-interests statements added (see the previous section); Supplementary Information and all other files unchanged. Repository commit with the amended declarations: see the `git log` entry "Add funding and competing-interests declarations after the technical check".
+- Status: awaiting the editorial decision / reviewer assignment. Manuscript ID `237ff86b-2ef7-4285-910e-ba200d462db6`. [Update here with the new version number (v1.1 or v2.0) and any editor's message.]
