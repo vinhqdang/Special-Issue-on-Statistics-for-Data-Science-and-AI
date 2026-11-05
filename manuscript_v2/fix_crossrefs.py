@@ -1,7 +1,7 @@
 """Rewrite cross-document references: main files use \\SIref for labels defined in SI files, SI files use \\Mref for labels defined in main files."""
 import re, pathlib
 S = pathlib.Path("sections")
-MAIN = ["introduction", "related", "setting", "design", "theory", "numcheck", "testing", "testing_sim", "empirical", "extra_splits", "extra_population", "baselines", "ablations", "guidance", "discussion"]
+MAIN = ["introduction", "related", "setting", "design", "theory", "numcheck", "testing", "testing_sim", "empirical", "extra_splits", "extra_population", "baselines", "ablations", "guidance", "discussion", "declarations"]
 SI = ["appendix_proofs", "si_theory_extra", "si_testing", "si_testing_sim", "simulation", "si_baselines", "si_ablations", "appendix_ablations", "appendix_data"]
 def expand(t):
     return re.sub(r"\\input\{tables/([^}]+?)(?:\.tex)?\}", lambda m: (pathlib.Path("tables") / (m.group(1) + ".tex")).read_text(), t)

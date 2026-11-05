@@ -19,7 +19,7 @@ root = pathlib.Path("manuscript_v2"); out = root / "springer"; out.mkdir(exist_o
 OFFICIAL = pathlib.Path(sys.argv[1]) if len(sys.argv) > 1 else None
 
 MAIN = ["introduction", "related", "setting", "design", "theory", "numcheck", "testing", "testing_sim", "empirical", "extra_splits",
-        "extra_population", "baselines", "ablations", "guidance", "discussion"]
+        "extra_population", "baselines", "ablations", "guidance", "discussion", "declarations"]
 SI = ["appendix_proofs", "si_theory_extra", "si_testing", "si_testing_sim", "simulation", "si_baselines", "si_ablations", "appendix_ablations", "appendix_data"]
 
 
