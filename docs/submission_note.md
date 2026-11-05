@@ -5,7 +5,7 @@
 **Article type:** Regular paper.
 **Title:** Labelling where models disagree: label-efficient comparison of classifiers on group fairness.
 **Author:** Quang-Vinh Dang, British University Vietnam (vinh.dq4@buv.edu.vn).
-**Manuscript ID / submission date in the system:** [fill in from the confirmation email]
+**Manuscript ID:** 237ff86b-2ef7-4285-910e-ba200d462db6 (v1.0)
 
 ## Version submitted
 - Repository state at the last commit before submission: `67c2243` on `main` (https://github.com/vinhqdang/Special-Issue-on-Statistics-for-Data-Science-and-AI).
@@ -34,3 +34,6 @@
 
 ## If revisions are requested
 Useful next steps, in order: repeat the main study over several splits for all settings; real-data check of the two-phase interval; a refit-aware variant; sequential/active comparison; tighten the weakest assumptions (A5), (A4_K), (P3).
+
+## Technical check (editorial support)
+- Amendment required: a Funding Declaration was missing. Added to the main paper (Statements and Declarations): funding - no specific funding; competing interests - none relevant (both confirmed by the author). Only these two lines of `manuscript_sn.tex` changed (verified by a diff of the generated file); the Supplementary Information is unchanged. Reply requested within 2 days of the email; resubmit from the Review page.
