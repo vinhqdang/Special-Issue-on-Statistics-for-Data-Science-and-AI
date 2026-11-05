@@ -1,0 +1,93 @@
+\section{Additional testing simulations}\label{si:testing-sim}
+
+This section gives the protocol and the full tables of the simulations summarised in Section~\Mref{sec:testing-sim}. All results come from \texttt{experiments/testing\_sim.py} (library: \texttt{tcs/labeling\_tests.py}, unit tests: \texttt{tests/test\_labeling\_tests.py}) and are stored in \texttt{results/testing\_sim.json}; a summary is in \texttt{results/testing\_sim\_summary.json}.
+
+\subsection{Protocol}
+
+\paragraph{Population with known nulls.} Covariates $x\in\mathbb R^5$ are standard normal, the group has prevalence $0.3$, and $Y\sim\mathrm{Bernoulli}\{\mathrm{expit}(\beta^\top x-0.2+0.3G)\}$ with $\beta=(1,-0.8,0.6,0,0)$, as in the non-smooth simulation. Model $m$ predicts $1\{\mathrm{expit}(s_m(\beta_m^\top x+o_mG))>1/2\}$. Models $0$ to $3$ have the weight on $x_4$ of the form $\beta_{m4}=\pm c_m$, $c_m\in[0.6,1]$ and $\beta_{m5}=0$; model $m+4$ copies model $m$ except that the weight is on $x_5$. Model $8$ uses neither. Since $(x_4,x_5)$ are exchangeable, independent of each other and of $(x_1,x_2,x_3,G,Y)$, the law of $(\hat Y_m,Y,G)$ equals that of $(\hat Y_{m+4},Y,G)$, so the three contrasts of the pairs $(m,m+4)$, $m=0,\dots,3$, are exactly zero in the population: $12$ true nulls out of $108$. The Monte Carlo value of these $12$ contrasts from $2\times10^7$ draws is at most $0.001$ in absolute value, consistent with the Monte Carlo error; they are set to zero. The smallest $|\theta_k|$ among the other contrasts is $0.007$, and $80$ contrasts have $|\theta_k|\ge0.02$ (``material'' false nulls). Because the contrasts are zero only in the population, the null family is tested only for the population target; for the pool target the family in which every hypothesis is true ($H_k:\theta_k=\theta_k^{\rm pool}$) is used.
+
+\paragraph{Estimators and variances.} SRS and PATTERN use the plug-in (expansion) estimator, PATTERN-DIF the difference estimator with the ensemble-mean proxy, strata $(G,K)$, plain Neyman allocation with a floor of $10$ labels per stratum, and no variance floor. The covariance matrix $\hat\Sigma$ is the stratified covariance of the residual influence values (difference estimator) or of the influence values (plug-in); its diagonal equals the variances of \texttt{tcs.labeling\_dif} and \texttt{tcs.labeling}, which is checked in the unit tests. For the population target the pool covariance $\hat\Sigma_{\rm pool}$ is added. Holm's step-down procedure \citep{holm1979} uses the Wald $p$-values. The single-step max-$t$ critical value uses $20{,}000$ standard normal draws with a fixed seed, transformed by the eigen-decomposition of $\hat R$ (negative eigenvalues set to zero and the margins renormalised); it is the exact normal quantile for $K=1$ and the Sidak value if $\hat R=I$ (unit tests). Bonferroni and Holm have the same FWER when all hypotheses are true, which is why the tables show identical values for the all-true families.
+
+\paragraph{Replications.} Synthetic study: $R=1000$ new pools per cell (no cell was reduced), six $(N,L)$ cells, $L\le N/4$; seeds are a function of the cell. Undefined estimates (an empty stratum or a non-positive denominator total) occurred in no replication. Real pools: the eleven settings of the main study (contrasts that are identically zero in the pool are excluded: $K=108$, except $57$ in Law school), $L\in\{250,500,1000,2000\}$ with $L\le N/4$, $R=400$ (reduced from $1000$ because of the number of cells), pool contrasts from all labels. Power curves: seven budgets between $200$ and $\min(4000,N/4)$, $R=1000$; the synthetic pool for this study and the next is one fixed pool of $N=20{,}000$ units (pool-conditional target). Power-optimal design: $R=1000$ per allocation. The budget for $80\%$ power is found by linear interpolation of power in $\log L$ between the grid points straddling $0.8$; it is censored if the curve starts above or ends below $0.8$.
+
+\paragraph{Predictions.} The predicted power uses $\Phi(-z+|\Delta|/\sqrt V)+\Phi(-z-|\Delta|/\sqrt V)$ with $V$ the exact design variance of the estimator, $V_k(n)=\sum_hN_h^2(1/n_h-1/N_h)S^2_{hk}$, where $S^2_{hk}$ is the finite-population variance within stratum $h$ of the (residual) influence value of contrast $k$ at the true totals of the pool, and $n_h$ the allocation used at that budget. The predicted budget is found on a grid of $40$ budgets with the same interpolation as for the simulated curves. Contrasts were chosen per setting among those whose predicted budgets for SRS, PATTERN and PATTERN-DIF are all inside the grid, six at evenly spaced ranks of the SRS budget. Law school, Spambase and Churn have no such contrasts (budget range too small or effects too small or too large) and are not in the power study.
+
+\paragraph{Power-optimal allocation.} The maximin allocation minimises $\max_kV_k(n)/\delta_k^2$ over $\sum_hn_h=L$, $\min(N_h,10)\le n_h\le N_h$, with $V_k$ from the proxy variance model of the residual influence values (label free); it is solved by mirror descent on the dual weights, with the duality gap reported ($\le0.13\%$ in all eight problems) and the integer allocation obtained by rounding. Performance is evaluated by simulating the labelling with each allocation and testing, for every targeted contrast, the null value $\theta^0_k$ whose distance from the truth is the target effect (for E1, $\theta^0_k=0$; for E2, $\theta_k^0=\theta_k-\mathrm{sign}(\theta_k)\times0.05$), using the true contrasts to define the targets. The minimum over contrasts of a simulated power is biased downwards by Monte Carlo noise (about $0.02$ to $0.04$ for $R=1000$); the predicted minimum, computed from the exact variances of the allocation used, is free of it and agrees with the simulated one within this bias.
+
+\subsection{Size}
+
+\begin{table}[p]
+\centering\scriptsize
+\caption{Size of the two-sided Wald test of the true value, mean and maximum over $108$ contrasts, by design, budget and level ($R=1000$). ``Pool, cond.'': pool-conditional test of the pool contrast. ``Pop., two-phase'': two-phase test of the population contrast. The maximum of a calibrated test has mean $0.019$, $0.068$, $0.125$ at $\alpha=0.01$, $0.05$, $0.10$.}\label{tab:test-size-full}
+\input{tables/test_size_full}
+\end{table}
+
+\begin{table}[p]
+\centering\small
+\caption{Rejection rate of the pool-conditional two-sided Wald test of the \emph{population} value (PATTERN-DIF, $R=1000$). The pool term is ignored, so the size exceeds the level when $\varpi$ is large.}\label{tab:test-size-popdesign}
+\input{tables/test_size_popdesign}
+\end{table}
+
+\begin{table}[p]
+\centering\scriptsize
+\caption{Rejection rates at the boundary of the null for pool-conditional tests of the pool contrast: one-sided tests ($H_0:\theta\ge\theta_0$ and $H_0:\theta\le\theta_0$, the first being a non-inferiority test with margin $\theta_0$) and TOST of $H_0:|\theta|\ge\delta$ with $\delta=|\theta_0|$ so that the truth is on the boundary (contrasts with $|\theta|\ge0.02$ only). Mean and maximum over contrasts.}\label{tab:test-onesided-full}
+\input{tables/test_onesided_full}
+\end{table}
+
+Size is correct to within Monte Carlo error for the pool-conditional tests of the pool contrast and the two-phase tests of the population contrast in all designs and cells (Table~\ref{tab:test-size-full}); the lowest rejection rates of single contrasts are $0.03$ at $\alpha=0.05$, so no contrast is systematically over-covered either. SRS has the largest worst-contrast rates at $L=250$ ($0.081$ at $\alpha=0.05$). The one-sided tests are as accurate as the two-sided ones. The TOST at the boundary is conservative on average, as expected when the margin is small relative to the standard error.
+
+\subsection{Familywise error and power}
+
+\begin{table}[p]
+\centering\scriptsize
+\caption{Synthetic population, $R=1000$, familywise level $0.05$. FWER: at least one rejection among the $12$ true nulls of $H_k:\theta_k=0$ (population target, two-phase covariance). Power: mean rejection rate over the $80$ false nulls with $|\theta_k|\ge0.02$. Covered: share of replications in which no hypothesis of the family $H_k:\theta_k=\theta_k^{\rm true}$ (all $108$ true) is rejected, for the pool target (pool-conditional covariance) and the population target (two-phase covariance); one minus this is the FWER of the all-true family.}\label{tab:test-fwer-full}
+\input{tables/test_fwer_full}
+\end{table}
+
+When all hypotheses are true the simultaneous coverage of the max-$t$ bands for PATTERN-DIF is $0.929$ to $0.951$ (pool target) and $0.935$ to $0.951$ (population target), below the nominal $0.95$ in most cells, while Bonferroni and Holm are at $0.95$ to $0.97$. The shortfall of max-$t$ is largest for SRS and PATTERN at small budgets (coverage $0.91$ to $0.93$ at $L=250$), where the estimated covariance of $108$ contrasts from $250$ labels is noisy, and for the pool target at small pools. We therefore describe max-$t$ as approximately, not exactly, calibrated at these budgets. With the $12$ true nulls the FWER of every adjusted procedure is at most $0.012$. The unadjusted tests have FWER $0.35$ to $0.48$ in this mixed family and a simultaneous coverage of $0.08$ to $0.24$ in the all-true family.
+
+\subsection{Real pools}
+
+\begin{table}[p]
+\centering\small
+\caption{Simultaneous coverage of the $K$ live pool contrasts at familywise level $0.05$ ($R=400$ per row; Monte Carlo standard error about $0.011$ at $0.95$). PATTERN-DIF without floor; Max-$t$ (floor) uses the zero-variance floor of \texttt{tcs.labeling\_dif}. Bonferroni and Holm coincide when every hypothesis is true. $c_{\max t}/c_{\rm Bonf}$: mean max-$t$ critical value over the Bonferroni value.}\label{tab:test-real-cover-full}
+\input{tables/test_real_cover_full}
+\end{table}
+
+\begin{table}[p]
+\centering\small
+\caption{Simultaneous coverage of the family of pool contrasts on the eleven real pools, mean and minimum over setting--budget cells at the budget $L$.}\label{tab:test-real-cover-summary}
+\input{tables/test_real_cover_summary}
+\end{table}
+
+The per-cell values (Table~\ref{tab:test-real-cover-full}) show that the shortfalls of the simultaneous procedures occur where the individual intervals already undercover at small budgets: Law school at $L=250$ (Bonferroni $0.72$, max-$t$ $0.65$) and $L=500$ (max-$t$ $0.89$), MAGIC at $L=250$ (max-$t$ $0.885$, Bonferroni $0.92$) and Spambase at $L=250$ (max-$t$ $0.897$). The zero-variance floor repairs most of Law school at $L=250$ (Bonferroni minimum over cells $0.92$, max-$t$ $0.89$). PATTERN-DIF max-$t$ is at or above $0.93$ in $51\%$ of the cells; in the summary (Table~\ref{tab:test-real-cover-summary}) its mean coverage rises with the budget from $0.90$ to $0.945$. Undefined estimates occurred in at most $0.5\%$ of the replications. Because $\hat\Sigma$ is estimated from the same strata as the standard errors, the simultaneous procedures inherit the small-budget deficiencies of the single intervals and add the noise of the correlation matrix.
+
+\subsection{Power curves and the sample-size check}
+
+\begin{table}[p]
+\centering\scriptsize
+\caption{Label budget for $80\%$ power of the two-sided Wald test of $H_0:\theta_k=0$ by setting. Contr.: number of contrasts with both budgets observed / selected. $V_{\rm SRS}/V_{\rm DIF}$: exact variance ratio at the PATTERN-DIF budget; MSE ratio ($L=500$): median efficiency of PATTERN-DIF against SRS in the main study (\texttt{results/label\_efficiency\_dif.json}); pred.\ and obs.: median over contrasts of the predicted and observed ratio of budgets; Within $\pm20\%$: share of contrasts with observed within $20\%$ of predicted. The last block gives SRS against PATTERN (plug-in).}\label{tab:test-power-full}
+\input{tables/test_power_full}
+\end{table}
+
+The predicted and observed budget ratios agree in every setting (Table~\ref{tab:test-power-full}); the ratio of the budgets is $0.96$ to $1.03$ times the prediction by setting. Two contrasts (one in EEG, one in Phoneme) were censored in the simulation. The ratio of variances at the budget of PATTERN-DIF overstates the budget ratio by $3\%$ to $20\%$ in the median by setting, because of the finite-pool factor. The comparison with the main-study efficiency shows that the latter depends on the budget and on the contrast set: it is the median MSE ratio over all live contrasts at $L=500$, whereas the budget ratio applies to contrasts that SRS can detect within the grid.
+
+\subsection{Power-optimal allocation}
+
+\begin{table}[p]
+\centering\scriptsize
+\caption{Default and maximin allocations for PATTERN-DIF ($R=1000$). E1: the $K_1$ contrasts with $|\theta_k|\ge0.02$ at effect $|\theta_k|$; E2: all $K$ contrasts at a common effect $0.05$. min and mean: minimum and mean over the targeted contrasts of the simulated power; pred.\ min: minimum predicted power; $<80\%$: number of targeted contrasts with simulated power below $0.8$. ``Default (plain)'' is the allocation of the main study, ``Default (resid)'' the Neyman allocation for the residual variance with weights $1/S_k^2$, ``Maximin, E1/E2'' the solution for the targets E1 and E2.}\label{tab:test-opt-full}
+\input{tables/test_opt_full}
+\end{table}
+
+The maximin allocation lowers the largest variance-to-effect ratio of the targeted contrasts (by $1.5$ to $2.0$ in the real pools, $1.05$ on the synthetic pool) and the simulated minimum power follows the prediction. It moves labels to the strata that matter for the hardest contrasts and away from the others, which lowers the mean power and increases the number of contrasts below $80\%$ in several pools. The allocation for the residual variance with the default weights (``resid'') is not better than the default.
+
+\subsection{Limitations}
+\begin{itemize}
+\item The exact nulls exist only in the population and there are only $12$ of them among $108$ hypotheses, so the FWER of the mixed family is far below the nominal level for every adjusted procedure; tightness is assessed through the all-true family.
+\item There is one synthetic design and eleven real pools; the real-pool study has only the all-true family and $R=400$, so coverages are resolved to about $0.01$.
+\item The max-$t$ procedure uses an estimated correlation matrix and showed mild anticonservatism (up to $0.09$ FWER) at small budgets, which the theory does not quantify.
+\item Power was studied for the pool-conditional target and for contrasts whose budgets fall inside the grid; contrasts that need many more labels, or fewer, are not represented, and the target effects are the true contrasts.
+\item The power-optimal allocation uses the true effect sizes and a proxy variance model; with a poorly calibrated proxy the predicted gain need not materialise, and the gains in minimum power are small in absolute terms.
+\item Equivalence and non-inferiority were examined at the boundary of the null only, not their power; the Bonferroni, Holm and max-$t$ procedures were examined for two-sided tests only.
+\end{itemize}

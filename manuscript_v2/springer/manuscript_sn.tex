@@ -5,6 +5,7 @@
 \usepackage{algorithm}\usepackage{algorithmicx}\usepackage{algpseudocode}
 \theoremstyle{thmstyleone}
 \newtheorem{proposition}{Proposition}
+\newtheorem{theorem}[proposition]{Theorem}
 \newtheorem{lemma}[proposition]{Lemma}
 \newtheorem{corollary}[proposition]{Corollary}
 \theoremstyle{thmstyletwo}
@@ -16,7 +17,8 @@
 \newcommand{\SIref}[1]{\ifcsname siref@#1\endcsname\csname siref@#1\endcsname\else\textbf{??}\fi}
 \newcommand{\Mref}[1]{\ifcsname mref@#1\endcsname\csname mref@#1\endcsname\else\textbf{??}\fi}
 \makeatletter
-\expandafter\gdef\csname siref@app:data\endcsname{S7}
+\expandafter\gdef\csname siref@app:data\endcsname{S9}
+\expandafter\gdef\csname siref@cor:uniform\endcsname{S11}
 \expandafter\gdef\csname siref@eq:alloc-loss\endcsname{S7}
 \expandafter\gdef\csname siref@eq:deff-err\endcsname{S9}
 \expandafter\gdef\csname siref@eq:deff-lambda\endcsname{S11}
@@ -30,6 +32,9 @@
 \expandafter\gdef\csname siref@eq:proxy-loss\endcsname{S14}
 \expandafter\gdef\csname siref@eq:resid-forms\endcsname{S2}
 \expandafter\gdef\csname siref@eq:resid-moments\endcsname{S3}
+\expandafter\gdef\csname siref@eq:si-ingredients\endcsname{S15}
+\expandafter\gdef\csname siref@eq:slut-a\endcsname{S16}
+\expandafter\gdef\csname siref@eq:slut-b\endcsname{S17}
 \expandafter\gdef\csname siref@eq:taylor\endcsname{S1}
 \expandafter\gdef\csname siref@fig:abl-coverage\endcsname{S7}
 \expandafter\gdef\csname siref@fig:abl-models\endcsname{S6}
@@ -39,6 +44,9 @@
 \expandafter\gdef\csname siref@fig:sim-dif-synth\endcsname{S4}
 \expandafter\gdef\csname siref@fig:sim-real\endcsname{S1}
 \expandafter\gdef\csname siref@fig:sim-rho\endcsname{S2}
+\expandafter\gdef\csname siref@lem:crit\endcsname{S13}
+\expandafter\gdef\csname siref@lem:slutsky\endcsname{S10}
+\expandafter\gdef\csname siref@lem:strat-clt\endcsname{S12}
 \expandafter\gdef\csname siref@prop:alloc-dif\endcsname{S7}
 \expandafter\gdef\csname siref@prop:deff\endcsname{S8}
 \expandafter\gdef\csname siref@prop:dif-closed\endcsname{S4}
@@ -49,17 +57,29 @@
 \expandafter\gdef\csname siref@prop:proxy\endcsname{S9}
 \expandafter\gdef\csname siref@prop:residual\endcsname{S2}
 \expandafter\gdef\csname siref@rem:zero-var-ext\endcsname{S1}
-\expandafter\gdef\csname siref@sec:app-ablations\endcsname{S6}
-\expandafter\gdef\csname siref@sec:sim-dif\endcsname{S3.4}
-\expandafter\gdef\csname siref@sec:sim-proxy\endcsname{S3.3}
-\expandafter\gdef\csname siref@sec:sim-real\endcsname{S3.1}
-\expandafter\gdef\csname siref@sec:sim-synth\endcsname{S3.2}
-\expandafter\gdef\csname siref@sec:simulation\endcsname{S3}
+\expandafter\gdef\csname siref@sec:app-ablations\endcsname{S8}
+\expandafter\gdef\csname siref@sec:sim-dif\endcsname{S5.4}
+\expandafter\gdef\csname siref@sec:sim-proxy\endcsname{S5.3}
+\expandafter\gdef\csname siref@sec:sim-real\endcsname{S5.1}
+\expandafter\gdef\csname siref@sec:sim-synth\endcsname{S5.2}
+\expandafter\gdef\csname siref@sec:simulation\endcsname{S5}
 \expandafter\gdef\csname siref@sec:theory-proofs\endcsname{S1}
-\expandafter\gdef\csname siref@si:ablation-tables\endcsname{S6}
-\expandafter\gdef\csname siref@si:ablations\endcsname{S5}
-\expandafter\gdef\csname siref@si:baselines\endcsname{S4}
+\expandafter\gdef\csname siref@si:ablation-tables\endcsname{S8}
+\expandafter\gdef\csname siref@si:ablations\endcsname{S7}
+\expandafter\gdef\csname siref@si:baselines\endcsname{S6}
 \expandafter\gdef\csname siref@si:proofs\endcsname{S1}
+\expandafter\gdef\csname siref@si:testing\endcsname{S3}
+\expandafter\gdef\csname siref@si:testing-are\endcsname{S3.3}
+\expandafter\gdef\csname siref@si:testing-clt\endcsname{S3.4}
+\expandafter\gdef\csname siref@si:testing-crit\endcsname{S3.6}
+\expandafter\gdef\csname siref@si:testing-design\endcsname{S3.9}
+\expandafter\gdef\csname siref@si:testing-eo\endcsname{S3.10}
+\expandafter\gdef\csname siref@si:testing-fwer\endcsname{S3.7}
+\expandafter\gdef\csname siref@si:testing-joint\endcsname{S3.5}
+\expandafter\gdef\csname siref@si:testing-pop\endcsname{S3.8}
+\expandafter\gdef\csname siref@si:testing-sim\endcsname{S4}
+\expandafter\gdef\csname siref@si:testing-size\endcsname{S3.2}
+\expandafter\gdef\csname siref@si:testing-slutsky\endcsname{S3.1}
 \expandafter\gdef\csname siref@si:theory-alloc\endcsname{S2.7}
 \expandafter\gdef\csname siref@si:theory-deff\endcsname{S2.8}
 \expandafter\gdef\csname siref@si:theory-deff-ratio\endcsname{S2.3}
@@ -70,32 +90,44 @@
 \expandafter\gdef\csname siref@si:theory-lambda\endcsname{S2.5}
 \expandafter\gdef\csname siref@si:theory-proxy\endcsname{S2.9}
 \expandafter\gdef\csname siref@si:theory-resid\endcsname{S2.1}
-\expandafter\gdef\csname siref@tab:abl-app-cov\endcsname{S14}
-\expandafter\gdef\csname siref@tab:abl-app-eff-design\endcsname{S10}
-\expandafter\gdef\csname siref@tab:abl-app-eff-proxy\endcsname{S11}
-\expandafter\gdef\csname siref@tab:abl-app-eff-proxy-ht\endcsname{S12}
-\expandafter\gdef\csname siref@tab:abl-app-eff-tuned\endcsname{S13}
-\expandafter\gdef\csname siref@tab:abl-app-eo\endcsname{S16}
-\expandafter\gdef\csname siref@tab:abl-app-models\endcsname{S17}
-\expandafter\gdef\csname siref@tab:abl-app-width\endcsname{S15}
-\expandafter\gdef\csname siref@tab:abl-eo\endcsname{S9}
-\expandafter\gdef\csname siref@tab:abl-lambda\endcsname{S18}
-\expandafter\gdef\csname siref@tab:abl-models\endcsname{S8}
-\expandafter\gdef\csname siref@tab:abl-proxy\endcsname{S7}
-\expandafter\gdef\csname siref@tab:base-setting\endcsname{S6}
-\expandafter\gdef\csname siref@tab:sim-dif-real\endcsname{S4}
-\expandafter\gdef\csname siref@tab:sim-dif-syn\endcsname{S5}
-\expandafter\gdef\csname siref@tab:sim-proxy\endcsname{S3}
-\expandafter\gdef\csname siref@tab:sim-real\endcsname{S1}
-\expandafter\gdef\csname siref@tab:sim-syn\endcsname{S2}
+\expandafter\gdef\csname siref@tab:abl-app-cov\endcsname{S22}
+\expandafter\gdef\csname siref@tab:abl-app-eff-design\endcsname{S18}
+\expandafter\gdef\csname siref@tab:abl-app-eff-proxy\endcsname{S19}
+\expandafter\gdef\csname siref@tab:abl-app-eff-proxy-ht\endcsname{S20}
+\expandafter\gdef\csname siref@tab:abl-app-eff-tuned\endcsname{S21}
+\expandafter\gdef\csname siref@tab:abl-app-eo\endcsname{S24}
+\expandafter\gdef\csname siref@tab:abl-app-models\endcsname{S25}
+\expandafter\gdef\csname siref@tab:abl-app-width\endcsname{S23}
+\expandafter\gdef\csname siref@tab:abl-eo\endcsname{S17}
+\expandafter\gdef\csname siref@tab:abl-lambda\endcsname{S26}
+\expandafter\gdef\csname siref@tab:abl-models\endcsname{S16}
+\expandafter\gdef\csname siref@tab:abl-proxy\endcsname{S15}
+\expandafter\gdef\csname siref@tab:base-setting\endcsname{S14}
+\expandafter\gdef\csname siref@tab:sim-dif-real\endcsname{S12}
+\expandafter\gdef\csname siref@tab:sim-dif-syn\endcsname{S13}
+\expandafter\gdef\csname siref@tab:sim-proxy\endcsname{S11}
+\expandafter\gdef\csname siref@tab:sim-real\endcsname{S9}
+\expandafter\gdef\csname siref@tab:sim-syn\endcsname{S10}
+\expandafter\gdef\csname siref@tab:test-fwer-full\endcsname{S4}
+\expandafter\gdef\csname siref@tab:test-onesided-full\endcsname{S3}
+\expandafter\gdef\csname siref@tab:test-opt-full\endcsname{S8}
+\expandafter\gdef\csname siref@tab:test-power-full\endcsname{S7}
+\expandafter\gdef\csname siref@tab:test-real-cover-full\endcsname{S5}
+\expandafter\gdef\csname siref@tab:test-real-cover-summary\endcsname{S6}
+\expandafter\gdef\csname siref@tab:test-size-full\endcsname{S1}
+\expandafter\gdef\csname siref@tab:test-size-popdesign\endcsname{S2}
 \expandafter\gdef\csname mref@alg:pattern\endcsname{1}
+\expandafter\gdef\csname mref@ass:testing\endcsname{2}
+\expandafter\gdef\csname mref@cor:are\endcsname{8}
 \expandafter\gdef\csname mref@eq:DIF\endcsname{7}
 \expandafter\gdef\csname mref@eq:HT\endcsname{6}
+\expandafter\gdef\csname mref@eq:L-formula\endcsname{27}
 \expandafter\gdef\csname mref@eq:PQ\endcsname{1}
 \expandafter\gdef\csname mref@eq:TPFP\endcsname{2}
 \expandafter\gdef\csname mref@eq:agree-var\endcsname{19}
 \expandafter\gdef\csname mref@eq:alloc\endcsname{9}
 \expandafter\gdef\csname mref@eq:anticipated\endcsname{23}
+\expandafter\gdef\csname mref@eq:are\endcsname{28}
 \expandafter\gdef\csname mref@eq:deff-general\endcsname{24}
 \expandafter\gdef\csname mref@eq:dif\endcsname{14}
 \expandafter\gdef\csname mref@eq:dif-deff\endcsname{21}
@@ -105,37 +137,50 @@
 \expandafter\gdef\csname mref@eq:infl-forms\endcsname{16}
 \expandafter\gdef\csname mref@eq:influence\endcsname{10}
 \expandafter\gdef\csname mref@eq:linvar\endcsname{12}
+\expandafter\gdef\csname mref@eq:n-omega\endcsname{29}
 \expandafter\gdef\csname mref@eq:objective\endcsname{22}
-\expandafter\gdef\csname mref@eq:pop-variance\endcsname{25}
+\expandafter\gdef\csname mref@eq:pop-variance\endcsname{30}
+\expandafter\gdef\csname mref@eq:power\endcsname{26}
 \expandafter\gdef\csname mref@eq:psi\endcsname{13}
 \expandafter\gdef\csname mref@eq:resid\endcsname{15}
 \expandafter\gdef\csname mref@eq:stratvar-err\endcsname{18}
 \expandafter\gdef\csname mref@eq:stratvar-tpr\endcsname{17}
 \expandafter\gdef\csname mref@eq:theta\endcsname{4}
 \expandafter\gdef\csname mref@eq:var\endcsname{8}
-\expandafter\gdef\csname mref@fig:efficiency\endcsname{1}
-\expandafter\gdef\csname mref@fig:pop-check\endcsname{3}
-\expandafter\gdef\csname mref@fig:split-eff\endcsname{2}
+\expandafter\gdef\csname mref@eq:zstat\endcsname{25}
+\expandafter\gdef\csname mref@fig:efficiency\endcsname{2}
+\expandafter\gdef\csname mref@fig:pop-check\endcsname{4}
+\expandafter\gdef\csname mref@fig:split-eff\endcsname{3}
+\expandafter\gdef\csname mref@fig:testing-sim\endcsname{1}
 \expandafter\gdef\csname mref@prop:allocation\endcsname{5}
 \expandafter\gdef\csname mref@prop:assumptions\endcsname{1}
 \expandafter\gdef\csname mref@prop:dif-deff\endcsname{4}
 \expandafter\gdef\csname mref@prop:dif-var\endcsname{3}
+\expandafter\gdef\csname mref@prop:eo\endcsname{12}
 \expandafter\gdef\csname mref@prop:influence\endcsname{2}
 \expandafter\gdef\csname mref@prop:validity\endcsname{1}
 \expandafter\gdef\csname mref@rem:zero-var\endcsname{1}
-\expandafter\gdef\csname mref@sec:ablations\endcsname{8}
-\expandafter\gdef\csname mref@sec:baselines\endcsname{7}
+\expandafter\gdef\csname mref@sec:ablations\endcsname{9}
+\expandafter\gdef\csname mref@sec:baselines\endcsname{8}
 \expandafter\gdef\csname mref@sec:design\endcsname{4}
-\expandafter\gdef\csname mref@sec:discussion\endcsname{10}
-\expandafter\gdef\csname mref@sec:empirical\endcsname{6}
+\expandafter\gdef\csname mref@sec:discussion\endcsname{11}
+\expandafter\gdef\csname mref@sec:empirical\endcsname{7}
 \expandafter\gdef\csname mref@sec:estimation\endcsname{4.2}
-\expandafter\gdef\csname mref@sec:guidance\endcsname{9}
+\expandafter\gdef\csname mref@sec:guidance\endcsname{10}
 \expandafter\gdef\csname mref@sec:intro\endcsname{1}
 \expandafter\gdef\csname mref@sec:numcheck\endcsname{5.8}
-\expandafter\gdef\csname mref@sec:population\endcsname{6.6}
+\expandafter\gdef\csname mref@sec:population\endcsname{7.6}
 \expandafter\gdef\csname mref@sec:related\endcsname{2}
 \expandafter\gdef\csname mref@sec:setting\endcsname{3}
-\expandafter\gdef\csname mref@sec:splits\endcsname{6.5}
+\expandafter\gdef\csname mref@sec:splits\endcsname{7.5}
+\expandafter\gdef\csname mref@sec:test-design\endcsname{6.4}
+\expandafter\gdef\csname mref@sec:test-eo\endcsname{6.5}
+\expandafter\gdef\csname mref@sec:test-joint\endcsname{6.3}
+\expandafter\gdef\csname mref@sec:test-limits\endcsname{6.6}
+\expandafter\gdef\csname mref@sec:test-power\endcsname{6.2}
+\expandafter\gdef\csname mref@sec:test-size\endcsname{6.1}
+\expandafter\gdef\csname mref@sec:testing\endcsname{6}
+\expandafter\gdef\csname mref@sec:testing-sim\endcsname{6.7}
 \expandafter\gdef\csname mref@sec:theory\endcsname{5}
 \expandafter\gdef\csname mref@sec:theory-alloc\endcsname{5.5}
 \expandafter\gdef\csname mref@sec:theory-asym\endcsname{5.2}
@@ -144,15 +189,22 @@
 \expandafter\gdef\csname mref@sec:theory-proxy\endcsname{5.7}
 \expandafter\gdef\csname mref@sec:theory-setup\endcsname{5.1}
 \expandafter\gdef\csname mref@sec:theory-structure\endcsname{5.3}
-\expandafter\gdef\csname mref@tab:abl-design\endcsname{8}
-\expandafter\gdef\csname mref@tab:abl-inference\endcsname{9}
-\expandafter\gdef\csname mref@tab:base-budget\endcsname{7}
-\expandafter\gdef\csname mref@tab:data\endcsname{1}
-\expandafter\gdef\csname mref@tab:decomposition\endcsname{2}
-\expandafter\gdef\csname mref@tab:efficiency\endcsname{3}
-\expandafter\gdef\csname mref@tab:inference\endcsname{4}
-\expandafter\gdef\csname mref@tab:pop-check\endcsname{6}
-\expandafter\gdef\csname mref@tab:split-main\endcsname{5}
+\expandafter\gdef\csname mref@tab:abl-design\endcsname{10}
+\expandafter\gdef\csname mref@tab:abl-inference\endcsname{11}
+\expandafter\gdef\csname mref@tab:base-budget\endcsname{9}
+\expandafter\gdef\csname mref@tab:data\endcsname{3}
+\expandafter\gdef\csname mref@tab:decomposition\endcsname{4}
+\expandafter\gdef\csname mref@tab:efficiency\endcsname{5}
+\expandafter\gdef\csname mref@tab:inference\endcsname{6}
+\expandafter\gdef\csname mref@tab:pop-check\endcsname{8}
+\expandafter\gdef\csname mref@tab:split-main\endcsname{7}
+\expandafter\gdef\csname mref@tab:test-power\endcsname{2}
+\expandafter\gdef\csname mref@tab:test-size\endcsname{1}
+\expandafter\gdef\csname mref@thm:design\endcsname{11}
+\expandafter\gdef\csname mref@thm:fwer\endcsname{10}
+\expandafter\gdef\csname mref@thm:joint\endcsname{9}
+\expandafter\gdef\csname mref@thm:power\endcsname{7}
+\expandafter\gdef\csname mref@thm:size\endcsname{6}
 \makeatother
 \begin{document}
 \title[Labelling where models disagree]{Labelling where models disagree: label-efficient comparison of classifiers on group fairness}
@@ -553,7 +605,7 @@ The Wald interval needs $\hat V_\psi>0$ and fails when a stratum's sample shows 
 few positives that the sample misses). Structural zeros ($d_i\equiv0$, e.g.\ the error difference where the pair agrees) are exact and harmless. For the other strata the
 design replaces $s^2_{\hat e,h}$ by the label-free anticipated residual variance $\tilde s^2_h=N_h^{-1}\sum_{U_h}\pi_i(1-\pi_i)\hat d_i^{\,2}$
 whenever $s^2_{\hat e,h}=0$ (equation~\SIref{eq:floor}). The floor never decreases $\hat V_\psi$, leaves the point estimate unchanged and does not
-affect Proposition~\ref{prop:validity}(c)--(d); it is a finite-sample safeguard, not an asymptotic correction (Supplementary Section~\SIref{si:theory-extra}).
+affect Proposition~\ref{prop:validity}(c)--(d) provided it is asymptotically negligible (Assumption (A5) of Section~\ref{sec:testing}); it is a finite-sample safeguard, not an asymptotic correction (Supplementary Section~\SIref{si:theory-extra}).
 \end{remark}
 
 \subsection{Allocation}\label{sec:theory-alloc}
@@ -618,6 +670,222 @@ by the predictions, not by the proxy (Proposition~\ref{prop:influence}).
 
 \subsection{Numerical check of the theory}\label{sec:numcheck}
 The design effects of this section are first-order (linearised) quantities, so we checked them against Monte Carlo experiments on the eleven real pools and on synthetic pools in which the disagreement rate is controlled (Supplementary Section~\SIref{sec:simulation}). We report three findings. First, the linearised design effect predicts the efficiency of the implemented design to within Monte Carlo error: over all target--budget pairs on the real pools the ratio of observed to predicted efficiency has median 1.00 (10\%--90\% range 0.83--1.22). Second, the closed-form expression of Corollary~\SIref{prop:deff} is accurate when the strata separate the agreements of a pair from its disagreements (two models), and captures the $1/\rho$ scaling and the effect of the size of the contrast; with nine models it is too optimistic and overstates the gain on real pools by a median factor of about two, because the count $K_i$ locates any disagreement but not that of a particular pair, and the bounds of Supplementary Section~\SIref{si:theory-extra} describe the gap. We therefore treat the closed form as an illustration of the mechanism, not as a forecast. Third, for the difference estimator the linearised residual variance predicts its gain over the plain estimator within Monte Carlo error (median ratio of observed to predicted gain 0.98 over 34 pool--budget cells, Supplementary Section~\SIref{sec:sim-dif}); the gain is moderate (median 1.47) and is largest in the law-school setting, where the label-free forecast underestimates it. An uninformative or inverted proxy leaves the allocation almost unchanged, and a proxy of the wrong sign makes the difference estimator worse than the plain one for the error contrast by a factor of about 1.3, as the theory predicts.
+
+% ---------------------------------------------------------------------------------------------
+% Hypothesis tests for fairness contrasts (main text). Notation as in sections/theory.tex and docs/notation_v2.md.
+% Proofs: sections/si_testing.tex (SI, label si:testing). Uses Assumption (A1)-(A4) of sections/theory.tex.
+% The preamble of main.tex has no `theorem' environment; it is declared here, sharing the proposition counter.
+% ---------------------------------------------------------------------------------------------
+\makeatletter
+\@ifundefined{theorem}{\theoremstyle{plain}\newtheorem{theorem}[proposition]{Theorem}\theoremstyle{definition}}{}
+\makeatother
+
+\section{Hypothesis tests for fairness contrasts}\label{sec:testing}
+
+Section~\ref{sec:theory} gives estimators and intervals. A user of the method also has to decide: does model $m$ have a smaller
+TPR gap than model $j$; is a candidate no worse than the incumbent by more than a margin $\delta$; which of the $Q=3\binom M2$ contrasts (the number of contrasts is written $Q$ here, to avoid the stratum variable $K_i$)
+differ from zero, when the question is asked of all of them at once? This section gives the tests, their size and power, the simultaneous
+procedures and the design that maximises power, with the assumptions under which each statement holds. Proofs are in Supplementary Section~\SIref{si:testing}.
+
+A hypothesis is a statement about a contrast of the pool, $\theta_k=f_k(T)$. The only randomness is the labelling lottery, so a $p$-value is a probability over
+that lottery for the fixed models and the fixed pool; it says nothing about retraining. Section~\ref{sec:population} treats the population contrast separately.
+For contrast $k$ write $\hat\theta_k=f_k(\hat T_\psi)$, $V_k=V_\psi(\theta_k;n)$ and $\hat V_k$ for the quantities of \eqref{eq:dif}--\eqref{eq:resid}, and define the studentised statistic
+\begin{equation}\label{eq:zstat}
+Z_k(\theta_0)=\frac{\hat\theta_k-\theta_0}{\hat V_k^{1/2}},\qquad z_q=\Phi^{-1}(q).
+\end{equation}
+All limits are along a sequence of pools as in Section~\ref{sec:theory-asym}. Contrasts that are exactly determined by the predictions ($V_k=0$) are excluded by (A3) and should be removed from the family.
+
+\begin{assumption}\label{ass:testing}
+\begin{enumerate}
+\item[(A5)] \emph{Floor.} If the variance floor of Remark~\ref{rem:zero-var} is used, $\hat V_k^{\flat}/\hat V_k\to1$ in probability, where $\hat V_k^\flat\ge\hat V_k$ is the floored estimator. (This holds if the floor is inactive with probability tending to one in strata that carry a non-negligible share of $V_k$, and adds $o(V_k)$ in the others.)
+\item[(A4$_Q$)] \emph{Joint Lindeberg condition.} (A4) holds for every linear combination of the $Q$ residual influence vectors whose variance is of exact order $r^2$.
+\item[(P1)] \emph{Population.} The pool is a simple random sample of $N$ units $(X_i,G_i,Y_i)$ from a fixed infinite population; models, strata rule and proxy rule are label-free functions of $(X,G)$.
+\item[(P2)] \emph{Regularity.} Population versions of (A2) hold ($P(G=g,Y=y)\ge c$) and the population influence value has variance $\sigma^2_\zeta>0$. There are constants $c,\varepsilon>0$ and sequences $m_N\to\infty$, $\eta_N\to0$ such that, with probability tending to one, the pool belongs to the class $\mathcal P_N$ of pools with $n_h\ge m_N$ for all $h$, $f_h\le1-\varepsilon$ in strata that are not fully enumerated, $P_g/N,Q_g/N\ge c$, $V_\psi(\theta;n)\ge c\,r^2$, and, for every stratum, either $n_h(1-f_h)S^2_{e,h}N^2\ge1/\eta_N$ or the stratum's share of $V_\psi(\theta;n)$ is at most $\eta_N$ (and (A5) holds uniformly over $\mathcal P_N$). Every sequence of pools taken from $\mathcal P_N$ then satisfies (A1)--(A4), along subsequences on which $\tau$ converges.
+\item[(P3)] \emph{Concentration.} There are constants $v_{\rm D}>0$ with $V_\psi(\theta;n)/v_{\rm D}\to1$ in probability over the pool.
+\end{enumerate}
+\end{assumption}
+
+(A5) and (P3) are conditions on the design and (A4$_Q$) is the multivariate counterpart of (A4); they are discussed at the end of the section.
+
+\subsection{Wald tests and their size}\label{sec:test-size}
+
+For a null value $\theta_0$ (asymptotic size and power of Wald tests are standard, \citealt[Ch.~11]{lehmann2005}; what is new here is the design-based setting) the two-sided Wald test rejects $H_0:\theta_k=\theta_0$ when $|Z_k(\theta_0)|>z_{1-\alpha/2}$, the upper one-sided test rejects $H_0:\theta_k\le\theta_0$ when $Z_k(\theta_0)>z_{1-\alpha}$, and the lower one is symmetric. For a margin $\delta>0$ the non-inferiority test of $H_0:\theta_k\ge\delta$ (for $\theta^{ERR}_{mj}$, say, $m$ is not worse than $j$ by $\delta$ or more) rejects when $Z_k(\delta)<-z_{1-\alpha}$. The equivalence test of $H_0:|\theta_k|\ge\delta$ is the two one-sided tests (TOST) procedure \citep{schuirmann1987,wellek2010}: it rejects when $Z_k(-\delta)>z_{1-\alpha}$ and $Z_k(\delta)<-z_{1-\alpha}$, that is, when the $(1-2\alpha)$ Wald interval lies inside $(-\delta,\delta)$ (this needs $\alpha<1/2$, as do the other one-sided procedures). It is an intersection-union test \citep{berger1982,berger1996}.
+
+\begin{theorem}[Size]\label{thm:size}
+Let $0<\alpha<1/2$. Consider a sequence of pools with (A1)--(A4) for $\theta_k$ (and (A5) if the floor is used), and constants $\theta_0=\theta_{0,N}$, $\delta=\delta_N>0$ (the sequences may vary with the pool).
+\begin{enumerate}
+\item[(a)] If $\theta_k=\theta_0$, then $Z_k(\theta_0)\to N(0,1)$ in law, the two-sided test has rejection probability tending to $\alpha$, and $2\{1-\Phi(|Z_k|)\}$ is asymptotically uniform.
+\item[(b)] If $\theta_k\le\theta_0$, the upper one-sided test has $\limsup P(\text{reject})\le\alpha$, with limit $\alpha$ when $(\theta_k-\theta_0)/V_k^{1/2}\to0$.
+\item[(c)] If $\theta_k\ge\delta$, the non-inferiority test has $\limsup P(\text{reject})\le\alpha$. If $|\theta_k|\ge\delta$ the TOST has $\limsup P(\text{reject})\le\alpha$, with limit $\alpha$ when $|\theta_k|=\delta$ and $\delta/V_k^{1/2}\to\infty$.
+\item[(d)] (Population target.) Under (P1)--(P3), let $s^2=v_{\rm D}+v_{\rm P}$ with $v_{\rm P}=\sigma^2_\zeta/N$ the variance of the pool error, $\theta_{\rm pop}$ the population contrast, and $Z^{\rm pop}=(\hat\theta_k-\theta_0)/(\hat V_{\rm design}+\hat V_{\rm pool})^{1/2}$, with $\hat V_{\rm pool}$ the estimator of Section~\ref{sec:population}. If $\theta_{\rm pop}=\theta_0$, (a)--(c) hold for $Z^{\rm pop}$ (with $\theta_{\rm pop}$ in place of $\theta_k$), and the power statements of Theorem~\ref{thm:power} hold for $Z^{\rm pop}$ with $\mu=(\theta_{\rm pop}-\theta_0)/s$. The pool-conditional statistic $Z_k$ applied to the same null has limiting rejection probability $2\{1-\Phi(z_{1-\alpha/2}/\sqrt{1+\varpi})\}$ whenever $\varpi=v_{\rm P}/v_{\rm D}\to\varpi_\infty\in[0,\infty]$ (by (P3), $\varpi$ is the ratio $V_{\rm pool}/V_{\rm design}$ of Section~\ref{sec:population}), which exceeds $\alpha$ unless $\varpi_\infty=0$.
+\end{enumerate}
+\end{theorem}
+
+\emph{Proof sketch.} Write $Z_k(\theta_0)=(X+\mu)/\varrho$ with $X=(\hat\theta_k-\theta_k)/V_k^{1/2}\to N(0,1)$ by Proposition~\ref{prop:validity}(c), $\varrho=(\hat V_k/V_k)^{1/2}\to1$ by Proposition~\ref{prop:validity}(d), and $\mu=(\theta_k-\theta_0)/V_k^{1/2}$. Because the normal law is continuous, convergence of the distribution function is uniform (P\'olya), and a Slutsky argument gives $P(X+\mu>z\varrho)=\Phi(\mu-z)+o(1)$ uniformly in $\mu$. Parts (a)--(c) are read off at $\mu=0$ or by monotonicity in $\mu$; the TOST bound is the minimum of its two component tests, the intersection-union argument. For (d), conditional on the pool the design error is asymptotically normal with variance $V_{\rm design}$, the pool error is a smooth function of an i.i.d.\ mean, and a characteristic-function argument that uses (P3) to treat $V_{\rm design}$ as constant shows that their sum is asymptotically normal with variance $v_{\rm D}+v_{\rm P}$; both variance estimators are consistent. $\square$
+
+Part (d) formalises the coverage formula of Section~\ref{sec:population}: ignoring the pool term inflates the size to $0.07$ at $\varpi=0.2$ and to $0.17$ at $\varpi=1$ for $\alpha=0.05$. The statement is asymptotic.
+
+\subsection{Power, local alternatives and Pitman efficiency}\label{sec:test-power}
+
+For a fixed pool the contrast $\theta_k$ is a number, so there is no sequence of alternatives to take. The power of a test of $H_0:\theta_k=\theta_0$ is a function of the hypothesised value $\theta_0$, and the sampling law of $\hat\theta_k$ does not depend on $\theta_0$. The following statement, therefore, describes the power curve of every hypothesised value for the given pool at once, and ``local'' means $|\theta_k-\theta_0|=O(V_k^{1/2})$. For a sequence of pools it applies along the sequence.
+
+\begin{theorem}[Power curve]\label{thm:power}
+Under the assumptions of Theorem~\ref{thm:size}, with $\mu=(\theta_k-\theta_0)/V_k^{1/2}$, $z=z_{1-\alpha/2}$ and $\Psi_\alpha(\mu)=\Phi(\mu-z)+\Phi(-\mu-z)$,
+\begin{equation}\label{eq:power}
+\sup_{\theta_0\in\mathbb R}\Big|P\big(|Z_k(\theta_0)|>z\big)-\Psi_\alpha(\mu)\Big|\to0 .
+\end{equation}
+The upper one-sided test has power $\Phi(\mu-z_{1-\alpha})$ and the lower one $\Phi(-\mu-z_{1-\alpha})$, uniformly. The TOST has power $[\Phi(b-z_{1-\alpha})-\Phi(z_{1-\alpha}-a)]_+$ with $a=(\theta_k+\delta)/V_k^{1/2}$ and $b=(\delta-\theta_k)/V_k^{1/2}$, uniformly in $\delta$. In particular the tests are consistent: power tends to one if $|\theta_k-\theta_0|/V_k^{1/2}\to\infty$.
+\end{theorem}
+
+\emph{Proof sketch.} The uniform Slutsky argument of Theorem~\ref{thm:size}, applied to the events $\{X+\mu>z\varrho\}$ and $\{X+\mu<-z\varrho\}$. $\square$
+
+Power therefore depends on the design only through the single number $V_k$: two designs with the same $V_k$ have the same asymptotic power curve, and $\Psi_\alpha$ is increasing in $|\mu|$. This reduces the comparison of designs to a comparison of variances.
+
+Let design $d$ allocate $n_h=\lambda_hL$ labels to its strata, with fixed shares $\lambda_h$, and let $S^2_h$ be the stratum variances of the influence values of the estimator that the design uses: the plain influence values $z$ for SRS and for the plain estimator, the residual values $e$ for the difference estimator. Then
+$V^{(d)}(L)=v_d/L-w_d$ with $v_d=\sum_hN_h^2S^2_h/\lambda_h$, $w_d=\sum_hN_hS^2_h$, valid while $\lambda_hL\le N_h$ in every stratum (a capped stratum contributes zero, not a negative term, so beyond that point the formula understates the variance). SRS is the one-stratum design with the plain estimator. The efficiency of the paper is $\mathrm{Eff}=V^{\rm SRS}(L)/V^{\rm PD}(L)$, equal to the ratio of mean squared errors up to the squared bias, which is $O(r^4)$.
+
+\begin{corollary}[Labels needed and efficiency]\label{cor:are}
+Let $0<\alpha<1-\beta<1$ and let $\mu_{\alpha,\beta}$ be the unique positive root of $\Psi_\alpha(\mu)=1-\beta$. It satisfies $\mu_{\alpha,\beta}\le z_{1-\alpha/2}+z_{1-\beta}$, and at the right-hand side the power exceeds $1-\beta$ by at most $\Phi(-2z_{1-\alpha/2})$; for one-sided tests the root is exactly $z_{1-\alpha}+z_{1-\beta}$. Under the assumptions of Theorem~\ref{thm:size}, a design with $\lambda_hL_d\le N_h$ reaches asymptotic power $1-\beta$ against $|\theta_k-\theta_0|=\Upsilon$ if and only if $L\ge L_d$, where
+\begin{equation}\label{eq:L-formula}
+L_d(\Upsilon)=\frac{\mu_{\alpha,\beta}^2\,v_d}{\Upsilon^2+\mu_{\alpha,\beta}^2\,w_d}.
+\end{equation}
+Hence for two designs
+\begin{equation}\label{eq:are}
+\frac{L_2}{L_1}=\frac{v_2}{v_1}\cdot\frac{\Upsilon^2+\mu^2_{\alpha,\beta}w_1}{\Upsilon^2+\mu^2_{\alpha,\beta}w_2}\longrightarrow\frac{v_2}{v_1}=\lim\frac{V^{(2)}(L)}{V^{(1)}(L)},
+\end{equation}
+the limit holding when the sampling fractions $\lambda_hL_d/N_h$ tend to zero for both designs. Thus the labels needed at equal power are asymptotically in the ratio of the asymptotic variances; this is the sense of Pitman efficiency here, since there is no local parametric sequence and the comparison is the label ratio at equal power for a fixed effect. For PATTERN-DIF against SRS the ratio is the efficiency $\mathrm{Eff}$ of the paper in the same limit, and the labels needed shrink by that factor asymptotically. (Under a calibrated proxy the expected efficiency is the product of the stratification gain and the factor $G$ of \eqref{eq:dif-deff}; that is an expectation, not an identity for a given pool.) For the population target the same formulas hold with $v_{\rm P}$ added to the variance: $L_d=\mu^2v_d/\{\Upsilon^2+\mu^2(w_d-v_{\rm P})\}$. The label ratio at equal power is still $v_2/v_1$ when $w_d$ is negligible, but power is capped at every $L$: no budget reaches power $1-\beta$ unless $\Upsilon>\mu_{\alpha,\beta}\,v_{\rm P}^{1/2}$.
+\end{corollary}
+
+\emph{Proof sketch.} Equal power means equal $\mu=\Upsilon/V^{1/2}$, hence $V^{(d)}(L_d)=\Upsilon^2/\mu^2$, which is \eqref{eq:L-formula}. $\square$
+
+The claim that labels shrink by the efficiency factor therefore has two qualifications. It is asymptotic, for a small labelled fraction, and for the population contrast it concerns the labels needed for a given power, not the mean squared error at a given budget; the latter ratio is $(\mathrm{Eff}+\varpi)/(1+\varpi)$ as in Section~\ref{sec:population}. In practice $v_d$ and $w_d$ are replaced by their anticipated values \eqref{eq:anticipated}, so \eqref{eq:L-formula} is a planning tool whose accuracy is that of the anticipated variances.
+
+\subsection{Joint inference over many contrasts}\label{sec:test-joint}
+
+Let $\Sigma$ be the $Q\times Q$ matrix with entries $\Sigma_{kl}=\sum_hc_h\,\mathrm{Cov}_h(e^{(k)},e^{(l)})$, the covariance of the linearised estimators, and $R$ the corresponding correlation matrix. The paper's family is a singular case: $\theta_{ml}=\theta_{mj}+\theta_{jl}$ for each of the three types, so the $Q=108$ contrasts of $M=9$ models are linear images of $3(M-1)=24$ gap contrasts, $R$ has rank at most $24$, and the theory below allows singular $R$. The estimator $\hat\Sigma$ has entries $\sum_hc_h\,\hat{\mathrm{Cov}}_h(\hat e^{(k)},\hat e^{(l)})$ from the within-stratum sample covariances of the residual influence vectors, with the floor added to the diagonal (this keeps $\hat\Sigma$ positive semi-definite). Let $\hat R$ be its correlation matrix.
+
+\begin{theorem}[Joint asymptotics]\label{thm:joint}
+Let (A1)--(A3) hold for each of the $Q$ contrasts (fixed $Q$), together with (A4$_Q$) and (A5). Then $\hat V_k/V_k\to1$, $\hat R-R\to0$ in probability, and $\{(\hat\theta_k-\theta_k)/V_k^{1/2}\}_{k\le Q}$ is asymptotically $N(0,R)$ in the sense that, along any subsequence with $R\to R_\infty$, it converges in law to $N(0,R_\infty)$.
+\end{theorem}
+
+\emph{Proof sketch.} The Taylor expansion of Proposition~\ref{prop:validity}(b) linearises every contrast with an $O_p(r^2)$ remainder. For a fixed linear combination the linear term is a sum of independent stratum means, to which the argument of Proposition~\ref{prop:validity}(c) applies under (A4$_Q$) (combinations of vanishing variance tend to zero); Cram\'er--Wold gives joint convergence. Consistency of $\hat\Sigma$ is that of Proposition~\ref{prop:validity}(d), entry by entry. $\square$
+
+For a correlation matrix $R$ let $c_\alpha(R)$ be the $(1-\alpha)$ quantile of $\max_{k\le Q}|N_k|$ for $N\sim N(0,R)$. It is computed by numerical integration or by simulation \citep{genz2009,hothorn2008}. The \emph{max-$|t|$ procedure} rejects $H_k:\theta_k=\theta_{k,0}$ when $|Z_k(\theta_{k,0})|>c_\alpha(\hat R)$. Its step-down version \citep{romano2005stepdown} recomputes the critical value on the set $S$ of hypotheses not yet rejected, using $c_\alpha(\hat R_S)$, until nothing more is rejected. Bonferroni rejects when $|Z_k|>z_{1-\alpha/(2Q)}$, and Holm's procedure \citep{holm1979} is the step-down version of Bonferroni.
+
+\begin{theorem}[Familywise error and simultaneous bands]\label{thm:fwer}
+Under the assumptions of Theorem~\ref{thm:joint}, for every configuration of true and false hypotheses, i.e.\ every set $I_0$ of $k$ with $\theta_k=\theta_{k,0}$,
+\begin{enumerate}
+\item[(a)] the max-$|t|$ procedure, its step-down version, Bonferroni and Holm each reject at least one true $H_k$ with probability at most $\alpha+o(1)$ (strong control of the familywise error rate), and the single-step max-$|t|$ has limit exactly $\alpha$ when $I_0=\{1,\dots,Q\}$;
+\item[(b)] the band $\hat\theta_k\pm c_\alpha(\hat R)\hat V_k^{1/2}$, $k=1,\dots,Q$, covers all $\theta_k$ simultaneously with probability tending to $1-\alpha$, hence also any contrast selected after looking at the data;
+\item[(c)] $c_\alpha(R)\le z_{1-\alpha/(2Q)}$ for every $R$ and $c_\alpha(R_S)\le c_\alpha(R)$ for every subset $S$; consequently the single-step max-$|t|$ rejects every hypothesis that Bonferroni rejects, and the step-down max-$|t|$ rejects every hypothesis that Holm rejects, for every data set. Under local alternatives the asymptotic power of each contrast is at least as large.
+\end{enumerate}
+\end{theorem}
+
+\emph{Proof sketch.} The map $R\mapsto c_\alpha(R)$ is continuous on the compact set of correlation matrices, because the law of $\max|N_k|$ is continuous and strictly increasing, so $c_\alpha(\hat R)-c_\alpha(R)\to0$ along subsequences. For $k\in I_0$ the statistic $Z_k(\theta_{k,0})$ does not involve the false nulls, and $\max_{I_0}|Z_k|\to\max_{I_0}|N_k|$ jointly with $c_\alpha(\hat R)\to c_\alpha(R_\infty)\ge c_\alpha(R_{\infty,I_0})$, the latter being the quantile of the maximum over fewer coordinates (subset pivotality of the Gaussian limit, compare the stepwise arguments of \citealt{romano2005stepwise,romano2005stepdown}). Hence the probability of a false rejection is asymptotically at most $\alpha$. For the step-down version, as long as no true null has been rejected the active set contains $I_0$. Bonferroni and Holm need only the marginal limits. Part (c) follows from the union bound and monotonicity. $\square$
+
+The gain over Bonferroni comes from the correlation: if the $Q$ contrasts were perfectly correlated the critical value would be $z_{1-\alpha/2}$ and not $z_{1-\alpha/(2Q)}$, and contrasts that share a model are correlated through that model's gap. The band answers the multiplicity and selection concern raised for Step 5 of Section~\ref{sec:guidance}: a statement about the best pair found after inspecting all of them is covered.
+
+\subsection{Designing the allocation for power}\label{sec:test-design}
+
+Let $S^2_{hk}=S^2_{e_k,h}$ be the stratum variance of the residual influence values of contrast $k$ (anticipated by \eqref{eq:anticipated} in practice), $V_k(n)=\sum_hN_h^2(1/n_h-1/N_h)S^2_{hk}$, and let $\delta_k>0$ be the effect to be detected for contrast $k$. The noncentrality is $\mu_k(n)=\delta_k/V_k(n)^{1/2}$. Let $\mathcal N=\{n:\sum_hn_h=L,\ \ell_h\le n_h\le N_h\}$ with $0<\ell_h\le N_h$ (the paper uses $\ell_h=10$). For $\omega\in\mathbb R^Q_{\ge0}$ put $A_h(\omega)^2=\sum_k\omega_kS^2_{hk}$ and
+\begin{equation}\label{eq:n-omega}
+n_h(\omega)=\min\{N_h,\max(\ell_h,N_hA_h(\omega)/\lambda)\},
+\end{equation}
+with $\lambda>0$ such that $\sum_hn_h(\omega)=L$; this is the weighted Neyman allocation of Proposition~\ref{prop:allocation}(b).
+
+\begin{theorem}[Optimal design for power]\label{thm:design}
+\begin{enumerate}
+\item[(a)] For a single contrast the minimiser of $V_k$ over $\mathcal N$, the Neyman allocation $n(\omega)$ with $Q=1$, maximises the asymptotic power \eqref{eq:power} of the Wald test for every effect size at once.
+\item[(b)] The maximin problem $\min_{n\in\mathcal N}\max_kV_k(n)/\delta_k^2$ (equivalently, maximise $\min_k\mu_k$) is a convex program with a saddle point. Let $\mathcal S_Q$ be the simplex and $\Gamma(w)=\min_{n\in\mathcal N}\sum_kw_kV_k(n)/\delta_k^2$. Then $\Gamma$ is concave, and if $w^\ast\in\arg\max_{\mathcal S_Q}\Gamma$ and $A_h(\omega^\ast)>0$ for every $h$, the optimal allocation is unique and equals $n(\omega^\ast)$ with $\omega^\ast_k=w^\ast_k/\delta_k^2$; that is, $n^\ast_h\propto N_h\{\sum_kw^\ast_kS^2_{hk}/\delta_k^2\}^{1/2}$ before bounds. Moreover $w^\ast_k>0$ only if $V_k(n^\ast)/\delta_k^2=\max_jV_j(n^\ast)/\delta_j^2$ (active contrasts have equal, maximal relative variance), $\partial\Gamma/\partial w_k=V_k(n(\omega))/\delta_k^2$, and an optimal $w^\ast$ exists with at most $H$ non-zero entries. Without bounds, $\Gamma(w)=(\sum_hN_hA_h)^2/L-\sum_hN_hA_h^2$ with $A_h^2=\sum_kw_kS^2_{hk}/\delta_k^2$.
+\item[(c)] Let $n^{\rm def}=n(\omega^{\rm def})$ with $\omega^{\rm def}_k=1/\sigma_k^2$ be the weighted Neyman allocation computed from the same variance array $S^2_{hk}$ that defines the $V_k$. Up to a factor that does not depend on $k$ or $n$ it minimises $\sum_kV_k(n)/V^{\rm SRS}_k$, the sum of inverse efficiencies, and not $\max_kV_k(n)/\delta_k^2$. It is maximin-optimal if $V_k(n^{\rm def})/\delta_k^2$ is the same for all $k$; this is also necessary when $Q\le H$, the vectors $(S^2_{hk})_h$ are linearly independent and no stratum is at a bound, but not in general when $Q>H$. For any $w\in\mathcal S_Q$ the value $\Gamma(w)$ is a lower bound on the optimum, so $\max_kV_k(n^{\rm def})/\delta_k^2\big/\Gamma(w)$ bounds the loss of the default allocation.
+\item[(d)] If a real allocation $n$ is rounded to an integer allocation $\tilde n\in\mathcal N$ with $\tilde n_h\ge n_h-1$ and $n_h\ge n_0>1$, then $V_k(\tilde n)+b_k\le\{n_0/(n_0-1)\}\{V_k(n)+b_k\}$ for every $k$, with $b_k=\sum_hN_hS^2_{hk}$.
+\end{enumerate}
+\end{theorem}
+
+\emph{Proof sketch.} (a) $\Psi_\alpha$ is increasing in $|\mu|$, so power is increasing in $\mu_k$, and Proposition~\ref{prop:allocation} minimises $V_k$. (b) $V_k$ is convex in $n$ and the objective is linear in $w$ on compact convex sets, so Sion's minimax theorem \citep{sion1958} gives a saddle point; the inner minimiser is the weighted Neyman allocation, and complementary slackness is the saddle condition. The support bound is Carath\'eodory's theorem applied to the stationarity condition in the $(H-1)$-dimensional quotient by constants. (c) and (d) are direct computations. $\square$
+
+Under the max-$|t|$ procedure the asymptotic power of each contrast is at least $\Phi(\min_k\mu_k-z_{1-\alpha/(2Q)})$, because $c_\alpha(R)\le z_{1-\alpha/(2Q)}$ (Theorem~\ref{thm:fwer}); the maximin design maximises this design-free lower bound. It does not maximise the power itself, since $c_\alpha(R)$ depends on the allocation through $R$. The allocation of Section~\ref{sec:design}, including the one used with PATTERN-DIF, is computed from the plain variances, whereas $S^2_{hk}$ above are the variances of the estimator being tested; for PATTERN-DIF the results (a)--(c) therefore describe the residual-variance rule, and the loss from using the plain rule is bounded for the weighted sum of variances (Proposition~\SIref{prop:alloc-dif}) but not for the maximin criterion. For computation, the dual problem is a concave maximisation on a simplex whose gradient is the vector of relative variances, so projected gradient or multiplicative updates apply, with $\lambda$ in \eqref{eq:n-omega} found by bisection. The ``power-optimal weights'' are $\omega^\ast_k=w^\ast_k/\delta_k^2$: a contrast with a large effect or a cheap variance receives weight zero, and only the contrasts that are hardest to resolve per unit of target effect determine the design. With $Q>H$ many weight vectors give the same allocation, so $w^\ast$ need not be unique even when $n^\ast$ is.
+
+\subsection{The equalised-odds gap}\label{sec:test-eo}
+
+The equalised-odds gap $\mathrm{EO}_m=\max(|a_m|,|b_m|)$, with $a_m=\Delta^{TPR}_m$ and $b_m=\Delta^{FPR}_m$, is not differentiable where $|a_m|=|b_m|$ or where both vanish, so the delta method behind Proposition~\ref{prop:validity} does not apply there. Let $\widehat{\mathrm{EO}}_m=\max(|\hat a_m|,|\hat b_m|)$ with plug-in gaps from $\hat T_\psi$, and assume that the pair $(\hat a_m,\hat b_m)$ satisfies the conditions of Theorem~\ref{thm:joint}.
+
+\begin{proposition}[Equalised-odds gap]\label{prop:eo}
+\begin{enumerate}
+\item[(a)] \emph{Away from ties.} If $(|a_m|-|b_m|)/r\to\infty$, then $(\widehat{\mathrm{EO}}_m-\mathrm{EO}_m)/V_{a}^{1/2}\to N(0,1)$, where $V_a$ is the variance of $\hat a_m$, and the Wald interval $\widehat{\mathrm{EO}}_m\pm z_{1-\alpha/2}\hat V_a^{1/2}$ has asymptotic coverage $1-\alpha$. (If $(|b_m|-|a_m|)/r\to\infty$ the same holds with $V_b$.)
+\item[(b)] \emph{Near ties.} If $\vartheta_N=(|a_m|-|b_m|)/r\to\vartheta\in\mathbb R$ (either sign) and $|a_m|/r,|b_m|/r\to\infty$, then $(\widehat{\mathrm{EO}}_m-\mathrm{EO}_m)/r\to\max(s_aZ_a,\,s_bZ_b-\vartheta)-\max(0,-\vartheta)$ in law, with $(Z_a,Z_b)$ the Gaussian limit of the standardised gaps and $s_a,s_b$ their signs. The limit is not normal in general, and its mean equals $\tfrac12\{E|Y|-|EY|\}$ with $Y\sim N(\vartheta,\sigma^2)$, $\sigma^2=\operatorname{Var}(s_aZ_a-s_bZ_b)$, which is positive unless $\sigma=0$: $\widehat{\mathrm{EO}}_m$ is biased upwards at order $r$. At $a_m=b_m=0$ the limit of $\widehat{\mathrm{EO}}_m/r$ is $\max(|Z_a|,|Z_b|)$. The regime in which $|a_m|/r$ or $|b_m|/r$ stays bounded without both being zero is not covered.
+\item[(c)] \emph{Intersection-union test.} For $\delta>0$ reject $H_0:\mathrm{EO}_m\ge\delta$ when the $(1-2\alpha)$ Wald intervals of both $a_m$ and $b_m$ lie inside $(-\delta,\delta)$. Under the marginal conditions of Theorem~\ref{thm:size} for $a_m$ and $b_m$ its asymptotic size is at most $\alpha$, with no condition on ties.
+\end{enumerate}
+\end{proposition}
+
+\emph{Proof sketch.} (a) and (b) follow because $\widehat{\mathrm{EO}}_m=\max(|\hat a_m|,|\hat b_m|)$ and, once $|a_m|/r\to\infty$, the signs of $\hat a_m,\hat b_m$ are those of $a_m,b_m$ with probability tending to one, so the maximum is of two linear functions of the estimation errors; the ties are decided at the scale $r$, which cannot be estimated consistently. (c) is the intersection-union argument applied to the four one-sided tests $a_m<\delta$, $a_m>-\delta$, $b_m<\delta$, $b_m>-\delta$. $\square$
+
+The position of a tie is not consistently estimable at scale $r$, so the limit law in (b) cannot be estimated by plugging in; moreover, for maps that are not fully differentiable the standard bootstrap is in general inconsistent at the points of non-differentiability \citep{fang2019} (we have not examined a finite-population bootstrap). The paper therefore tests the signed gaps, which are smooth, uses the intersection-union test (c) when the question is whether a model's equalised-odds gap is below a margin, and reports rankings by $\mathrm{EO}_m$ descriptively (Section~\ref{sec:ablations}). A test of $\mathrm{EO}_m-\mathrm{EO}_j$ is covered by (a) only when no tie occurs in either model, which is an assumption about the unknown gaps rather than a testable property.
+
+\subsection{What is and is not proved}\label{sec:test-limits}
+
+Everything above is asymptotic with $H$ and $Q$ fixed, for pools that satisfy (A1)--(A4). (A5) and (P3) are high-level statements about the design that we do not derive from primitive assumptions: the first says that the variance floor does not matter asymptotically, the second that the random pool does not move the design variance on the relative scale (it would follow from a law of large numbers for the stratum moments and a continuous allocation rule, which we have not proved). (A4$_Q$) is Hájek's condition applied to combinations of contrasts; it cannot be replaced by the marginal conditions, because a stratum that is degenerate for a combination can break joint normality although each contrast is regular. Part (d) of Theorem~\ref{thm:size} assumes that the pool is a simple random sample and that the models are fixed, so it does not cover a convenience pool or models refitted on the same data. Finite-sample size and power are not addressed by the theory and have to be checked by simulation; at small budgets the nominal levels are not reached for ratio contrasts with few sampled positives.
+
+\subsection{Size, power and familywise error: simulations}\label{sec:testing-sim}
+
+This subsection checks the tests of Section~\ref{sec:testing} by simulation. We ask whether the Wald tests have their nominal size, whether the simultaneous procedures control the familywise error rate (FWER) over the $K=108$ contrasts, whether the label budgets predicted by the power formula are the ones observed, and whether allocating labels for power helps. Full tables are in Supplementary Section~\SIref{si:testing-sim}.
+
+\paragraph{Set-up.} The synthetic population is the generative model of the non-smooth simulation (five Gaussian covariates, a group with prevalence $0.3$, a logistic label model) with nine fixed scoring rules, so there are $36$ pairs and $108$ contrasts. To have contrasts that are exactly zero in the population without making them trivial, four rules use the covariate $x_4$, which does not enter the label model, and each has a twin that uses $x_5$ instead, with the same weights, scale and group offset. Because $x_4$ and $x_5$ are exchangeable and independent of $(Y,G)$, a rule and its twin have the same TPR gap, FPR gap and error rate, so the three contrasts of each of the four pairs are zero: $12$ true nulls, whereas the twins' predictions differ on a large part of every pool. The population values come from $2\times10^{7}$ draws. We compare SRS and PATTERN with the plug-in estimator and PATTERN-DIF, with the variance estimators of Section~\ref{sec:design}. Pools of $N\in\{2000,8000\}$ units are drawn anew in every replication, with $L\in\{250,500,1000,2000\}$ and $L\le N/4$ (six cells), and $R=1000$ replications per cell. The pool-conditional test targets the contrast of the pool, the two-phase test the population contrast with the variance of Section~\ref{sec:population}. On the eleven cached real pools the truth is the pool contrast computed from all labels. Simultaneous procedures use $\alpha=0.05$; the max-$t$ critical value is the $0.95$ quantile of $\max_k|X_k|$ for $X\sim N(0,\hat R)$, from $20{,}000$ draws with a fixed seed. With $R=1000$ the Monte Carlo standard error of a rejection rate near $0.05$ is $0.007$, and the largest of $108$ such rates from a perfectly calibrated test has mean $0.068$ (at $\alpha=0.01$ and $0.10$: $0.019$ and $0.125$), so we compare ``max'' columns with these values and not with the nominal level.
+
+\paragraph{Size.} Table~\ref{tab:test-size} and Figure~\ref{fig:testing-sim}(a) give the results for PATTERN-DIF. The two-sided Wald test of the true value has mean rejection rate $0.048$ to $0.053$ at $\alpha=0.05$ in all six cells, for the pool-conditional test of the pool contrast and for the two-phase test of the population contrast ($0.009$ to $0.012$ and $0.096$ to $0.104$ at $\alpha=0.01$ and $0.10$). The worst contrast is rejected in $0.063$ to $0.074$ of the replications; the largest value, $0.074$, is just above the $0.068$ expected from noise alone, and we do not read it as a failure. The plug-in estimators with SRS and PATTERN behave in the same way (mean $0.048$ to $0.056$), SRS being slightly liberal at $L=250$ (worst contrast $0.08$). One-sided tests at the boundary of the null reject in $0.048$ to $0.055$ of the replications on average (all three designs) (non-inferiority at the boundary is the one-sided test with margin equal to the true value), and the TOST at the boundary of the equivalence region is conservative on average ($0.02$ to $0.05$ at $\alpha=0.05$), as it should be when the margin is small relative to the standard error (Supplementary Table~\SIref{tab:test-onesided-full}). The pool term matters for the target, not for the test of the target actually chosen. The pool-conditional test of the \emph{population} value rejects in $0.060$ to $0.175$ of the replications at nominal $0.05$, increasing with $\varpi=\hat V_{\rm pool}/\hat V_{\rm design}$ (from $0.08$ to $1.19$), while the two-phase test stays at $0.05$ (Supplementary Table~\SIref{tab:test-size-popdesign}).
+
+\begin{table*}[t]
+\centering\footnotesize
+\caption{PATTERN-DIF, synthetic population, $R=1000$ pools per row. Size: rejection rate of the two-sided Wald test of the true value at nominal $0.05$ (pool-conditional test of the pool contrast; two-phase test of the population contrast), mean and maximum over the $108$ contrasts (the maximum of a calibrated test has mean $0.068$). $\varpi$: median estimated $V_{\rm pool}/V_{\rm design}$. FWER: probability of rejecting at least one of the $12$ true nulls of $H_k:\theta_k=0$, $k=1,\dots,108$, at familywise level $0.05$ (population target).}\label{tab:test-size}
+\resizebox{\textwidth}{!}{\begin{tabular}{rr r rr rr rrrr}\toprule
+ & & & \multicolumn{2}{c}{Size, pool value} & \multicolumn{2}{c}{Size, population value} & \multicolumn{4}{c}{FWER, population nulls} \\
+$N$ & $L$ & $\varpi$ & mean & max & mean & max & Unadj. & Bonf. & Holm & Max-$t$ \\\midrule
+2{,}000 & 250 & 0.39 & 0.051 & 0.066 & 0.051 & 0.067 & 0.398 & 0.006 & 0.008 & 0.009 \\
+ & 500 & 1.11 & 0.053 & 0.069 & 0.051 & 0.069 & 0.406 & 0.007 & 0.008 & 0.008 \\
+\addlinespace
+8{,}000 & 250 & 0.08 & 0.052 & 0.069 & 0.051 & 0.066 & 0.353 & 0.005 & 0.006 & 0.009 \\
+ & 500 & 0.20 & 0.048 & 0.064 & 0.049 & 0.067 & 0.375 & 0.002 & 0.003 & 0.004 \\
+ & 1000 & 0.46 & 0.050 & 0.069 & 0.048 & 0.063 & 0.386 & 0.007 & 0.011 & 0.009 \\
+ & 2000 & 1.19 & 0.052 & 0.074 & 0.053 & 0.071 & 0.450 & 0.006 & 0.008 & 0.008 \\
+\bottomrule\end{tabular}
+}
+\end{table*}
+
+\paragraph{Familywise error and power.} With only $12$ true nulls among $108$ hypotheses the familywise error of every adjusted procedure is far below $0.05$ (Table~\ref{tab:test-size}, FWER columns: $0.002$ to $0.011$ for Bonferroni, Holm and max-$t$, against $0.35$ to $0.45$ unadjusted), because the correction is for $108$ tests whereas the null set is small. That is conservative but not informative about tightness, so we also test the family in which every hypothesis is true ($H_k:\theta_k=\theta_k^{\rm true}$), where the FWER is one minus the simultaneous coverage (Figure~\ref{fig:testing-sim}(b), Supplementary Table~\SIref{tab:test-fwer-full}). For PATTERN-DIF the unadjusted tests reject at least one true hypothesis in $0.76$ to $0.81$ of the replications for the pool target and in $0.82$ to $0.90$ for the population target, so $108$ unadjusted intervals almost never cover simultaneously. Bonferroni and Holm (identical here) have FWER $0.03$ to $0.05$, and max-$t$ $0.05$ to $0.07$ (mean $0.058$ for both targets). Max-$t$ is therefore slightly anticonservative, by about one percentage point, in line with its critical value being only $3\%$ below the Bonferroni value (about $3.4$ against $3.5$): the contrasts are only moderately correlated, so the gain is small, and the estimated correlation matrix adds noise. The anticonservatism is larger for the plug-in estimators with small budgets (SRS: FWER up to $0.09$ at $N=2000$, $L=250$). The cell with the largest value for PATTERN-DIF ($0.07$) is within three Monte Carlo standard errors of $0.05$. The power of the three procedures against the $80$ false nulls with $|\theta_k|\ge0.02$ is higher for Holm and max-$t$ than for Bonferroni in every cell, by $0.01$ to $0.03$, and neither of the two dominates: max-$t$ is ahead at small budgets (PATTERN-DIF, $N=2000$, $L=250$: $0.20$ against $0.19$ for Holm and $0.18$ for Bonferroni) and Holm at large ones ($N=8000$, $L=2000$: $0.68$, $0.67$, $0.66$ for Holm, max-$t$, Bonferroni). Holm is never less powerful than Bonferroni. PATTERN-DIF has the highest power at every budget (Bonferroni power $0.52$ against $0.36$ for SRS at $N=8000$, $L=1000$).
+
+\paragraph{Real pools.} On the eleven cached real pools (35 setting--budget cells, $R=400$, truth from the pool labels; the $K$ contrasts that are not identically zero, so $K=108$, except $57$ in Law school) we measured the simultaneous coverage of the family of pool contrasts. For PATTERN-DIF the unadjusted intervals cover all contrasts at once in only $0.20$ to $0.33$ of the replications on average over cells (by budget), Bonferroni and Holm in $0.93$, $0.96$, $0.97$ and $0.98$ at $L=250$, $500$, $1000$, $2000$, and max-$t$ in $0.90$, $0.93$, $0.94$ and $0.945$. Over all cells the means are $0.954$ (Bonferroni, Holm) and $0.923$ (max-$t$); the Monte Carlo standard error is $0.011$. Max-$t$ is thus not conservative on real pools but falls short of its level, by $0.03$ on average and by more at small budgets, and the shortfall is concentrated in a few cells: it is below $0.90$ in four of the $35$ (Law school at $L=250$ and $500$ with $0.65$ and $0.89$, MAGIC at $L=250$ with $0.885$, Spambase at $L=250$ with $0.897$); Bonferroni is below $0.93$ in three (Law school $L=250$: $0.72$, MAGIC $L=250$ and $500$). These are the cells in which the main study found worst-contrast coverage below nominal, so the failure is that of the individual intervals at small budgets, not of the max-$t$ construction. With the zero-variance floor of Section~\ref{sec:design} the minimum over cells rises from $0.72$ to $0.92$ for Bonferroni and from $0.65$ to $0.89$ for max-$t$ (mean $0.934$). The plug-in estimators are much worse (mean Bonferroni coverage $0.67$ for SRS and $0.91$ for PATTERN), as in the main study. The critical value of max-$t$ is on average $5\%$ below the Bonferroni value for these real contrasts, which are more strongly correlated than the synthetic ones (Supplementary Tables~\SIref{tab:test-real-cover-full} and~\SIref{tab:test-real-cover-summary}).
+
+\paragraph{Power curves and label budgets.} For six contrasts per setting (selected so that the predicted budgets for SRS and PATTERN-DIF both fall in the grid $200\le L\le\min(4000,N/4)$; $R=1000$ labelled samples per budget, pool-conditional target) we estimated the power of the two-sided test of $H_0:\theta_k=0$ at seven budgets and interpolated in $\log L$ to the budget for $80\%$ power. We compare the ratio $L_{\rm SRS}/L_{\rm DIF}$ with the prediction from the power function with the exact finite-pool variances (computed with the pool labels and the allocation actually used). Figure~\ref{fig:testing-sim}(c) and Table~\ref{tab:test-power} show close agreement: over $49$ contrasts in nine settings the median of observed over predicted is $1.00$ (quartiles $0.97$ and $1.02$), all ratios lie within $\pm20\%$ and the rank correlation is $0.99$; absolute budgets agree equally well ($0.99$ and $1.00$ for SRS and PATTERN-DIF). Two contrasts were censored (power never reached $80\%$ on the grid). The asymptotic prediction by the ratio of variances is slightly too high. The ratio of the variances of SRS and PATTERN-DIF at the budget of PATTERN-DIF is $2.9$ to $6.0$ across settings, and the observed budget ratio is about $0.88$ times it (range $0.78$ to $1.08$), because the finite-pool factor $1/L-1/N$ makes the variance of SRS fall faster than $1/L$ at the budgets reached; the sample-size formula that includes it is accurate. The MSE ratio of the main study at $L=500$ is a different quantity and need not agree: it is the efficiency at one budget, and for several settings it exceeds the budget ratio (for example $12.1$ against $4.9$ for Bank marketing), because PATTERN-DIF exhausts small strata as the budget grows.
+
+\begin{table*}[t]
+\centering\footnotesize
+\caption{Label budget for $80\%$ power of the two-sided Wald test of $H_0:\theta_k=0$, ratio of SRS to PATTERN-DIF. $V_{\rm SRS}/V_{\rm DIF}$: ratio of exact variances at the budget of PATTERN-DIF (asymptotic prediction, median over contrasts); predicted: from the power function with the exact variance at each budget; observed: from $R=1000$ simulated power curves; Obs./pred.: median of the per-contrast ratio. Contrasts: number selected per setting.}\label{tab:test-power}
+\begin{tabular}{lrrrrr}\toprule
+Setting & Contrasts & $V_{\rm SRS}/V_{\rm DIF}$ & Predicted $L_{\rm SRS}/L_{\rm DIF}$ & Observed & Obs./pred.\ \\\midrule
+Synthetic pool & 6 & 2.88 & 2.79 & 2.60 & 0.97 \\
+Adult (sex) & 6 & 5.97 & 5.40 & 5.35 & 1.02 \\
+Adult (race) & 6 & 3.57 & 3.29 & 3.37 & 0.97 \\
+Bank marketing & 6 & 5.88 & 4.92 & 4.88 & 1.00 \\
+Credit card & 6 & 4.37 & 3.66 & 3.59 & 0.96 \\
+MAGIC & 6 & 3.52 & 3.11 & 3.07 & 1.00 \\
+EEG eye state & 6 & 4.35 & 3.76 & 3.93 & 1.03 \\
+Phoneme & 3 & 2.94 & 2.49 & 2.28 & 0.97 \\
+Electricity & 6 & 3.01 & 2.83 & 2.87 & 1.01 \\
+\midrule
+All & 51 & & 3.29 & 3.35 & 1.00 \\
+\bottomrule\end{tabular}
+
+\end{table*}
+
+\paragraph{Power-optimal allocation.} For the synthetic pool and three real pools (Adult (sex), Bank marketing, Electricity) with $L\in\{500,1000\}$ we solved the maximin problem of Section~\ref{sec:testing} with the effect sizes as targets, using the true contrasts (an idealisation: in practice they come from a pilot or from planning values). Two target sets were used: E1, the contrasts with $|\theta_k|\ge0.02$ with effect $|\theta_k|$, and E2, all contrasts with a common effect of $0.05$. The solver is certified: the duality gap was below $0.2\%$ in every problem. Compared with the default allocation, the maximin allocation reduces the largest variance-to-effect ratio $\max_kV_k/\delta_k^2$ by a factor of $1.5$ to $2.0$ in the real pools and by $1.05$ on the synthetic pool, where the default is already close to optimal (Supplementary Table~\SIref{tab:test-opt-full}). The power at the worst contrast rises accordingly but from low levels, because the hardest contrasts remain nearly unpowered at these budgets: for E2 it goes from $0.09$ to $0.13$ (Adult (sex), $L=500$), from $0.17$ to $0.23$ (Bank marketing, $L=1000$) and from $0.37$ to $0.65$ (Electricity, $L=1000$), whereas for E1 at $L=1000$ the gains are smaller ($0.12$ to $0.14$ in Adult (sex), none in Bank marketing, $0.15$ to $0.21$ in Electricity). The cost is the mean power and the number of contrasts that reach $80\%$: in Adult (sex) at $L=1000$ the mean power under E2 falls from $0.87$ to $0.79$ and the number of contrasts below $80\%$ rises from $21$ to $35$. Power-optimal design therefore helps the worst-off contrasts and costs the others; it is not a free improvement.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{testing_sim}
+\caption{(a) Rejection rate at nominal $5\%$ (mean over $108$ contrasts) against the estimated ratio of pool to design variance. (b) FWER of the family in which all $108$ population hypotheses are true, by cell ($N$ above, $L$ below). (c) Predicted and observed $L_{\rm SRS}/L_{\rm DIF}$ at $80\%$ power, one point per contrast; dotted lines: $\pm20\%$. (d) Minimum simulated power over the targeted contrasts under the default and the maximin allocation (filled: E2, open: E1).}\label{fig:testing-sim}
+\end{figure*}
+
+\paragraph{Limitations.} The nulls are exact only in the population and there are only $12$ of them, so the adjusted FWER with true nulls is conservative and the all-true family is the demanding check. There is one synthetic design and eleven real pools; the power study uses contrasts whose budgets fall in the grid, and the power-optimal allocation is evaluated with the true effect sizes and the proxy variance model. Max-$t$ uses an estimated correlation matrix of $108$ contrasts and is mildly anticonservative at small budgets. Further limitations are listed in Supplementary Section~\SIref{si:testing-sim}.
 
 \section{Empirical study on eleven data settings}\label{sec:empirical}
 

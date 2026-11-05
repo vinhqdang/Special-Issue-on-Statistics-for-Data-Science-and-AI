@@ -18,9 +18,9 @@ import re, sys, shutil, pathlib, subprocess, tempfile, os
 root = pathlib.Path("manuscript_v2"); out = root / "springer"; out.mkdir(exist_ok=True)
 OFFICIAL = pathlib.Path(sys.argv[1]) if len(sys.argv) > 1 else None
 
-MAIN = ["introduction", "related", "setting", "design", "theory", "numcheck", "empirical", "extra_splits",
+MAIN = ["introduction", "related", "setting", "design", "theory", "numcheck", "testing", "testing_sim", "empirical", "extra_splits",
         "extra_population", "baselines", "ablations", "guidance", "discussion"]
-SI = ["appendix_proofs", "si_theory_extra", "simulation", "si_baselines", "si_ablations", "appendix_ablations", "appendix_data"]
+SI = ["appendix_proofs", "si_theory_extra", "si_testing", "si_testing_sim", "simulation", "si_baselines", "si_ablations", "appendix_ablations", "appendix_data"]
 
 
 def read(p): return (root / p).read_text()
@@ -58,6 +58,7 @@ PRE = r"""%Version 3.1 December 2024 template; compile with the official sn-jnl.
 \usepackage{algorithm}\usepackage{algorithmicx}\usepackage{algpseudocode}
 \theoremstyle{thmstyleone}
 \newtheorem{proposition}{Proposition}
+\newtheorem{theorem}[proposition]{Theorem}
 \newtheorem{lemma}[proposition]{Lemma}
 \newtheorem{corollary}[proposition]{Corollary}
 \theoremstyle{thmstyletwo}
